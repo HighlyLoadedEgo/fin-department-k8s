@@ -73,9 +73,10 @@ vault write auth/kubernetes/role/eso-role \
 ### 4. Сиды секретов в Vault
 
 ```bash
-# MinIO (root от всего S3: harbor/loki/cnpg-backups)
-vault kv put secret/minio/root \
-  rootUser='admin' rootPassword='<strong>'
+# Yandex Cloud S3 (статический ключ из консоли Yandex Cloud:
+# Object Storage → {bucket} → Service accounts / или IAM → Service account → ключи)
+vault kv put secret/s3/yandex \
+  accessKey='<YCAJE...>' secretKey='<YCP...>'
 
 # Harbor
 vault kv put secret/database/harbor password='<strong>'
@@ -86,8 +87,8 @@ vault kv put secret/harbor/secret-key secretKey='<ровно 16 символов
 vault kv put secret/grafana/admin admin-password='<strong>'
 ```
 
-После синка: Job'ы в ns `minio` создадут бакеты `harbor`, `loki-logs`,
-`cnpg-backups`; CNPG поднимется и сделает immediate-бэкап в MinIO.
+Бакеты создаются руками в Yandex Console: `harbor-mortypython`, `loki-logs`,
+`cnpg-backups`. После синка CNPG сделает immediate-бэкап, Loki начнёт писать чанки.
 
 ## Tracing / OTel
 

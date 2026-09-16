@@ -5,6 +5,5 @@ namespace: harbor
 resources:
   - namespace.yaml
   - external-secret.yaml
-  - bucket-job.yaml
   - release.yaml
   - istio.yaml

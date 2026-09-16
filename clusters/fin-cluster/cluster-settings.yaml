@@ -19,8 +19,6 @@ data:
   GRAFANA_HOST: grafana.mortypython.ru
   HEADLAMP_HOST: headlamp.mortypython.ru
   WEAVE_HOST: weave.mortypython.ru
-  S3_HOST: s3.mortypython.ru
-  CONSOLE_S3_HOST: console-s3.mortypython.ru
   JAEGER_HOST: jaeger.mortypython.ru
 
   # Vault — внутренний хост: /etc/hosts на клиенте → 158.160.183.114.
@@ -31,8 +29,13 @@ data:
   STORAGE_CLASS: local-path
   LONGHORN_STORAGE_CLASS: longhorn
 
+  # Yandex Cloud S3 (Object Storage). Бакеты создаются руками в консоли:
+  # harbor, loki-logs, cnpg-backups. Ключи: Vault secret/s3/yandex.
+  S3_ENDPOINT_URL: https://storage.yandexcloud.net
+  S3_REGION: ru-central1
+
   HARBOR_DB_USER: harbor
   HARBOR_DB: harbor
-  HARBOR_S3_BUCKET: harbor
+  HARBOR_S3_BUCKET: harbor-mortypython
   CNPG_BACKUP_BUCKET: cnpg-backups
   LOKI_S3_BUCKET: loki-logs

@@ -1,6 +1,6 @@
 ---
-# Creds для Barman → общий MinIO (root; lab single-node).
-# Vault: secret/data/minio/root
+# Creds для Barman → Yandex Cloud S3.
+# Vault: secret/data/s3/yandex {accessKey, secretKey}
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -17,17 +17,17 @@ spec:
     template:
       engineVersion: v2
       data:
-        ACCESS_KEY_ID: "{{ .rootUser }}"
-        ACCESS_SECRET_KEY: "{{ .rootPassword }}"
+        ACCESS_KEY_ID: "{{ .accessKey }}"
+        ACCESS_SECRET_KEY: "{{ .secretKey }}"
   data:
-    - secretKey: rootUser
+    - secretKey: accessKey
       remoteRef:
-        key: minio/root
-        property: rootUser
-    - secretKey: rootPassword
+        key: s3/yandex
+        property: accessKey
+    - secretKey: secretKey
       remoteRef:
-        key: minio/root
-        property: rootPassword
+        key: s3/yandex
+        property: secretKey
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup

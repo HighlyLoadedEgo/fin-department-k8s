@@ -25,8 +25,9 @@ spec:
     barmanObjectStore:
       # После migrate local-path→longhorn: новый empty prefix (старый
       # s3://…/infra-db занят WAL → recovery падал с Expected empty archive).
-      destinationPath: s3://${CNPG_BACKUP_BUCKET}/infra-db-lh
-      endpointURL: http://minio.minio.svc.cluster.local:9000
+      destinationPath: s3://${CNPG_BACKUP_BUCKET}/infra-db
+      endpointURL: ${S3_ENDPOINT_URL}
+      # Yandex S3: path-style + регион идут через барман-окружение из s3Credentials-секрета не нужны — endpoint публичный TLS.
       s3Credentials:
         accessKeyId:
           name: cnpg-backup-s3

@@ -25,11 +25,10 @@ MetalLB VIP `158.160.183.114`).
 | `external-secrets` | ESO → Vault (`ClusterSecretStore/vault-backend`) |
 | `vault-system` | HashiCorp Vault (raft на longhorn, UI на vault.mortypython.local) |
 | `cnpg-system` | CloudNativePG operator + barman-cloud plugin |
-| `postgres` | кластер `infra-db` (harbor DB), бэкапы → MinIO |
-| `minio` | MinIO (S3: harbor, loki, cnpg-backups) |
-| `harbor` | registry.mortypython.ru (PG на infra-db, redis internal, S3 на MinIO) |
+| `postgres` | кластер `infra-db` (harbor DB), бэкапы → Yandex S3 |
+| `harbor` | registry.mortypython.ru (PG на infra-db, redis internal, S3 на Yandex Object Storage) |
 | `monitoring` | kube-prometheus-stack + Grafana |
-| `loki` | Loki + Alloy (логи → MinIO) |
+| `loki` | Loki + Alloy (логи → Yandex S3) |
 | `jaeger` | Jaeger v2 (badger на PVC), UI на jaeger.mortypython.ru |
 | `opentelemetry-system` | OTel Operator (Instrumentation / OpenTelemetryCollector CR) |
 | `headlamp` | Kubernetes UI (вход SA-token) |

@@ -17,6 +17,4 @@ spec:
     - "${GRAFANA_HOST}"
     - "${HEADLAMP_HOST}"
     - "${WEAVE_HOST}"
-    - "${S3_HOST}"
-    - "${CONSOLE_S3_HOST}"
     - "${JAEGER_HOST}"

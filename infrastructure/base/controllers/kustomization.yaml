@@ -15,7 +15,6 @@ resources:
   # data
   - cnpg-system
   - postgres-system
-  - minio
   # registry
   - harbor-system
   # observability
