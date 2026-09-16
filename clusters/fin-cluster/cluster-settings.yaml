@@ -37,5 +37,5 @@ data:
   HARBOR_DB_USER: harbor
   HARBOR_DB: harbor
   HARBOR_S3_BUCKET: harbor-mortypython
-  CNPG_BACKUP_BUCKET: cnpg-backups
-  LOKI_S3_BUCKET: loki-logs
+  CNPG_BACKUP_BUCKET: mortypython-cnpg-backups
+  LOKI_S3_BUCKET: mortypython-loki-logs

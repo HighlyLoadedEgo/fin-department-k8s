@@ -87,8 +87,8 @@ vault kv put secret/harbor/secret-key secretKey='<ровно 16 символов
 vault kv put secret/grafana/admin admin-password='<strong>'
 ```
 
-Бакеты создаются руками в Yandex Console: `harbor-mortypython`, `loki-logs`,
-`cnpg-backups`. После синка CNPG сделает immediate-бэкап, Loki начнёт писать чанки.
+Бакеты создаются руками в Yandex Console: `harbor-mortypython`, `mortypython-loki-logs`,
+`mortypython-cnpg-backups`. После синка CNPG сделает immediate-бэкап, Loki начнёт писать чанки.
 
 ## Tracing / OTel
 
