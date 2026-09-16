@@ -1,0 +1,111 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: loki
+spec:
+  interval: 1h
+  timeout: 10m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: loki
+      version: "7.3.0"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      interval: 15m
+  values:
+    deploymentMode: SingleBinary
+
+    global:
+      priorityClassName: fin-platform
+
+    loki:
+      auth_enabled: false
+      commonConfig:
+        replication_factor: 1
+      schemaConfig:
+        configs:
+          - from: "2026-01-01"
+            store: tsdb
+            object_store: s3
+            schema: v13
+            index:
+              prefix: loki_index_
+              period: 24h
+      storage:
+        type: s3
+        bucketNames:
+          chunks: ${LOKI_S3_BUCKET}
+          ruler: ${LOKI_S3_BUCKET}
+          admin: ${LOKI_S3_BUCKET}
+        s3:
+          endpoint: minio.minio.svc.cluster.local:9000
+          region: us-east-1
+          accessKeyId: $${AWS_ACCESS_KEY_ID}
+          secretAccessKey: $${AWS_SECRET_ACCESS_KEY}
+          s3ForcePathStyle: true
+          insecure: true
+      limits_config:
+        allow_structured_metadata: true
+        retention_period: 168h
+      compactor:
+        retention_enabled: true
+        delete_request_store: s3
+
+    minio:
+      enabled: false
+
+    chunksCache:
+      enabled: false
+    resultsCache:
+      enabled: false
+
+    singleBinary:
+      replicas: 1
+      extraArgs:
+        - -config.expand-env=true
+      extraEnvFrom:
+        - secretRef:
+            name: loki-s3
+      persistence:
+        enabled: true
+        storageClass: ${LONGHORN_STORAGE_CLASS}
+        size: 10Gi
+
+    backend:
+      replicas: 0
+    read:
+      replicas: 0
+    write:
+      replicas: 0
+    ingester:
+      replicas: 0
+    querier:
+      replicas: 0
+    queryFrontend:
+      replicas: 0
+    queryScheduler:
+      replicas: 0
+    distributor:
+      replicas: 0
+    compactor:
+      replicas: 0
+    indexGateway:
+      replicas: 0
+    bloomPlanner:
+      replicas: 0
+    bloomBuilder:
+      replicas: 0
+    bloomGateway:
+      replicas: 0

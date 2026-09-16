@@ -1,0 +1,22 @@
+---
+# CNPG exposes Postgres metrics on port metrics (9187). Manual PodMonitor
+# (enablePodMonitor deprecated). Relabelings keep namespace/pod for dashboards.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: infra-db-metrics
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: infra-db-metrics
+    app.kubernetes.io/part-of: monitoring
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: infra-db
+  podMetricsEndpoints:
+    - port: metrics
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_namespace]
+          targetLabel: namespace
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          targetLabel: pod

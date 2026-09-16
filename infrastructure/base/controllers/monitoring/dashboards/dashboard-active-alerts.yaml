@@ -1,0 +1,188 @@
+---
+# Дашборд Active Alerts: Alert list + counters (без дырявой таблицы лейблов).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-active-alerts
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  active-alerts.json: |-
+    {
+      "annotations": { "list": [] },
+      "description": "Firing/pending alerts from Prometheus rules (same pipeline as Slack). Watchdog excluded.",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "id": null,
+      "links": [
+        {
+          "asDropdown": false,
+          "icon": "external link",
+          "includeVars": false,
+          "keepTime": false,
+          "tags": [],
+          "targetBlank": true,
+          "title": "Grafana Alerting",
+          "tooltip": "",
+          "type": "link",
+          "url": "/alerting/list"
+        }
+      ],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "displayName": " ",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 3, "w": 8, "x": 0, "y": 0 },
+          "id": 1,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value"
+          },
+          "title": "Critical",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "count(ALERTS{alertstate=\"firing\",severity=\"critical\",alertname!=\"Watchdog\"}) or vector(0)",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "displayName": " ",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "orange", "value": 1 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 3, "w": 8, "x": 8, "y": 0 },
+          "id": 2,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value"
+          },
+          "title": "Warning",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "count(ALERTS{alertstate=\"firing\",severity=\"warning\",alertname!=\"Watchdog\"}) or vector(0)",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "displayName": " ",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "blue", "value": 1 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 3, "w": 8, "x": 16, "y": 0 },
+          "id": 3,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value"
+          },
+          "title": "Total",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "count(ALERTS{alertstate=\"firing\",alertname!=\"Watchdog\"}) or vector(0)",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "datasource", "uid": "grafana" },
+          "gridPos": { "h": 20, "w": 24, "x": 0, "y": 3 },
+          "id": 4,
+          "options": {
+            "alertInstanceLabelFilter": "{alertname!=\"Watchdog\"}",
+            "alertName": "",
+            "dashboardAlerts": false,
+            "groupBy": ["alertname"],
+            "groupMode": "custom",
+            "maxItems": 100,
+            "sortOrder": 1,
+            "stateFilter": {
+              "error": true,
+              "firing": true,
+              "noData": false,
+              "normal": false,
+              "pending": true,
+              "recovering": false
+            },
+            "viewMode": "list"
+          },
+          "title": "Open alerts",
+          "type": "alertlist"
+        }
+      ],
+      "preload": false,
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["alerts", "prometheus"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Active Alerts",
+      "uid": "fin-active-alerts",
+      "version": 3
+    }

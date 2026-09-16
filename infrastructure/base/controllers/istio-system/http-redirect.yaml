@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: fin-http-redirect
+  namespace: istio-system
+spec:
+  hosts:
+    - "${DOMAIN}"
+    - "*.${DOMAIN}"
+    - "${VAULT_HOST}"
+  gateways:
+    - istio-system/fin-gw-http
+  http:
+    - name: redirect-to-https
+      match:
+        - uri:
+            prefix: /
+      redirect:
+        scheme: https
+        redirectCode: 301

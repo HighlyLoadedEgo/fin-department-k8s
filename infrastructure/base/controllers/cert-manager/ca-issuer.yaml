@@ -1,0 +1,35 @@
+# Self-signed CA для внутренних хостов вне публичного DNS (vault.mortypython.local).
+# LE такие не выдаёт — UI Vault ходит по этому серту (браузер попросит доверие
+# корню; экспорт: kubectl -n cert-manager get secret ca-key-pair -o jsonpath='{.data.tls\.crt}' | base64 -d).
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-bootstrap
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fin-root-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: fin-department Root CA
+  secretName: ca-key-pair
+  duration: 87600h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-bootstrap
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ca-issuer
+spec:
+  ca:
+    secretName: ca-key-pair

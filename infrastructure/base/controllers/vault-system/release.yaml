@@ -1,0 +1,55 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vault
+  namespace: vault-system
+spec:
+  interval: 1h
+  timeout: 10m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: vault
+      version: "0.34.0"
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: hashicorp
+        namespace: flux-system
+  values:
+    server:
+      replicas: 1
+      priorityClassName: fin-critical
+      standalone:
+        enabled: true
+        config: |
+          ui = true
+          disable_mlock = true
+          listener "tcp" {
+            address = "[::]:8200"
+            tls_disable = 1
+          }
+          storage "raft" {
+            path = "/vault/data"
+          }
+      dataStorage:
+        enabled: true
+        size: 5Gi
+        storageClass: ${LONGHORN_STORAGE_CLASS}
+      resources:
+        requests:
+          cpu: 250m
+          memory: 512Mi
+        limits:
+          memory: 1Gi
+    ui:
+      enabled: true
+      serviceType: ClusterIP

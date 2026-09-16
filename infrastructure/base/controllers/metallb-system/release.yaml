@@ -1,0 +1,35 @@
+# MetalLB controller + speaker (L2-режим для bare-metal LoadBalancer).
+#
+# CRD ставятся САМИМ chart'ом (crds.enabled=true) — только chart-ные CRD
+# содержат conversion-webhook; без него controller v0.16.1 падает в restart-loop.
+# IPAddressPool/L2Advertisement: global — тот же infrastructure KS
+# (custom-resources в base/controllers). ru — KS metallb-config после Ready chart.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: metallb
+  namespace: metallb-system
+spec:
+  interval: 30m
+  timeout: 10m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: metallb
+      version: "0.16.1"
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: metallb
+        namespace: flux-system
+  values:
+    crds:
+      enabled: true
+      validationFailurePolicy: Fail

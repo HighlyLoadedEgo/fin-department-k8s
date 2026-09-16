@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+  namespace: headlamp
+spec:
+  interval: 1h
+  timeout: 10m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: headlamp
+      version: "0.43.0"
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: flux-system
+      interval: 15m
+  values:
+    fullnameOverride: headlamp
+    config:
+      inCluster: true
+      unsafeUseServiceAccountToken: false
+      # Без OIDC (Keycloak нет): вход service account token'ом.
+      # Токен: kubectl -n headlamp create token headlamp
+      oidc:
+        secret:
+          create: false
+        externalSecret:
+          enabled: false
+    # Chart-managed binding kept off: roleRef is immutable; we bind SA in rbac.yaml.
+    clusterRoleBinding:
+      create: false
+      clusterRoleName: oidc-cluster-readonly
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: false
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 512Mi

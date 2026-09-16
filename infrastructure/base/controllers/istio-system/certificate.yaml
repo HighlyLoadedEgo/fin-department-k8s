@@ -1,0 +1,22 @@
+# Публичные хосты (mortypython.ru): LE HTTP-01 через ingressgateway.
+# DNS A-записи → VIP должны существовать до reconcile, иначе Certificate не Ready.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fin-tls
+  namespace: istio-system
+spec:
+  secretName: fin-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - "${DOMAIN}"
+    - "*.${DOMAIN}"
+    - "${HARBOR_HOST}"
+    - "${GRAFANA_HOST}"
+    - "${HEADLAMP_HOST}"
+    - "${WEAVE_HOST}"
+    - "${S3_HOST}"
+    - "${CONSOLE_S3_HOST}"
+    - "${JAEGER_HOST}"

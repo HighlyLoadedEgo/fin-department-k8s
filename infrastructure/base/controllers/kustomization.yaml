@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # storage / network base
+  - priority-classes
+  - longhorn
+  - metallb-system
+  - metallb-system/custom-resources
+  - istio-system
+  # pki / secrets
+  - cert-manager
+  - external-secrets
+  # vault
+  - vault-system
+  # data
+  - cnpg-system
+  - postgres-system
+  - minio
+  # registry
+  - harbor-system
+  # observability
+  - monitoring
+  - loki
+  - jaeger
+  - otel-system
+  # ui
+  - headlamp
+  - weave-gitops

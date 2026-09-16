@@ -1,0 +1,15 @@
+---
+# IP-адрес(а), которые MetalLB будет раздавать сервисам type=LoadBalancer.
+# Значение берётся из cluster-settings (ключ METALLB_IP_POOL) через
+# postBuild.substituteFrom. Поддерживаемые форматы (см. metallb docs):
+#   - один адрес:       222.167.208.182-222.167.208.182
+#   - диапазон CIDR:    222.167.208.0/24
+#   - диапазон через -: 222.167.208.182-222.167.208.190
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: fin-ip-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - "${METALLB_IP_POOL}"

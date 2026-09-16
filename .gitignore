@@ -1,0 +1,6 @@
+*.secret.yaml
+*.sealed.yaml
+vault-init.txt
+*.vault-token
+unseal-key*
+.idea/

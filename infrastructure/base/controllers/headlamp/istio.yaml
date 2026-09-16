@@ -1,0 +1,26 @@
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: headlamp
+  namespace: headlamp
+spec:
+  hosts:
+    - headlamp.${DOMAIN}
+  gateways:
+    - istio-system/fin-gw
+  http:
+    - name: primary
+      match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: headlamp.headlamp.svc.cluster.local
+            port:
+              number: 80
+      timeout: 3600s
+      headers:
+        response:
+          set:
+            X-Frame-Options: "SAMEORIGIN"

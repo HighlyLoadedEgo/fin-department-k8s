@@ -1,0 +1,23 @@
+# vault.mortypython.local — внутренний хост (/etc/hosts → VIP).
+# TLS-сервер https-vault на fin-gw (серт vault-tls, CA-issuer).
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: vault-ui
+  namespace: vault-system
+spec:
+  hosts:
+    - "${VAULT_HOST}"
+  gateways:
+    - istio-system/fin-gw
+  http:
+    - name: primary
+      match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: vault.vault-system.svc.cluster.local
+            port:
+              number: 8200
+      timeout: 3600s

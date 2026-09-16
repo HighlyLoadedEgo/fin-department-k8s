@@ -1,0 +1,68 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  maxHistory: 2
+  dependsOn:
+    - name: istio-base
+      namespace: istio-system
+    - name: istiod
+      namespace: istio-system
+  interval: 30m
+  timeout: 10m
+  targetNamespace: istio-system
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+    force: true
+  releaseName: istio-ingressgateway
+  chart:
+    spec:
+      chart: gateway
+      version: "1.30.3"
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: flux-system
+  values:
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      # Single-node: не раздувать HPA.
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 70
+    priorityClassName: fin-platform
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    service:
+      type: LoadBalancer
+      # Разрешаем MetalLB поделиться VIP 222.167.208.182 с jitsi-coturn
+      # (UDP 3478; пересечений по портам с gateway нет). Аннотация с тем же
+      # ключом стоит и у Service jitsi-coturn.
+      ports:
+        - name: status-port
+          port: 15021
+          protocol: TCP
+          targetPort: 15021
+        - name: http2
+          port: 80
+          protocol: TCP
+          targetPort: 80
+        - name: https
+          port: 443
+          protocol: TCP
+          targetPort: 443

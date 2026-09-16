@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: istio-system
+resources:
+  - base.yaml
+  - istiod.yaml
+  - ingressgateway.yaml
+  - gateway.yaml
+  - http-redirect.yaml
+  - certificate.yaml
+  - certificate-vault.yaml
+  - hsts.yaml

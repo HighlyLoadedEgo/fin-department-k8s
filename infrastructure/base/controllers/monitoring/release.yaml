@@ -1,0 +1,149 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  interval: 1h
+  timeout: 15m
+  install:
+    crds: Skip
+    remediation:
+      retries: -1
+  upgrade:
+    crds: Skip
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: "87.21.0"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      interval: 15m
+  values:
+    fullnameOverride: kube-prometheus-stack
+
+    # CRDs живут в infrastructure/base/crds/prometheus-operator (как cert-manager/cnpg).
+    crds:
+      enabled: false
+
+    alertmanager:
+      enabled: true
+      alertmanagerSpec:
+        externalUrl: https://${GRAFANA_HOST}
+        # Подхватываем только наши AlertmanagerConfig по уникальному label.
+        alertmanagerConfigSelector:
+          matchLabels:
+            alertmanagerConfig: slack
+        # Без None оператор добавляет matcher namespace=<ns AlertmanagerConfig>,
+        # и алерты из других ns (напр. litellm-system) не доходят до Slack.
+        alertmanagerConfigMatcherStrategy:
+          type: None
+
+    grafana:
+      enabled: true
+      adminUser: admin
+      admin:
+        existingSecret: grafana-admin
+        userKey: admin-user
+        passwordKey: admin-password
+      persistence:
+        enabled: true
+        type: pvc
+        storageClassName: ${LONGHORN_STORAGE_CLASS}
+        size: 5Gi
+      # Официальный путь chart 87.21.0: Loki попадает в тот же ConfigMap,
+      # что Prometheus/Alertmanager (templates/grafana/configmaps-datasources.yaml).
+      additionalDataSources:
+        - name: Loki
+          uid: loki
+          type: loki
+          access: proxy
+          url: http://loki-gateway.loki.svc.cluster.local
+          isDefault: false
+          jsonData:
+            maxLines: 1000
+      ingress:
+        enabled: false
+      grafana.ini:
+        server:
+          root_url: https://grafana.${DOMAIN}
+          domain: grafana.${DOMAIN}
+        analytics:
+          check_for_updates: false
+        auth:
+          # Без Keycloak: basic auth, пароль из Vault (grafana/admin).
+          disable_login_form: false
+        auth.basic:
+          enabled: true
+        auth.anonymous:
+          enabled: false
+      sidecar:
+        dashboards:
+          enabled: true
+          label: grafana_dashboard
+          labelValue: "1"
+          searchNamespace: ALL
+        datasources:
+          # PrometheusRule-алерты видны в Grafana Alerting (Data source-managed).
+          extraJsonData:
+            manageAlerts: true
+          alertmanager:
+            enabled: true
+            name: Alertmanager
+            uid: alertmanager
+            implementation: prometheus
+            # Grafana-managed rules тоже можно слать в этот AM (опционально).
+            handleGrafanaManagedAlerts: true
+
+    prometheus:
+      prometheusSpec:
+        externalLabels:
+          cluster: ${CLUSTER_NAME}
+        retention: 7d
+        podMonitorSelectorNilUsesHelmValues: false
+        podMonitorNamespaceSelector: {}
+        serviceMonitorSelectorNilUsesHelmValues: true
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ${LONGHORN_STORAGE_CLASS}
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 8Gi
+
+    prometheus-node-exporter:
+      prometheus:
+        monitor:
+          enabled: true
+
+    kube-state-metrics:
+      prometheus:
+        monitor:
+          enabled: true
+
+    # k3s: control-plane внутри одного процесса, отдельных endpoints нет.
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeEtcd:
+      enabled: false
+    kubeProxy:
+      enabled: false
+
+    defaultRules:
+      create: true
+      rules:
+        alertmanager: true
+        kubeControllerManager: false
+        kubeScheduler: false
+        etcd: false
+        kubeProxy: false

@@ -1,0 +1,10 @@
+---
+# prometheus-community Helm charts (kube-prometheus-stack).
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: prometheus-community
+  namespace: flux-system
+spec:
+  url: https://prometheus-community.github.io/helm-charts
+  interval: 30m

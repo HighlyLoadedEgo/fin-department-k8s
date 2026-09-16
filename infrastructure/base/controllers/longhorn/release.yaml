@@ -1,0 +1,48 @@
+---
+# Longhorn — CSI storage с allowVolumeExpansion.
+# На нодах нужен open-iscsi (k3s): apt/yum install open-iscsi && systemctl enable --now iscsid
+#
+# Single-node: defaultClassReplicaCount=1 (на 3+ нодах поднять до 2–3).
+# defaultClass=false — cluster default остаётся local-path, longhorn только явно.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn
+spec:
+  interval: 1h
+  timeout: 15m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: longhorn
+      version: "1.12.0"
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: flux-system
+  values:
+    persistence:
+      defaultClass: false
+      defaultClassReplicaCount: 1
+      # Retain: удаление PVC не стирает PV/данные — чистить руками.
+      reclaimPolicy: Retain
+    # Thin volumes: physical free >> scheduled. 100% blocks new 5Gi PVC
+    # while ~170Gi free on disk; 200% is Longhorn's usual default.
+    defaultSettings:
+      storageOverProvisioningPercentage: "200"
+    longhornUI:
+      replicas: 1
+    csi:
+      attacherReplicaCount: 1
+      provisionerReplicaCount: 1
+      resizerReplicaCount: 1
+      snapshotterReplicaCount: 1

@@ -1,0 +1,33 @@
+---
+# Single-node: под давлением scheduler должен предпочитать платформу CI/batch.
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: fin-critical
+value: 1000000
+globalDefault: false
+description: Vault, CNPG — потеря = простой всего кластера
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: fin-platform
+value: 100000
+globalDefault: false
+description: Istio gateway, Keycloak, MinIO, Redis, RabbitMQ
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: fin-apps
+value: 10000
+globalDefault: false
+description: Application workloads (dev/prod)
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: fin-batch
+value: 1000
+globalDefault: false
+description: Tekton PipelineRuns / Jobs — можно вытеснять

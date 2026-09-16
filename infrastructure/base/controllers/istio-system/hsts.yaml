@@ -1,0 +1,43 @@
+---
+# HSTS на ingress-gateway: браузер сам апгрейдит http→https и больше
+# не показывает «не защищено» после первой удачной сессии по https.
+#
+# max-age=2 года, includeSubDomains — покрывает все поддомены ${DOMAIN}.
+# preload НЕ включаем (его нельзя отзывать; включить позже осознанно через
+# hstspreload.org, когда уверен что https стабилен на всех поддоменах).
+#
+# Реализация: Lua-фильтр INSERT_BEFORE перед router — добавляет заголовок
+# в ответ и не трогает route_config (который Istio генерит динамически через
+# xDS), поэтому маршрутизация не ломается.
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: hsts
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+              subFilter:
+                name: envoy.filters.http.router
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.filters.http.hsts
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            value:
+              inlineCode: |
+                local hsts = "max-age=63072000; includeSubDomains"
+                function envoy_on_response(response_handle)
+                  response_handle:headers():replace("Strict-Transport-Security", hsts)
+                end

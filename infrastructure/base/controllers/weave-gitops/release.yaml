@@ -1,0 +1,46 @@
+# Weave GitOps UI. Без Keycloak: auth-methods=srv (пароль admin'а в секрете
+# weave-gitops-admin-auth, ключ password — chart генерит случайный при
+# adminUser.create: true; посмотреть: kubectl -n weave get secret
+# weave-gitops-admin-auth -o jsonpath='{.data.password}' | base64 -d).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: weave-gitops
+  namespace: weave
+spec:
+  interval: 1h
+  timeout: 10m
+  targetNamespace: weave
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: ./charts/gitops-server
+      sourceRef:
+        kind: GitRepository
+        name: weave-gitops
+        namespace: flux-system
+      interval: 1h
+  values:
+    fullnameOverride: weave-gitops
+    adminUser:
+      create: true
+    serviceAccount:
+      create: true
+      name: weave-gitops
+    rbac:
+      create: true
+      # admin-права Flux CRD + read workloads (для single-admin кластера хватит).
+      adminUserRole: cluster-admin
+      viewUserRole: view
+    service:
+      type: ClusterIP
+      port: 9001
+    ingress:
+      enabled: false
+    serverTLS:
+      enable: false

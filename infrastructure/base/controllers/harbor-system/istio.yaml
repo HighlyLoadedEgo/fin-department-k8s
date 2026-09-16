@@ -1,0 +1,39 @@
+---
+# /api /service /v2 → core; остальное (UI) → nginx harbor:8080
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  hosts:
+    - ${HARBOR_HOST}
+  gateways:
+    - istio-system/fin-gw
+  http:
+    - name: api-registry
+      match:
+        - uri:
+            prefix: /api
+        - uri:
+            prefix: /service
+        - uri:
+            prefix: /v2
+        - uri:
+            prefix: /c/
+      route:
+        - destination:
+            host: harbor-core.harbor.svc.cluster.local
+            port:
+              number: 80
+      timeout: 600s
+    - name: portal
+      match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: harbor.harbor.svc.cluster.local
+            port:
+              number: 8080
+      timeout: 300s

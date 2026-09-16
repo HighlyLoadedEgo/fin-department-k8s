@@ -1,0 +1,44 @@
+---
+# External Secrets Operator (ESO).
+#
+# Синхронизирует секреты из Vault → обычные K8s Secret через декларативные
+# ExternalSecret CR. Workloads читают их привычным secretKeyRef — миграция
+# компонентов на Vault тривиальна (меняем plain Secret на ExternalSecret).
+#
+# Auth к Vault — через Kubernetes auth method (см. cluster-secret-store.yaml):
+# SA external-secrets/external-secrets (создаётся этим чартом) ↔ Vault role
+# eso-role. Привязка роли в Vault — ручной bootstrap-шаг в runbook (Phase 8).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-secrets
+  namespace: external-secrets
+spec:
+  interval: 1h
+  timeout: 10m
+  install:
+    crds: Skip
+    remediation:
+      retries: -1
+  upgrade:
+    crds: Skip
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: external-secrets
+      version: "2.8.0"
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: external-secrets
+        namespace: flux-system
+  values:
+    installCRDs: false
+    replicaCount: 1
+    serviceAccount:
+      # SA с таким именем referenced в ClusterSecretStore.serviceAccountRef.
+      create: true
+      name: external-secrets

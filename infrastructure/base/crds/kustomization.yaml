@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - istio
+  - cert-manager
+  - external-secrets
+  - cnpg
+  - barman-cloud
+  - prometheus-operator

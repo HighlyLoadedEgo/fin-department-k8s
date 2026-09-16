@@ -1,0 +1,11 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: metallb-system
+resources:
+  - namespace.yaml
+  - release.yaml
+  # IPAddressPool/L2Advertisement — не здесь: SSA dry-run без CRD валит
+  # весь infrastructure KS, HelmRelease даже не создаётся.
+  # global: custom-resources в base/controllers (CRD уже есть).
+  # ru: отдельный Flux KS metallb-config (dependsOn: infrastructure).

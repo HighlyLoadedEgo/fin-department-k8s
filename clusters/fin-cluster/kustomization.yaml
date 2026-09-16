@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# Bootstrap:
+#   flux bootstrap git --url=... --path clusters/fin-cluster
+# (gotk-components.yaml / gotk-sync.yaml генерируются bootstrap'ом в flux-system/)
+resources:
+  - flux-system
+  - cluster-settings.yaml
+  - infrastructure-crds.yaml
+  - infrastructure.yaml

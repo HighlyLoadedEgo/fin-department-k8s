@@ -1,0 +1,156 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  interval: 1h
+  timeout: 20m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: harbor
+      version: "1.17.4"
+      sourceRef:
+        kind: HelmRepository
+        name: harbor
+        namespace: flux-system
+      interval: 15m
+  values:
+    expose:
+      type: clusterIP
+      tls:
+        enabled: false
+      clusterIP:
+        name: harbor
+        ports:
+          httpPort: 8080
+          httpsPort: 8443
+
+    externalURL: https://${HARBOR_HOST}
+    ipFamily:
+      ipv6:
+        enabled: false
+      ipv4:
+        enabled: true
+
+    existingSecretAdminPassword: harbor-admin
+    existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+    existingSecretSecretKey: harbor-secret-key
+
+    persistence:
+      enabled: true
+      resourcePolicy: keep
+      persistentVolumeClaim:
+        registry:
+          existingClaim: ""
+        jobservice:
+          jobLog:
+            storageClass: ${LONGHORN_STORAGE_CLASS}
+            size: 1Gi
+        trivy:
+          storageClass: ${LONGHORN_STORAGE_CLASS}
+          size: 5Gi
+      imageChartStorage:
+        disableredirect: true
+        type: s3
+        s3:
+          existingSecret: harbor-s3
+          region: us-east-1
+          bucket: ${HARBOR_S3_BUCKET}
+          regionendpoint: http://minio.minio.svc.cluster.local:9000
+          secure: false
+          v4auth: true
+
+    internalTLS:
+      enabled: false
+    cache:
+      enabled: false
+    metrics:
+      enabled: false
+    trace:
+      enabled: false
+    enableMigrateHelmHook: false
+
+    portal:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+
+    core:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
+
+    jobservice:
+      replicas: 1
+      maxJobWorkers: 5
+      jobLoggers:
+        - database
+        - stdout
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
+
+    registry:
+      replicas: 1
+      relativeurls: false
+      credentials:
+        username: harbor_registry_user
+        existingSecret: ""
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+
+    trivy:
+      enabled: true
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          memory: 1Gi
+
+    database:
+      type: external
+      external:
+        host: infra-db-rw.postgres.svc.cluster.local
+        port: "5432"
+        username: ${HARBOR_DB_USER}
+        coreDatabase: ${HARBOR_DB}
+        existingSecret: harbor-db-auth
+        sslmode: disable
+
+    # Internal redis Harbor (один pod, single-node) — внешний redis-system не нужен.
+    redis:
+      type: internal
+
+    exporter:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          memory: 128Mi

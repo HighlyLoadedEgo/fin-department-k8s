@@ -1,0 +1,43 @@
+---
+# Creds для Barman → общий MinIO (root; lab single-node).
+# Vault: secret/data/minio/root
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cnpg-backup-s3
+  namespace: postgres
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: cnpg-backup-s3
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        ACCESS_KEY_ID: "{{ .rootUser }}"
+        ACCESS_SECRET_KEY: "{{ .rootPassword }}"
+  data:
+    - secretKey: rootUser
+      remoteRef:
+        key: minio/root
+        property: rootUser
+    - secretKey: rootPassword
+      remoteRef:
+        key: minio/root
+        property: rootPassword
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: infra-db-daily
+  namespace: postgres
+spec:
+  schedule: "0 30 2 * * *"
+  backupOwnerReference: self
+  immediate: true
+  method: barmanObjectStore
+  cluster:
+    name: infra-db
