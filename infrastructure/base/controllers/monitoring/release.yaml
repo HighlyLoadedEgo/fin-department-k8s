@@ -105,9 +105,16 @@ spec:
 
     prometheus:
       prometheusSpec:
+        # 6GB-нода: держим Prometheus в рамках (680MB+ и растёт).
+        resources:
+          requests:
+            cpu: 100m
+            memory: 400Mi
+          limits:
+            memory: 700Mi
         externalLabels:
           cluster: ${CLUSTER_NAME}
-        retention: 7d
+        retention: 3d
         podMonitorSelectorNilUsesHelmValues: false
         podMonitorNamespaceSelector: {}
         serviceMonitorSelectorNilUsesHelmValues: true
