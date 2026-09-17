@@ -19,7 +19,7 @@ spec:
   # блокирует РФ-сети (403), OCI-версии чарта на docker hub нет.
   chart:
     spec:
-      chart: ./charts/vault
+      chart: ./infrastructure/base/controllers/vault-system/charts/vault
       sourceRef:
         kind: GitRepository
         name: flux-system
