@@ -143,7 +143,7 @@ vault kv put secret/grafana/admin admin-password='<strong>'
   коммитит тег в `apps/hackaton-fin-department/deployment.yaml` → KS `apps`.
 - БД: CNPG `infra-db`, роль `${HACKATON_FIN_DB_USER}`, DB `${HACKATON_FIN_DB}`,
   пароль Vault `database/hackaton-fin`. Миграции — initContainer `make migrate`.
-- UI/API: `api.mortypython.ru` (SAN в `fin-tls`), DNS → 77.91.112.72.
+- UI/API: `fin-api.mortypython.ru` (SAN в `fin-tls`), DNS → 77.91.112.72.
 - Vault: `vault kv put secret/database/hackaton-fin password='...'`,
   `vault kv put secret/harbor/robot-ci username='robot$fin+ci' password='...'`.
 

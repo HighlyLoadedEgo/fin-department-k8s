@@ -37,7 +37,7 @@ data:
   S3_REGION: ru-central1
 
   # hackaton-fin-department (бэкенд)
-  APP_HOST: api.mortypython.ru
+  APP_HOST: fin-api.mortypython.ru
   HACKATON_FIN_DB_USER: hackaton_fin
   HACKATON_FIN_DB: hackaton_fin_department
 
