@@ -133,3 +133,28 @@ vault kv put secret/grafana/admin admin-password='<strong>'
 - Секреты в git не класть; всё через Vault → ExternalSecret (`creationPolicy: Owner`).
 - metallb: CRD ставит сам chart (`crds.enabled: true`) — conversion webhook;
   сырые CRD в `crds/` не класть.
+
+## apps: hackaton-fin-department (бэкенд)
+
+- CI (репо `hackaton-fin-department`, ветка main): Quality → build & push
+  `registry.mortypython.ru/fin/hackaton-fin-department:main-<UTC ts14>-<sha12>`
+  (GitHub vars/secrets: `HARBOR_USERNAME`, `HARBOR_TOKEN` — robot account
+  Harbor с push в project `fin`).
+- CD: `ImageRepository`+`ImagePolicy` (numerical по ts) → `ImageUpdateAutomation`
+  коммитит тег в `apps/hackaton-fin-department/deployment.yaml` → KS `apps`.
+- БД: CNPG `infra-db`, роль `${HACKATON_FIN_DB_USER}`, DB `${HACKATON_FIN_DB}`,
+  пароль Vault `database/hackaton-fin`. Миграции — initContainer `make migrate`.
+- UI/API: `api.mortypython.ru` (SAN в `fin-tls`), DNS → 77.91.112.72.
+- Vault: `vault kv put secret/database/hackaton-fin password='...'`,
+  `vault kv put secret/harbor/robot-ci username='robot$fin+ci' password='...'`.
+
+### Включить image-контроллеры (один раз)
+
+Deploy key от bootstrap read-only, а IAU нужен push — ребутстрапни с токеном:
+
+```bash
+flux bootstrap github --owner=HighlyLoadedEgo --repository=fin-department-k8s \
+  --branch=main --path=clusters/fin-cluster --personal \
+  --components-extra=image-reflector,image-automation --token-auth
+# GITHUB_TOKEN=<PAT со scope repo> перед командой
+```
