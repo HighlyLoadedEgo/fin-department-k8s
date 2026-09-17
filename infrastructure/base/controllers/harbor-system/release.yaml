@@ -122,8 +122,9 @@ spec:
           memory: 256Mi
           cpu: 100m
 
+    # Trivy выключен: на 6GB-ноде своп-оде. Включить, когда будет 8GB+.
     trivy:
-      enabled: true
+      enabled: false
       replicas: 1
       resources:
         requests:
