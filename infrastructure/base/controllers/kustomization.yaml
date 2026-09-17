@@ -17,10 +17,10 @@ resources:
   # registry
   - harbor-system
   # observability
-  - monitoring
-  - loki
-  - jaeger
-  - otel-system
+#  - monitoring
+#  - loki
+#  - jaeger
+#  - otel-system
   # ui
-  - headlamp
-  - weave-gitops
+#  - headlamp
+#  - weave-gitops
