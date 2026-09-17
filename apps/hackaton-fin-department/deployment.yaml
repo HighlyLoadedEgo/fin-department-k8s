@@ -21,7 +21,7 @@ spec:
       containers:
         - name: app
           # {"$imagepolicy": "flux-system:hackaton-fin-department"} — сеттер читает ВЕСЬ тег
-          image: registry.mortypython.ru/fin/hackaton-fin-department:main-00000000000000-000000000000 # {"$imagepolicy": "flux-system:hackaton-fin-department"}
+          image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260917131624-ab7f4bf3ccdf # {"$imagepolicy": "flux-system:hackaton-fin-department"}
           ports:
             - name: http
               containerPort: 8080
@@ -60,7 +60,7 @@ spec:
       initContainers:
         # alembic-миграции до старта приложения (аналог make migrate из compose)
         - name: migrate
-          image: registry.mortypython.ru/fin/hackaton-fin-department:main-00000000000000-000000000000 # {"$imagepolicy": "flux-system:hackaton-fin-department"}
+          image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260917131624-ab7f4bf3ccdf # {"$imagepolicy": "flux-system:hackaton-fin-department"}
           command: ["make", "migrate"]
           env:
             - name: POSTGRES_PROTOCOL
