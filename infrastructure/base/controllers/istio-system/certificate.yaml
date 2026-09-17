@@ -10,9 +10,10 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
+  # Без wildcard: LE запрещает mixing wildcard+exact, а wildcard требует
+  # DNS-01 (у нас HTTP-01). Новые поддомены добавлять сюда явным SAN'ом.
   dnsNames:
     - "${DOMAIN}"
-    - "*.${DOMAIN}"
     - "${HARBOR_HOST}"
     - "${GRAFANA_HOST}"
     - "${HEADLAMP_HOST}"
