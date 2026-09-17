@@ -1,4 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+# gotk-components.yaml и gotk-sync.yaml генерирует `flux bootstrap` —
+# они ОБЯЗАНЫ быть в этом списке, иначе root-KS flux-system их выпрунит
+# (GitRepository/Kustomization flux-system удалятся сами, bootstrap отвалится).
 resources:
+  - gotk-components.yaml
+  - gotk-sync.yaml
   - gotk-helm.yaml
