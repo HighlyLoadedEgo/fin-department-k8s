@@ -30,4 +30,5 @@ spec:
     installCRDs: false
     replicaCount: 1
     config:
-      enableGatewayAPI: true
+      # Gateway API CRD в кластере нет — без этого контроллер падает на старте.
+      enableGatewayAPI: false
