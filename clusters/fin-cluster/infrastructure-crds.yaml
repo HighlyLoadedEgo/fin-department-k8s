@@ -13,3 +13,7 @@ spec:
   path: ./infrastructure/base/crds
   prune: true
   wait: true
+  # Dry-run drift detection на больших CRD (alertmanager/prometheus) ловит
+  # таймауты apiserver'а. CRD меняются только вместе с чартами — дрейф не нужен.
+  driftDetection:
+    mode: disabled
