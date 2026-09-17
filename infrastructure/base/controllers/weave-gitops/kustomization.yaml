@@ -5,4 +5,5 @@ resources:
   - namespace.yaml
   - external-secret.yaml
   - release.yaml
+  - rbac.yaml
   - istio.yaml

@@ -1,0 +1,50 @@
+# Weave UI читает Flux-объекты + ворклоады через SA weave-gitops.
+# Chart'овский rbac не покрывает Flux CRD (проверено auth can-i → no).
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: weave-gitops-reader
+rules:
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+      - helm.toolkit.fluxcd.io
+      - source.toolkit.fluxcd.io
+      - notification.toolkit.fluxcd.io
+      - image.toolkit.fluxcd.io
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - events
+      - namespaces
+      - nodes
+      - persistentvolumeclaims
+      - pods
+      - pods/log
+      - secrets
+      - services
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - statefulsets
+      - daemonsets
+      - replicasets
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: weave-gitops-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: weave-gitops-reader
+subjects:
+  - kind: ServiceAccount
+    name: weave-gitops
+    namespace: weave
