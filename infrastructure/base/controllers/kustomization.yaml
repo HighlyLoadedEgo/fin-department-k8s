@@ -5,6 +5,7 @@ resources:
   - priority-classes
   - longhorn
   - metallb-system
+  - metallb-system/custom-resources
   - istio-system
   # pki / secrets
   - cert-manager

@@ -8,4 +8,3 @@ resources:
   - cluster-settings.yaml
   - infrastructure-crds.yaml
   - infrastructure.yaml
-  - metallb-config.yaml
