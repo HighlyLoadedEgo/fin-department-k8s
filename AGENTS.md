@@ -56,8 +56,17 @@ vault operator unseal <key>
 export VAULT_TOKEN=<initial root token>
 
 vault auth enable kubernetes
+
+# ⚠️ В свежем Vault kv-v2 на secret/ НЕ создан по умолчанию:
+vault secrets enable -path=secret -version=2 kv
+
+# ⚠️ disable_local_ca_jwt=true отключает авто-CA → надо отдать k3s CA явно,
+# иначе TokenReview падает с "x509: certificate signed by unknown authority":
+kubectl config view --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d > /tmp/k3s-ca.crt
+kubectl -n vault-system cp /tmp/k3s-ca.crt vault-0:/tmp/k3s-ca.crt
 vault write auth/kubernetes/config \
   kubernetes_host=https://kubernetes.default.svc \
+  kubernetes_ca_cert=@/tmp/k3s-ca.crt \
   disable_local_ca_jwt=true
 vault policy write eso - <<'EOF'
 path "secret/data/*"     { capabilities = ["read"] }
@@ -69,6 +78,16 @@ vault write auth/kubernetes/role/eso-role \
   policies=eso \
   ttl=1h
 ```
+
+⚠️ Роль `eso-role` требует, чтобы SA ESO мог делать TokenReview — биндинг
+`system:auth-delegator` для SA external-secrets уже в манифестах
+(`external-secrets/auth-delegator.yaml`). Без него login падает голым
+"permission denied". Диагностика: `vault write sys/loggers level=debug` →
+спровоцировать логин → `kubectl -n vault-system logs vault-0 | grep "login
+unauthorized"` → `vault write sys/loggers level=info`.
+
+После фиксов: `kubectl annotate clustersecretstore vault-backend
+force-sync=$(date +%s) --overwrite` (ESO кэширует InvalidProviderConfig).
 
 ### 4. Сиды секретов в Vault
 
