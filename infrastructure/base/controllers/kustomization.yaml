@@ -19,7 +19,6 @@ resources:
   - harbor-system
   # observability
   - monitoring
-  - loki
   - jaeger
   - otel-system
   # ui

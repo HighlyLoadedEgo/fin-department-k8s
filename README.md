@@ -28,7 +28,6 @@ MetalLB VIP `77.91.112.72`).
 | `postgres` | кластер `infra-db` (harbor DB), бэкапы → Yandex S3 |
 | `harbor` | registry.mortypython.ru (PG на infra-db, redis internal, S3 на Yandex Object Storage) |
 | `monitoring` | kube-prometheus-stack + Grafana |
-| `loki` | Loki + Alloy (логи → Yandex S3) |
 | `jaeger` | Jaeger v2 (badger на PVC), UI на jaeger.mortypython.ru |
 | `opentelemetry-system` | OTel Operator (Instrumentation / OpenTelemetryCollector CR) |
 | `headlamp` | Kubernetes UI (вход SA-token) |

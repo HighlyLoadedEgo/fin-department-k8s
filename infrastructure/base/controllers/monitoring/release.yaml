@@ -59,17 +59,6 @@ spec:
         type: pvc
         storageClassName: ${LONGHORN_STORAGE_CLASS}
         size: 5Gi
-      # Официальный путь chart 87.21.0: Loki попадает в тот же ConfigMap,
-      # что Prometheus/Alertmanager (templates/grafana/configmaps-datasources.yaml).
-      additionalDataSources:
-        - name: Loki
-          uid: loki
-          type: loki
-          access: proxy
-          url: http://loki-gateway.loki.svc.cluster.local
-          isDefault: false
-          jsonData:
-            maxLines: 1000
       ingress:
         enabled: false
       grafana.ini:
