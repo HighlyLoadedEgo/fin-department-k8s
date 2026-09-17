@@ -8,3 +8,4 @@ resources:
   - cluster-settings.yaml
   - infrastructure-crds.yaml
   - infrastructure.yaml
+  - apps.yaml

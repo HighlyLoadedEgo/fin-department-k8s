@@ -10,3 +10,15 @@ spec:
   name: ${HARBOR_DB}
   owner: ${HARBOR_DB_USER}
   databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: hackaton-fin-db
+  namespace: postgres
+spec:
+  cluster:
+    name: infra-db
+  name: ${HACKATON_FIN_DB}
+  owner: ${HACKATON_FIN_DB_USER}
+  databaseReclaimPolicy: retain

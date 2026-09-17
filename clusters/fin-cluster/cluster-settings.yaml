@@ -36,6 +36,11 @@ data:
   S3_ENDPOINT_URL: https://storage.yandexcloud.net
   S3_REGION: ru-central1
 
+  # hackaton-fin-department (бэкенд)
+  APP_HOST: api.mortypython.ru
+  HACKATON_FIN_DB_USER: hackaton_fin
+  HACKATON_FIN_DB: hackaton_fin_department
+
   HARBOR_DB_USER: harbor
   HARBOR_DB: harbor
   HARBOR_S3_BUCKET: harbor-mortypython

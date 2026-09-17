@@ -19,3 +19,4 @@ spec:
     - "${HEADLAMP_HOST}"
     - "${WEAVE_HOST}"
     - "${JAEGER_HOST}"
+    - "${APP_HOST}"

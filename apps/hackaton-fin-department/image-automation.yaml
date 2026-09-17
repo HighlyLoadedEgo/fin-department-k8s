@@ -1,0 +1,29 @@
+# Коммитит обновлённые теги из ImagePolicy в ./apps (branch main).
+# Требует: 1) image-automation-controller (flux bootstrap --components-extra),
+# 2) секрет flux-system/gitops-ssh / token с правом push в репо.
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: hackaton-fin-department
+  namespace: flux-system
+spec:
+  interval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        name: fluxcdbot
+        email: fluxcdbot@users.noreply.github.com
+      messageTemplate: |
+        autodeploy: hackaton-fin-department → {{range .Updated.Images}}{{.Name}}: {{.NewTag}}{{end}}
+    push:
+      branch: main
+  update:
+    path: ./apps
+    strategy: Setters

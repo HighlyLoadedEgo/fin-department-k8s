@@ -66,3 +66,13 @@ spec:
           name: harbor-pg
         inRoles:
           - pg_monitor
+      # Consumer: hackaton-fin-department (бэкенд). Vault database/hackaton-fin.
+      - name: ${HACKATON_FIN_DB_USER}
+        login: true
+        superuser: false
+        createdb: false
+        createrole: false
+        passwordSecret:
+          name: hackaton-fin-pg
+        inRoles:
+          - pg_monitor

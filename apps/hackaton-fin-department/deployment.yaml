@@ -1,0 +1,75 @@
+# Образ апдейтит ImageUpdateAutomation (image-automation-controller):
+# marker $imagepolicy привязан к ImagePolicy flux-system/hackaton-fin-department.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hackaton-fin-department
+  namespace: hackaton-fin
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hackaton-fin-department
+  template:
+    metadata:
+      labels:
+        app: hackaton-fin-department
+    spec:
+      containers:
+        - name: app
+          # {"$imagepolicy": "flux-system:hackaton-fin-department"}
+          image: registry.mortypython.ru/fin/hackaton-fin-department:main-00000000000000-000000000000
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_ADDRESS
+              value: 0.0.0.0
+            - name: APP_PORT
+              value: "8080"
+            - name: POSTGRES_PROTOCOL
+              value: postgresql+asyncpg
+            - name: POSTGRES_HOST
+              value: infra-db-rw.postgres.svc.cluster.local
+            - name: POSTGRES_PORT
+              value: "5432"
+          envFrom:
+            - secretRef:
+                name: hackaton-fin-db
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+      initContainers:
+        # alembic-миграции до старта приложения (аналог make migrate из compose)
+        - name: migrate
+          # {"$imagepolicy": "flux-system:hackaton-fin-department"}
+          image: registry.mortypython.ru/fin/hackaton-fin-department:main-00000000000000-000000000000
+          command: ["make", "migrate"]
+          env:
+            - name: POSTGRES_PROTOCOL
+              value: postgresql+asyncpg
+            - name: POSTGRES_HOST
+              value: infra-db-rw.postgres.svc.cluster.local
+            - name: POSTGRES_PORT
+              value: "5432"
+          envFrom:
+            - secretRef:
+                name: hackaton-fin-db
