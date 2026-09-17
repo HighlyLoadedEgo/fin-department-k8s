@@ -15,14 +15,14 @@ spec:
       retries: -1
       remediateLastFailure: true
     cleanupOnFail: true
+  # Чарт вендорен в репо (charts/vault): helm.releases.hashicorp.com
+  # блокирует РФ-сети (403), OCI-версии чарта на docker hub нет.
   chart:
     spec:
-      chart: vault
-      version: "0.34.0"
-      interval: 15m
+      chart: ./charts/vault
       sourceRef:
-        kind: HelmRepository
-        name: hashicorp
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
   values:
     server:
