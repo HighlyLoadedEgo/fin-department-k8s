@@ -3,5 +3,6 @@ kind: Kustomization
 namespace: weave
 resources:
   - namespace.yaml
+  - external-secret.yaml
   - release.yaml
   - istio.yaml

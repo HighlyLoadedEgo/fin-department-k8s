@@ -28,7 +28,9 @@ spec:
   values:
     fullnameOverride: weave-gitops
     adminUser:
-      create: true
+      # Пароль приносит ExternalSecret (weave-gitops-admin-auth) из Vault
+      # weave-gitops/admin {username, password}.
+      create: false
     serviceAccount:
       create: true
       name: weave-gitops
