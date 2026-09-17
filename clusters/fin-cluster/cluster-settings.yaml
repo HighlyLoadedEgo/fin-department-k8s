@@ -6,9 +6,10 @@ metadata:
   namespace: flux-system
 data:
   CLUSTER_NAME: fin-cluster
+  NODE_IP: 77.91.112.72
   DOMAIN: mortypython.ru
-  # VIP MetalLB / ingressgateway. DNS публичных поддоменов → этот IP.
-  METALLB_IP_POOL: 77.91.112.72-77.91.112.72
+  # VIP = публичный IP ноды (облако): MetalLB не работает (L2 ARP режется),
+  # ingressgateway ловит трафик через spec.externalIPs.
 
   # Harbor — публичный.
   REGISTRY: registry.mortypython.ru

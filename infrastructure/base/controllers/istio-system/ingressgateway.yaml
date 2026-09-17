@@ -50,6 +50,9 @@ spec:
         memory: 1Gi
     service:
       type: LoadBalancer
+      # VIP = IP самой ноды (облако). MetalLB на VPS не работает.
+      externalIPs:
+        - "${NODE_IP}"
       # Разрешаем MetalLB поделиться VIP 222.167.208.182 с jitsi-coturn
       # (UDP 3478; пересечений по портам с gateway нет). Аннотация с тем же
       # ключом стоит и у Service jitsi-coturn.

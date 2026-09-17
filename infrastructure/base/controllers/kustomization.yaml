@@ -4,8 +4,12 @@ resources:
   # storage / network base
   - priority-classes
   - longhorn
-  - metallb-system
-  - metallb-system/custom-resources
+  # metallb выключен: VPS в облаке — L2 ARP-анонсы режутся виртуализацией.
+  # VIP = IP ноды, ingressgateway ловит трафик через spec.externalIPs
+  # (прописан в istio-system/ingressgateway.yaml). На bare-metal вернуть:
+  # раскомментировать + закрепить DNS на VIP.
+  # - metallb-system
+  # - metallb-system/custom-resources
   - istio-system
   # pki / secrets
   - cert-manager
