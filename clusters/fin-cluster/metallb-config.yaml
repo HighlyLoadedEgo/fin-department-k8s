@@ -1,0 +1,24 @@
+# IPAddressPool/L2Advertisement отдельным KS: CRD ставит сам chart metallb
+# (crds.enabled: true), и до его установки dry-run IPAddressPool валит весь
+# apply infrastructure. Поэтому пулы едут строго после готового infrastructure.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: metallb-config
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infrastructure
+  interval: 1h
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/base/controllers/metallb-system/custom-resources
+  prune: true
+  wait: true
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
