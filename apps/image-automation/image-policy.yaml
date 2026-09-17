@@ -1,0 +1,33 @@
+# CD-контур: CI пушит в Harbor теги main-<UTC YYYYMMDDhhmmss>-<sha12>,
+# ImagePolicy числит по ts, ImageUpdateAutomation коммитит новый тег в
+# deployment.yaml (marker $imagepolicy ниже).
+# Требует image-reflector/image-automation контроллеры (см. AGENTS.md).
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: hackaton-fin-department
+  namespace: flux-system
+spec:
+  image: registry.mortypython.ru/fin/hackaton-fin-department
+  interval: 2m
+  exclusionList:
+    - "^sha-.*"
+  secretRef:
+    name: harbor-registry
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: hackaton-fin-department
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: hackaton-fin-department
+  filterTags:
+    pattern: '^main-(?P<ts>[0-9]{14})-'
+    extract: '$ts'
+  policy:
+    numerical:
+      order: asc
+---

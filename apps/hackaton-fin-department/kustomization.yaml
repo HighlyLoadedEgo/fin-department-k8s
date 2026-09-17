@@ -4,7 +4,5 @@ namespace: hackaton-fin
 resources:
   - namespace.yaml
   - external-secret.yaml
-  - image-policy.yaml
-  - image-automation.yaml
   - deployment.yaml
   - istio.yaml

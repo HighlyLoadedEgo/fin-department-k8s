@@ -1,0 +1,30 @@
+# Robot account Harbor с правами pull проекта fin.
+# Vault: secret/data/harbor/robot-ci {username, password}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: harbor-registry
+  namespace: flux-system
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: harbor-registry
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/dockerconfigjson
+      engineVersion: v2
+      data:
+        .dockerconfigjson: '{"auths":{"registry.mortypython.ru":{"username":"{{ .username }}","password":"{{ .password }}"}}}'
+  data:
+    - secretKey: username
+      remoteRef:
+        key: harbor/robot-ci
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: harbor/robot-ci
+        property: password
