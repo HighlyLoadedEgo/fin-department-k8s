@@ -1,3 +1,6 @@
+# HashiCorp charts. HTTP-репозиторий helm.releases.hashicorp.com блокирует
+# РФ-сети (403), поэтому берём те же чарты из OCI на Docker Hub —
+# registry-1.docker.io доступен. Тег = версия чарта (напр. vault 0.34.0).
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
@@ -5,5 +8,6 @@ metadata:
   name: hashicorp
   namespace: flux-system
 spec:
-  url: https://helm.releases.hashicorp.com
+  type: oci
   interval: 30m
+  url: oci://registry-1.docker.io/hashicorp
