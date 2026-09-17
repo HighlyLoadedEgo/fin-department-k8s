@@ -15,7 +15,7 @@ spec:
     - "^sha-.*"
   # Auth на приватный Harbor: ES ниже (Vault harbor/robot-ci).
 ---
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImagePolicy
 metadata:
   name: hackaton-fin-department
