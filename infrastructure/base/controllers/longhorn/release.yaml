@@ -40,7 +40,8 @@ spec:
     defaultSettings:
       storageOverProvisioningPercentage: "200"
     longhornUI:
-      replicas: 1
+      # UI отключён (6GB-нода): смотреть тома можно kubectl'ом.
+      replicas: 0
     csi:
       attacherReplicaCount: 1
       provisionerReplicaCount: 1
