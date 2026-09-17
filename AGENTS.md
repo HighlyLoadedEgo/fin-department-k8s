@@ -1,7 +1,7 @@
 # AGENTS.md
 
 GitOps-репо одного k3s-кластера `fin-cluster` (mortypython.ru, VIP
-`158.160.183.114`, диск 50GB SSD, single-node). Только манифесты, без
+`77.91.112.72`, диск 50GB SSD, single-node). Только манифесты, без
 исходников приложений. Паттерны унаследованы от `tmst-k8s`.
 
 ## Порядок запуска (bootstrap)
@@ -22,7 +22,7 @@ curl -sfL https://get.k3s.io | sh -s - server \
 
 ### 1. DNS
 
-Публичные A-записи `→ 158.160.183.114` (нужны ДО push: LE HTTP-01 и
+Публичные A-записи `→ 77.91.112.72` (нужны ДО push: LE HTTP-01 и
 `wait: true` у KS `infrastructure`):
 
 - `registry.mortypython.ru` (Harbor, дан)
@@ -30,7 +30,7 @@ curl -sfL https://get.k3s.io | sh -s - server \
 - `s3.mortypython.ru`, `console-s3.mortypython.ru`
 - `jaeger.mortypython.ru`
 
-Внутренний (на клиентах через /etc/hosts → `158.160.183.114`):
+Внутренний (на клиентах через /etc/hosts → `77.91.112.72`):
 `vault.mortypython.local` — серт self-signed CA `fin-department Root CA`
 (`kubectl -n cert-manager get secret ca-key-pair -o jsonpath='{.data.tls\.crt}' | base64 -d` → импортировать в браузер/ОС).
 

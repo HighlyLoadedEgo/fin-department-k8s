@@ -8,20 +8,20 @@ data:
   CLUSTER_NAME: fin-cluster
   DOMAIN: mortypython.ru
   # VIP MetalLB / ingressgateway. DNS публичных поддоменов → этот IP.
-  METALLB_IP_POOL: 158.160.183.114-158.160.183.114
+  METALLB_IP_POOL: 77.91.112.72-77.91.112.72
 
   # Harbor — публичный.
   REGISTRY: registry.mortypython.ru
   REGISTRY_NAMESPACE: fin
   HARBOR_HOST: registry.mortypython.ru
 
-  # UI-хосты (публичные, HTTP-01): добавь DNS A → 158.160.183.114.
+  # UI-хосты (публичные, HTTP-01): добавь DNS A → 77.91.112.72.
   GRAFANA_HOST: grafana.mortypython.ru
   HEADLAMP_HOST: headlamp.mortypython.ru
   WEAVE_HOST: weave.mortypython.ru
   JAEGER_HOST: jaeger.mortypython.ru
 
-  # Vault — внутренний хост: /etc/hosts на клиенте → 158.160.183.114.
+  # Vault — внутренний хост: /etc/hosts на клиенте → 77.91.112.72.
   # Серт self-signed CA (ClusterIssuer ca-issuer).
   VAULT_HOST: vault.mortypython.local
   VAULT_ADDR: https://vault.mortypython.local

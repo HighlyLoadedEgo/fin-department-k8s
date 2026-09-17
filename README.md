@@ -1,7 +1,7 @@
 # fin-department-k8s
 
 GitOps (Flux) для одного k3s-кластера (`fin-cluster`, домен `mortypython.ru`,
-MetalLB VIP `158.160.183.114`).
+MetalLB VIP `77.91.112.72`).
 
 За основу взят `tmst-k8s` (структура, контроллеры, паттерн Vault → ESO → Secret).
 
@@ -18,7 +18,7 @@ MetalLB VIP `158.160.183.114`).
 
 | Namespace | Что |
 |---|---|
-| `metallb-system` | MetalLB, пул `158.160.183.114` |
+| `metallb-system` | MetalLB, пул `77.91.112.72` |
 | `longhorn` | storage (нужен open-iscsi на ноде!) |
 | `istio-system` | istiod + ingressgateway (LoadBalancer на VIP) |
 | `cert-manager` | LE (публичные хосты) + CA-issuer (vault.mortypython.local) |
