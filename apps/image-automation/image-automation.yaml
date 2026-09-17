@@ -21,7 +21,7 @@ spec:
         name: fluxcdbot
         email: fluxcdbot@users.noreply.github.com
       messageTemplate: |
-        autodeploy: hackaton-fin-department {{range .Changed.Images}}{{.Name}} → {{.Tag}}{{end}}
+        autodeploy: hackaton-fin-department image tag update (flux image automation)
     push:
       branch: main
   update:
