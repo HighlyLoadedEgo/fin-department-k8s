@@ -4,4 +4,5 @@ namespace: external-secrets
 resources:
   - namespace.yaml
   - release.yaml
+  - auth-delegator.yaml
   - cluster-secret-store.yaml
