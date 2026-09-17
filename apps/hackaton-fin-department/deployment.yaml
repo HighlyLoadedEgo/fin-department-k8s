@@ -18,6 +18,8 @@ spec:
       labels:
         app: hackaton-fin-department
     spec:
+      imagePullSecrets:
+        - name: harbor-registry
       containers:
         - name: app
           # {"$imagepolicy": "flux-system:hackaton-fin-department"} — сеттер читает ВЕСЬ тег
