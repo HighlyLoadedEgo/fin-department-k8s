@@ -11,7 +11,7 @@ spec:
     branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/HighlyLoadedEgo/fin-department-k8s
+  url: https://github.com/HighlyLoadedEgo/fin-department-k8s.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
