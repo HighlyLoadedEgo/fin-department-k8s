@@ -22,7 +22,6 @@ spec:
         - name: harbor-registry
       containers:
         - name: app
-          # {"$imagepolicy": "flux-system:hackaton-fin-department"} — сеттер читает ВЕСЬ тег
           image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260917131624-ab7f4bf3ccdf # {"$imagepolicy": "flux-system:hackaton-fin-department"}
           ports:
             - name: http
