@@ -1,0 +1,24 @@
+---
+# Приложение отдаёт OTel-метрики (Prometheus reader) на /metrics порта http.
+# PodMonitor: у kube-prometheus-stack podMonitorSelectorNilUsesHelmValues=false —
+# подхватывается без лейблов release. Relabelings держат namespace/pod для дашбордов.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: hackaton-fin-department
+  namespace: hackaton-fin
+  labels:
+    app.kubernetes.io/name: hackaton-fin-department
+    app.kubernetes.io/part-of: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: hackaton-fin-department
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_namespace]
+          targetLabel: namespace
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          targetLabel: pod

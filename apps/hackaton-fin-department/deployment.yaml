@@ -34,6 +34,8 @@ spec:
               value: infra-db-rw.postgres.svc.cluster.local
             - name: POSTGRES_PORT
               value: "5432"
+            - name: OTEL_ENDPOINT
+              value: http://jaeger-collector.jaeger.svc.cluster.local:4317
           envFrom:
             - secretRef:
                 name: hackaton-fin-db
