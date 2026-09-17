@@ -33,8 +33,9 @@ spec:
     crds:
       enabled: false
 
+    # Alertmanager не используется — выключен вместе с его CRD.
     alertmanager:
-      enabled: true
+      enabled: false
       alertmanagerSpec:
         externalUrl: https://${GRAFANA_HOST}
         # Подхватываем только наши AlertmanagerConfig по уникальному label.
