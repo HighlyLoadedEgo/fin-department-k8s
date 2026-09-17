@@ -23,4 +23,7 @@ resources:
   - otel-system
   # ui
   - headlamp
-  - weave-gitops
+  # weave-gitops выключен: v0.38 (последняя, проект закрыт) ходит по
+  # v1beta2-версиям Flux CRD, которые больше не обслуживаются → пустой UI.
+  # UI кластера — Headlamp (вход по SA-token). Вернуть при даунгрейде CRD.
+  # - weave-gitops
