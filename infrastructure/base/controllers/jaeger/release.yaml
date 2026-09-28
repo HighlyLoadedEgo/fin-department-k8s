@@ -1,6 +1,6 @@
 # Jaeger v2 (all-in-one) с badger-хранилищем на PVC. Приём OTLP :4317/:4318,
 # UI :16686, zipkin-приём :9411 (Istio шлёт трейсы сюда — см. istiod.yaml).
-# Приложения шлют трейсы на jaeger-collector.jaeger.svc.cluster.local:4317.
+# Приложения шлют трейсы на jaeger.jaeger.svc.cluster.local:4317.
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:

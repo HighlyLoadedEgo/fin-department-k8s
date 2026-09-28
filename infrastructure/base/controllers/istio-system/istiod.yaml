@@ -79,5 +79,5 @@ spec:
         # Трейсы → Jaeger (OTLP/zipkin-порт collector'а).
         - name: jaeger
           zipkin:
-            service: jaeger-collector.jaeger.svc.cluster.local
+            service: jaeger.jaeger.svc.cluster.local
             port: 9411

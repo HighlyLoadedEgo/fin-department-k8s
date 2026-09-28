@@ -35,7 +35,7 @@ spec:
             - name: POSTGRES_PORT
               value: "5432"
             - name: OTEL_ENDPOINT
-              value: http://jaeger-collector.jaeger.svc.cluster.local:4317
+              value: http://jaeger.jaeger.svc.cluster.local:4317
           envFrom:
             - secretRef:
                 name: hackaton-fin-db
