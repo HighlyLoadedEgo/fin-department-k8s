@@ -19,4 +19,5 @@ spec:
     - "${HEADLAMP_HOST}"
     - "${WEAVE_HOST}"
     - "${JAEGER_HOST}"
+    - "${OTEL_HOST}"
     - "${APP_HOST}"

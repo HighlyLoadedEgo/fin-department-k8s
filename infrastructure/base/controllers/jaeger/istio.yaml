@@ -21,3 +21,27 @@ spec:
             port:
               number: 16686
       timeout: 3600s
+# Публичный OTLP/HTTP-приём для мобильного приложения: POST /v1/traces.
+# Сервис jaeger экспозит otlp-http :4318 (см. chart templates/jaeger/jaeger-service.yaml).
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: otel-ingest
+  namespace: jaeger
+spec:
+  hosts:
+    - "${OTEL_HOST}"
+  gateways:
+    - istio-system/fin-gw
+  http:
+    - name: primary
+      match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: jaeger.jaeger.svc.cluster.local
+            port:
+              number: 4318
+      timeout: 60s

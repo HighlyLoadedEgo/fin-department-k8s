@@ -23,6 +23,9 @@ data:
   WEAVE_HOST: weave.mortypython.ru
   JAEGER_HOST: jaeger.mortypython.ru
 
+  # Публичный OTLP/HTTP-приём Jaeger для мобильного приложения (SAN в fin-tls).
+  OTEL_HOST: otel.mortypython.ru
+
   # Vault — внутренний хост: /etc/hosts на клиенте → 77.91.112.72.
   # Серт self-signed CA (ClusterIssuer ca-issuer).
   VAULT_HOST: vault.mortypython.local
