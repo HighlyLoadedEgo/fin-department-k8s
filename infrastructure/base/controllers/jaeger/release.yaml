@@ -58,11 +58,14 @@ spec:
                   directory_key: /badger/key
                   ephemeral: false
                   span_store_ttl: 168h
+          jaeger_query:
+            storage:
+              - name: badger_store
         service:
-          extensions: [jaeger_storage, healthcheckv2]
+          extensions: [jaeger_storage, jaeger_query, healthcheckv2]
           pipelines:
             traces:
-              receivers: [otlp]
+              receivers: [otlp, zipkin]
               exporters: [jaeger_storage_exporter]
         receivers:
           otlp:
@@ -71,6 +74,8 @@ spec:
                 endpoint: 0.0.0.0:4317
               http:
                 endpoint: 0.0.0.0:4318
+          zipkin:
+            endpoint: 0.0.0.0:9411
         exporters:
           jaeger_storage_exporter:
             trace_storage: badger_store

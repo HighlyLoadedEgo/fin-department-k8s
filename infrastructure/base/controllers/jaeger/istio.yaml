@@ -17,7 +17,7 @@ spec:
             prefix: /
       route:
         - destination:
-            host: jaeger-query.jaeger.svc.cluster.local
+            host: jaeger.jaeger.svc.cluster.local
             port:
               number: 16686
       timeout: 3600s
