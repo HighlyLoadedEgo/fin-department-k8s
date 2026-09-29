@@ -236,13 +236,6 @@ data:
                 "regex": "^unknown$",
                 "renamePattern": "Неизвестно"
               }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
             }
           ],
           "options": {
@@ -706,13 +699,6 @@ data:
                 "regex": "^unknown$",
                 "renamePattern": "Неизвестно"
               }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
             }
           ],
           "options": {
@@ -816,21 +802,6 @@ data:
                       "value": {
                         "mode": "fixed",
                         "fixedColor": "#EDC948"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "нет данных"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#79706E"
                       }
                     }
                   ]
@@ -2060,21 +2031,6 @@ data:
                     }
                   }
                 ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "нет данных"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "#3B4252"
-                    }
-                  }
-                ]
               }
             ]
           },
@@ -2217,13 +2173,6 @@ data:
               "options": {
                 "regex": "practice_answer",
                 "renamePattern": "Ответы на практике"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
               }
             }
           ]
@@ -2488,21 +2437,6 @@ data:
                       "value": {
                         "mode": "fixed",
                         "fixedColor": "#DDB6A9"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "нет данных"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#3B4252"
                       }
                     }
                   ]
@@ -3040,21 +2974,6 @@ data:
                     }
                   }
                 ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "нет данных"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "#79706E"
-                    }
-                  }
-                ]
               }
             ]
           },
@@ -3197,21 +3116,6 @@ data:
                       }
                     }
                   ]
-                },
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/нет данных/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#79706E"
-                      }
-                    }
-                  ]
                 }
               ]
             },
@@ -3230,13 +3134,6 @@ data:
               "options": {
                 "regex": "False$",
                 "renamePattern": "повторы"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": " $",
-                "renamePattern": "— нет данных"
               }
             }
           ]
