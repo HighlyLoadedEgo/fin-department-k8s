@@ -1,5 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v16: бизнес-метрики hackaton-fin-department (fin_*).
+# Дашборд «Игровая аналитика» v17: бизнес-метрики hackaton-fin-department (fin_*).
 # Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
 # палитра Tableau (насыщенная, без кислоты); проценты в легенде под донатами;
 apiVersion: v1
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 16,
+      "version": 17,
       "templating": {
         "list": []
       },
@@ -251,7 +251,15 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden",
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            }
           },
           "fieldConfig": {
             "defaults": {
@@ -573,7 +581,15 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden",
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            }
           },
           "fieldConfig": {
             "defaults": {
@@ -958,7 +974,15 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden",
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            }
           },
           "fieldConfig": {
             "defaults": {
@@ -2918,7 +2942,15 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden",
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            }
           },
           "fieldConfig": {
             "defaults": {
