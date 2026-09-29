@@ -53,10 +53,10 @@ spec:
             periodSeconds: 20
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 100m
+              memory: 256Mi
             limits:
-              memory: 512Mi
+              memory: 2Gi
       initContainers:
         # alembic-миграции до старта приложения (аналог make migrate из compose)
         - name: migrate
@@ -72,3 +72,9 @@ spec:
           envFrom:
             - secretRef:
                 name: hackaton-fin-db
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              memory: 512Mi
