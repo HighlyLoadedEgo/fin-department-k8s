@@ -1,5 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v17: бизнес-метрики hackaton-fin-department (fin_*).
+# Дашборд «Игровая аналитика» v16: бизнес-метрики hackaton-fin-department (fin_*).
 # Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
 # палитра Tableau (насыщенная, без кислоты); проценты в легенде под донатами;
 apiVersion: v1
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 17,
+      "version": 16,
       "templating": {
         "list": []
       },
@@ -251,15 +251,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -581,15 +573,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -974,15 +958,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -1982,15 +1958,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -2488,15 +2456,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -2958,15 +2918,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
