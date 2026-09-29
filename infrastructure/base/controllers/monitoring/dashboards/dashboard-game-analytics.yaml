@@ -1982,7 +1982,15 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden",
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            }
           },
           "fieldConfig": {
             "defaults": {
@@ -2480,7 +2488,15 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden",
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            }
           },
           "fieldConfig": {
             "defaults": {
