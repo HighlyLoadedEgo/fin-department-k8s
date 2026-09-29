@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 17,
+      "version": 18,
       "templating": {
         "list": []
       },
