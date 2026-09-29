@@ -19,7 +19,7 @@ spec:
         - name: harbor-registry
       containers:
         - name: app
-          image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260929194049-95d0bec7235c # {"$imagepolicy": "flux-system:hackaton-fin-department"}
+          image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260929204006-8d16335edde3 # {"$imagepolicy": "flux-system:hackaton-fin-department"}
           ports:
             - name: http
               containerPort: 8080
@@ -60,7 +60,7 @@ spec:
       initContainers:
         # alembic-миграции до старта приложения (аналог make migrate из compose)
         - name: migrate
-          image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260929194049-95d0bec7235c # {"$imagepolicy": "flux-system:hackaton-fin-department"}
+          image: registry.mortypython.ru/fin/hackaton-fin-department:main-20260929204006-8d16335edde3 # {"$imagepolicy": "flux-system:hackaton-fin-department"}
           command: ["make", "migrate"]
           env:
             - name: POSTGRES_PROTOCOL
