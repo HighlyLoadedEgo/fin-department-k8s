@@ -1,5 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v15: бизнес-метрики hackaton-fin-department (fin_*).
+# Дашборд «Игровая аналитика» v16: бизнес-метрики hackaton-fin-department (fin_*).
 # Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
 # палитра Tableau (насыщенная, без кислоты); проценты в легенде под донатами;
 apiVersion: v1
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 15,
+      "version": 16,
       "templating": {
         "list": []
       },
@@ -511,52 +511,52 @@ data:
             {
               "refId": "A",
               "expr": "max(fin_pet_balance_bucket{le=\"50\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
-              "legendFormat": "01. 0–50"
+              "legendFormat": "​0–50"
             },
             {
               "refId": "B",
               "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"50\"})",
-              "legendFormat": "02. 50–100"
+              "legendFormat": "​​50–100"
             },
             {
               "refId": "C",
               "expr": "max(fin_pet_balance_bucket{le=\"150\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
-              "legendFormat": "03. 100–150"
+              "legendFormat": "​​​100–150"
             },
             {
               "refId": "D",
               "expr": "max(fin_pet_balance_bucket{le=\"200\"}) - max(fin_pet_balance_bucket{le=\"150\"})",
-              "legendFormat": "04. 150–200"
+              "legendFormat": "​​​​150–200"
             },
             {
               "refId": "E",
               "expr": "max(fin_pet_balance_bucket{le=\"300\"}) - max(fin_pet_balance_bucket{le=\"200\"})",
-              "legendFormat": "05. 200–300"
+              "legendFormat": "​​​​​200–300"
             },
             {
               "refId": "F",
               "expr": "max(fin_pet_balance_bucket{le=\"400\"}) - max(fin_pet_balance_bucket{le=\"300\"})",
-              "legendFormat": "06. 300–400"
+              "legendFormat": "​​​​​​300–400"
             },
             {
               "refId": "G",
               "expr": "max(fin_pet_balance_bucket{le=\"600\"}) - max(fin_pet_balance_bucket{le=\"400\"})",
-              "legendFormat": "07. 400–600"
+              "legendFormat": "​​​​​​​400–600"
             },
             {
               "refId": "H",
               "expr": "max(fin_pet_balance_bucket{le=\"800\"}) - max(fin_pet_balance_bucket{le=\"600\"})",
-              "legendFormat": "08. 600–800"
+              "legendFormat": "​​​​​​​​600–800"
             },
             {
               "refId": "I",
               "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"800\"})",
-              "legendFormat": "09. 800–1 000"
+              "legendFormat": "​​​​​​​​​800–1 000"
             },
             {
               "refId": "J",
               "expr": "max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"1000\"})",
-              "legendFormat": "10. 1 000 и больше"
+              "legendFormat": "​​​​​​​​​​1 000 и больше"
             }
           ],
           "transformations": [],
@@ -593,7 +593,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "01. 0–50"
+                    "options": "​0–50"
                   },
                   "properties": [
                     {
@@ -608,7 +608,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "02. 50–100"
+                    "options": "​​50–100"
                   },
                   "properties": [
                     {
@@ -623,7 +623,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "03. 100–150"
+                    "options": "​​​100–150"
                   },
                   "properties": [
                     {
@@ -638,7 +638,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "04. 150–200"
+                    "options": "​​​​150–200"
                   },
                   "properties": [
                     {
@@ -653,7 +653,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "05. 200–300"
+                    "options": "​​​​​200–300"
                   },
                   "properties": [
                     {
@@ -668,7 +668,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "06. 300–400"
+                    "options": "​​​​​​300–400"
                   },
                   "properties": [
                     {
@@ -683,7 +683,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "07. 400–600"
+                    "options": "​​​​​​​400–600"
                   },
                   "properties": [
                     {
@@ -698,7 +698,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "08. 600–800"
+                    "options": "​​​​​​​​600–800"
                   },
                   "properties": [
                     {
@@ -713,7 +713,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "09. 800–1 000"
+                    "options": "​​​​​​​​​800–1 000"
                   },
                   "properties": [
                     {
@@ -728,7 +728,7 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "10. 1 000 и больше"
+                    "options": "​​​​​​​​​​1 000 и больше"
                   },
                   "properties": [
                     {
@@ -2478,22 +2478,7 @@ data:
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Завершил событие"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#F28E2B"
+                        "fixedColor": "#8A9BAE"
                       }
                     }
                   ]
@@ -2508,37 +2493,7 @@ data:
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#59A14F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Принял подработку"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#EDC948"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Завершил подработку"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B07AA1"
+                        "fixedColor": "#9BAE8A"
                       }
                     }
                   ]
@@ -2553,7 +2508,7 @@ data:
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#76B7B2"
+                        "fixedColor": "#B0A68C"
                       }
                     }
                   ]
@@ -2561,14 +2516,14 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Бюджет утверждён"
+                    "options": "Завершил событие"
                   },
                   "properties": [
                     {
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#E15759"
+                        "fixedColor": "#8AA69E"
                       }
                     }
                   ]
@@ -2576,14 +2531,14 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Выбор"
+                    "options": "Принял подработку"
                   },
                   "properties": [
                     {
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#FF9DA7"
+                        "fixedColor": "#A69E8A"
                       }
                     }
                   ]
@@ -2591,29 +2546,14 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Открыл событие"
+                    "options": "Завершил подработку"
                   },
                   "properties": [
                     {
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#9C755F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Пополнение накоплений"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#86BCB6"
+                        "fixedColor": "#948B9E"
                       }
                     }
                   ]
@@ -2628,7 +2568,7 @@ data:
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#D37295"
+                        "fixedColor": "#8F9FA6"
                       }
                     }
                   ]
@@ -2636,14 +2576,14 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Пропустил мини-игру"
+                    "options": "Выбор"
                   },
                   "properties": [
                     {
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#BAB0AC"
+                        "fixedColor": "#A6B09F"
                       }
                     }
                   ]
@@ -2651,14 +2591,44 @@ data:
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Снятие накоплений"
+                    "options": "Открыл событие"
                   },
                   "properties": [
                     {
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#499894"
+                        "fixedColor": "#9EA6B0"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Пополнение накоплений"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#A69A8F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Бюджет утверждён"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#8F9E8A"
                       }
                     }
                   ]
@@ -2673,7 +2643,7 @@ data:
                       "id": "color",
                       "value": {
                         "mode": "fixed",
-                        "fixedColor": "#DDB6A9"
+                        "fixedColor": "#B09F8F"
                       }
                     }
                   ]
