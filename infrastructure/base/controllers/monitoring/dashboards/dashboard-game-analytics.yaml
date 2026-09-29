@@ -251,15 +251,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -581,15 +573,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -974,15 +958,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -1982,15 +1958,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -2489,15 +2457,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
@@ -2959,15 +2919,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "hidden",
-            "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            }
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
