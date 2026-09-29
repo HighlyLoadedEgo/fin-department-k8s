@@ -1,5 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v8: бизнес-метрики hackaton-fin-department (fin_*).
+# Дашборд «Игровая аналитика» v9: бизнес-метрики hackaton-fin-department (fin_*).
 # Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
 # палитра Tableau (насыщенная, без кислоты); проценты в легенде под донатами;
 apiVersion: v1
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 8,
+      "version": 9,
       "templating": {
         "list": []
       },
@@ -425,53 +425,53 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
-              "legendFormat": "01. 0–100"
+              "expr": "max(fin_pet_balance_bucket{le=\"50\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
+              "legendFormat": "01. 0–50"
             },
             {
               "refId": "B",
-              "expr": "max(fin_pet_balance_bucket{le=\"250\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
-              "legendFormat": "02. 100–250"
+              "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"50\"})",
+              "legendFormat": "02. 50–100"
             },
             {
               "refId": "C",
-              "expr": "max(fin_pet_balance_bucket{le=\"500\"}) - max(fin_pet_balance_bucket{le=\"250\"})",
-              "legendFormat": "03. 250–500"
+              "expr": "max(fin_pet_balance_bucket{le=\"150\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
+              "legendFormat": "03. 100–150"
             },
             {
               "refId": "D",
-              "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"500\"})",
-              "legendFormat": "04. 500–1 000"
+              "expr": "max(fin_pet_balance_bucket{le=\"200\"}) - max(fin_pet_balance_bucket{le=\"150\"})",
+              "legendFormat": "04. 150–200"
             },
             {
               "refId": "E",
-              "expr": "max(fin_pet_balance_bucket{le=\"2500\"}) - max(fin_pet_balance_bucket{le=\"1000\"})",
-              "legendFormat": "05. 1 000–2 500"
+              "expr": "max(fin_pet_balance_bucket{le=\"300\"}) - max(fin_pet_balance_bucket{le=\"200\"})",
+              "legendFormat": "05. 200–300"
             },
             {
               "refId": "F",
-              "expr": "max(fin_pet_balance_bucket{le=\"5000\"}) - max(fin_pet_balance_bucket{le=\"2500\"})",
-              "legendFormat": "06. 2 500–5 000"
+              "expr": "max(fin_pet_balance_bucket{le=\"400\"}) - max(fin_pet_balance_bucket{le=\"300\"})",
+              "legendFormat": "06. 300–400"
             },
             {
               "refId": "G",
-              "expr": "max(fin_pet_balance_bucket{le=\"10000\"}) - max(fin_pet_balance_bucket{le=\"5000\"})",
-              "legendFormat": "07. 5 000–10 000"
+              "expr": "max(fin_pet_balance_bucket{le=\"600\"}) - max(fin_pet_balance_bucket{le=\"400\"})",
+              "legendFormat": "07. 400–600"
             },
             {
               "refId": "H",
-              "expr": "max(fin_pet_balance_bucket{le=\"25000\"}) - max(fin_pet_balance_bucket{le=\"10000\"})",
-              "legendFormat": "08. 10 000–25 000"
+              "expr": "max(fin_pet_balance_bucket{le=\"800\"}) - max(fin_pet_balance_bucket{le=\"600\"})",
+              "legendFormat": "08. 600–800"
             },
             {
               "refId": "I",
-              "expr": "max(fin_pet_balance_bucket{le=\"50000\"}) - max(fin_pet_balance_bucket{le=\"25000\"})",
-              "legendFormat": "09. 25 000–50 000"
+              "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"800\"})",
+              "legendFormat": "09. 800–1 000"
             },
             {
               "refId": "J",
-              "expr": "max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"50000\"})",
-              "legendFormat": "10. 50 000 и больше"
+              "expr": "max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"1000\"})",
+              "legendFormat": "10. 1 000 и больше"
             }
           ],
           "transformations": [],
@@ -1387,6 +1387,191 @@ data:
                   {
                     "color": "#59A14F",
                     "value": 5
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 27,
+          "type": "piechart",
+          "title": "Возраст питомца",
+          "description": "На сколько выросли питомцы игроков",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 60
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max by (age) (fin_players_by_pet_age)",
+              "legendFormat": "{{age}}"
+            }
+          ],
+          "options": {
+            "pieType": "donut",
+            "displayLabels": [],
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "legend": {
+              "showLegend": true,
+              "displayMode": "table",
+              "placement": "bottom",
+              "values": [
+                "value",
+                "percent"
+              ],
+              "calcs": []
+            }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Детёныш"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EDC948"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Подросток"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Взрослый"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#59A14F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Старший"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#F28E2B"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "age",
+                "renamePattern": ""
+              }
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "type": "stat",
+          "title": "Мини-игры на игрока",
+          "description": "Среднее число пройденных мини-игр на игрока",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 60
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max(fin_completed_minigames_sum) / max(fin_completed_minigames_count)"
+            }
+          ],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#4E79A7",
+                    "value": null
                   }
                 ]
               }
