@@ -1,6 +1,7 @@
 ---
-# Дашборд Game Analytics v3: бизнес-метрики hackaton-fin-department (fin_*).
-# rate-панели имеют фолбэк vector(0) — без трафика рисуют нулевую линию, а не No data.
+# Дашборд Game Analytics v4: бизнес-метрики hackaton-fin-department (fin_*).
+# Событийные панели читают fin_*_stored (агрегат всей БД, пересчёт раз в минуту),
+# потоковые панели — rate-счётчики. Везде фолбэк vector(0) вместо No data.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -33,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Game Analytics",
       "uid": "game-analytics",
-      "version": 3,
+      "version": 4,
       "templating": {
         "list": []
       },
@@ -556,9 +557,9 @@ data:
         },
         {
           "id": 12,
-          "type": "timeseries",
-          "title": "Факты аналитики по типам (top 7)",
-          "description": "Темп поступления игровых фактов: бюджет, покупки, накопления, ответы и т.д.",
+          "type": "bargauge",
+          "title": "Факты по типам — всего в базе",
+          "description": "Все сохранённые факты: история снапшотов + аналитика (пересчёт раз в минуту)",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -572,45 +573,50 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(7, sum by (detail_type) (rate(fin_analytics_facts_total[$__rate_interval]))) or on() label_replace(vector(0), \"detail_type\", \"нет данных\", \"\", \"\")",
+              "expr": "topk(7, sum by (detail_type) (fin_facts_stored)) or on() label_replace(vector(0), \"detail_type\", \"нет данных\", \"\", \"\")",
               "legendFormat": "{{detail_type}}"
             }
           ],
           "options": {
-            "legend": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
               "calcs": [
-                "mean",
-                "max"
+                "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
-              "custom": {
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "lineWidth": 2,
-                "showPoints": "never",
-                "spanNulls": true,
-                "lineInterpolation": "smooth"
-              }
-            },
-            "overrides": []
+              "defaults": {
+                "unit": "short",
+                "decimals": 0,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            }
           }
         },
         {
           "id": 13,
-          "type": "timeseries",
-          "title": "Действия игроков (top 8)",
-          "description": "Каждая команда движка пишет interaction-факт: клики, RenamePet, CompleteStoryGame и т.д.",
+          "type": "bargauge",
+          "title": "Действия игроков — всего в базе",
+          "description": "Interaction-факты по командам движка: клики, RenamePet, CompleteStoryGame, …",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -624,35 +630,38 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(8, sum by (name) (rate(fin_interactions_total[$__rate_interval]))) or on() label_replace(vector(0), \"name\", \"нет данных\", \"\", \"\")",
+              "expr": "topk(8, sum by (name) (fin_interactions_stored)) or on() label_replace(vector(0), \"name\", \"нет данных\", \"\", \"\")",
               "legendFormat": "{{name}}"
             }
           ],
           "options": {
-            "legend": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
               "calcs": [
-                "mean",
-                "max"
+                "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
-              "custom": {
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "lineWidth": 2,
-                "showPoints": "never",
-                "spanNulls": true,
-                "lineInterpolation": "smooth"
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
               }
             },
             "overrides": []
@@ -661,8 +670,8 @@ data:
         {
           "id": 14,
           "type": "timeseries",
-          "title": "Покупки и откладывание",
-          "description": "OPTIONAL_PURCHASE по исходу и DESIRE_DEFERRED",
+          "title": "Покупки и откладывание — всего",
+          "description": "OPTIONAL_PURCHASE по исходу и DESIRE_DEFERRED за всю историю",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -676,102 +685,58 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(rate(fin_optional_purchases_total{purchased=\"True\"}[$__rate_interval])) or vector(0)",
+              "expr": "sum(fin_purchases_stored{purchased=\"True\"}) or vector(0)",
               "legendFormat": "куплено"
             },
             {
               "refId": "B",
-              "expr": "sum(rate(fin_optional_purchases_total{purchased=\"False\"}[$__rate_interval])) or vector(0)",
+              "expr": "sum(fin_purchases_stored{purchased=\"False\"}) or vector(0)",
               "legendFormat": "не куплено"
             },
             {
               "refId": "C",
-              "expr": "sum(rate(fin_desires_deferred_total[$__rate_interval])) or vector(0)",
+              "expr": "sum(fin_desires_stored{declared=\"True\"}) or vector(0)",
               "legendFormat": "отложено желание"
             }
           ],
           "options": {
-            "legend": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
               "calcs": [
-                "mean"
+                "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
-              "custom": {
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "lineWidth": 2,
-                "showPoints": "never",
-                "spanNulls": true
-              },
-              "color": {
-                "mode": "palette-classic"
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "purple",
+                    "value": null
+                  }
+                ]
               }
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "куплено"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "green"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "не куплено"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "orange"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "отложено желание"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "blue"
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           }
         },
         {
           "id": 15,
           "type": "timeseries",
-          "title": "Деньги в движении",
-          "description": "Суммы: движения накоплений, незапланированные траты, заработок (монет/с)",
+          "title": "Деньги в движении — всего (монет)",
+          "description": "Суммы по всем сохранённым фактам: накопления, незапланированные траты, заработок",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -785,45 +750,49 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (kind) (rate(fin_saving_amount_total[$__rate_interval])) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
+              "expr": "sum by (kind) (fin_saving_amount_stored) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
               "legendFormat": "накопления {{kind}}"
             },
             {
               "refId": "B",
-              "expr": "sum(rate(fin_unexpected_expense_amount_total[$__rate_interval])) or vector(0)",
+              "expr": "fin_unexpected_expense_amount_stored or vector(0)",
               "legendFormat": "незапланированные траты"
             },
             {
               "refId": "C",
-              "expr": "sum(rate(fin_earning_amount_total[$__rate_interval])) or vector(0)",
+              "expr": "fin_earning_amount_stored or vector(0)",
               "legendFormat": "заработок"
             }
           ],
           "options": {
-            "legend": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
               "calcs": [
-                "mean"
+                "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "custom": {
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "lineWidth": 2,
-                "showPoints": "never",
-                "spanNulls": true
-              },
-              "min": 0
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "yellow",
+                    "value": null
+                  }
+                ]
+              }
             },
             "overrides": []
           }
@@ -832,7 +801,7 @@ data:
           "id": 16,
           "type": "stat",
           "title": "Правильность ответов",
-          "description": "Доля practice_answer, где ответ совпал с ожидаемым",
+          "description": "Доля верных practice_answer среди всех сохранённых",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -846,7 +815,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(rate(fin_practice_answers_total{correct=\"True\"}[$__rate_interval])) / clamp_min(sum(rate(fin_practice_answers_total[$__rate_interval])), 1e-9)"
+              "expr": "sum(fin_practice_stored{correct=\"True\"} or vector(0)) / clamp_min(sum(fin_practice_stored or vector(0)), 1e-9)"
             }
           ],
           "options": {
@@ -1070,9 +1039,9 @@ data:
         },
         {
           "id": 20,
-          "type": "timeseries",
-          "title": "Доли плана бюджета",
-          "description": "Как игроки делят бюджет: needs / wants / savings / reserve (нормировано)",
+          "type": "piechart",
+          "title": "Доли плана бюджета — всего",
+          "description": "Как игроки делят бюджет: needs / wants / savings / reserve по всем подтверждённым планам",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -1086,56 +1055,52 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "(sum(rate(fin_budget_amount_total{bucket=\"needs\"}[$__rate_interval])) or vector(0)) / clamp_min(sum(rate(fin_budget_amount_total[$__rate_interval])) or vector(0), 1e-9)",
+              "expr": "fin_budget_amount_stored{bucket=\"needs\"} or vector(0)",
               "legendFormat": "needs"
             },
             {
               "refId": "B",
-              "expr": "(sum(rate(fin_budget_amount_total{bucket=\"wants\"}[$__rate_interval])) or vector(0)) / clamp_min(sum(rate(fin_budget_amount_total[$__rate_interval])) or vector(0), 1e-9)",
+              "expr": "fin_budget_amount_stored{bucket=\"wants\"} or vector(0)",
               "legendFormat": "wants"
             },
             {
               "refId": "C",
-              "expr": "(sum(rate(fin_budget_amount_total{bucket=\"savings\"}[$__rate_interval])) or vector(0)) / clamp_min(sum(rate(fin_budget_amount_total[$__rate_interval])) or vector(0), 1e-9)",
+              "expr": "fin_budget_amount_stored{bucket=\"savings\"} or vector(0)",
               "legendFormat": "savings"
             },
             {
               "refId": "D",
-              "expr": "(sum(rate(fin_budget_amount_total{bucket=\"reserve\"}[$__rate_interval])) or vector(0)) / clamp_min(sum(rate(fin_budget_amount_total[$__rate_interval])) or vector(0), 1e-9)",
+              "expr": "fin_budget_amount_stored{bucket=\"reserve\"} or vector(0)",
               "legendFormat": "reserve"
             }
           ],
           "options": {
             "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "value",
+                "percent"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
               "calcs": [
                 "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
+              "mode": "single",
+              "sort": "none"
             }
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "percentunit",
-              "decimals": 0,
-              "min": 0,
-              "max": 1,
-              "custom": {
-                "drawStyle": "line",
-                "fillOpacity": 30,
-                "lineWidth": 1,
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "normal"
-                }
-              }
+              "unit": "short",
+              "decimals": 0
             },
             "overrides": []
           }
