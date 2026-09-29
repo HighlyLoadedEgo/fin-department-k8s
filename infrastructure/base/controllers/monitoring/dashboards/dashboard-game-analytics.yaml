@@ -1,7 +1,7 @@
 ---
-# Дашборд «Игровая аналитика» v5: бизнес-метрики hackaton-fin-department (fin_*).
-# Перевод значений — renameByRegex/valueMappings (бэк отдаёт стабильные EN-лейблы).
-# Все агрегаты с max by — защита от дублей серий при нескольких подах/переходах.
+# Дашборд «Игровая аналитика» v6: бизнес-метрики hackaton-fin-department (fin_*).
+# EN-лейблы на бэке, перевод — renameByRegex; агрегаты max by от дублей серий;
+# диапазоны баланса считаются из bucket'ов прямо в запросах; описание у каждой панели.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 5,
+      "version": 6,
       "templating": {
         "list": []
       },
@@ -52,7 +52,8 @@ data:
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
-          }
+          },
+          "description": "Сводка по аудитории и прогрессу игроков"
         },
         {
           "id": 2,
@@ -63,7 +64,7 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 8,
             "w": 4,
             "x": 0,
             "y": 1
@@ -104,7 +105,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Сколько игроков сохранили прогресс в облаке"
         },
         {
           "id": 3,
@@ -115,7 +117,7 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 8,
             "w": 4,
             "x": 4,
             "y": 1
@@ -156,7 +158,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Сколько устройств зарегистрировано в игре"
         },
         {
           "id": 4,
@@ -167,7 +170,7 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 8,
             "w": 4,
             "x": 8,
             "y": 1
@@ -208,7 +211,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Сколько раз игроки начинали кампанию заново: каждый рестарт истории — новый прогон"
         },
         {
           "id": 5,
@@ -219,8 +223,8 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
-            "w": 6,
+            "h": 8,
+            "w": 12,
             "x": 12,
             "y": 1
           },
@@ -312,7 +316,8 @@ data:
                 "renamePattern": "Неизвестно"
               }
             }
-          ]
+          ],
+          "description": "На какой главе истории сейчас находятся игроки"
         },
         {
           "id": 6,
@@ -323,10 +328,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 9,
             "w": 6,
-            "x": 18,
-            "y": 1
+            "x": 0,
+            "y": 10
           },
           "targets": [
             {
@@ -394,7 +399,8 @@ data:
                 "renamePattern": "Старший"
               }
             }
-          ]
+          ],
+          "description": "На сколько выросли питомцы игроков"
         },
         {
           "id": 7,
@@ -405,10 +411,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 9,
             "w": 6,
-            "x": 0,
-            "y": 8
+            "x": 6,
+            "y": 10
           },
           "targets": [
             {
@@ -476,22 +482,23 @@ data:
                 "renamePattern": "Неизвестно"
               }
             }
-          ]
+          ],
+          "description": "Какие характеры выбирают игроки"
         },
         {
           "id": 8,
           "type": "piechart",
           "title": "Внешний вид",
-          "description": "Выбранный аксессуар питомца",
+          "description": "Какие аксессуары носят питомцы",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 9,
             "w": 6,
-            "x": 6,
-            "y": 8
+            "x": 12,
+            "y": 10
           },
           "targets": [
             {
@@ -598,10 +605,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 9,
             "w": 6,
-            "x": 12,
-            "y": 8
+            "x": 18,
+            "y": 10
           },
           "targets": [
             {
@@ -647,7 +654,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Средний игровой день: насколько глубоко игроки продвинулись по кампании"
         },
         {
           "id": 10,
@@ -658,10 +666,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 7,
+            "h": 9,
             "w": 6,
-            "x": 18,
-            "y": 8
+            "x": 0,
+            "y": 20
           },
           "targets": [
             {
@@ -736,7 +744,8 @@ data:
                 "renamePattern": "Большая экспедиция"
               }
             }
-          ]
+          ],
+          "description": "Сколько игроков завершили большие целевые проекты кампании"
         },
         {
           "id": 11,
@@ -746,12 +755,13 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 15
+            "y": 30
           },
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
-          }
+          },
+          "description": "Игровые события и поведение игроков"
         },
         {
           "id": 12,
@@ -762,10 +772,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
+            "h": 11,
             "w": 12,
             "x": 0,
-            "y": 16
+            "y": 31
           },
           "targets": [
             {
@@ -801,6 +811,14 @@ data:
                     "value": null
                   }
                 ]
+              },
+              "custom": {
+                "drawStyle": "bars",
+                "lineWidth": 1,
+                "fillOpacity": 80,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true
               }
             },
             "overrides": []
@@ -953,7 +971,8 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ]
+          ],
+          "description": "Все игровые события в базе по типам: бюджеты, покупки, ответы, заработок"
         },
         {
           "id": 13,
@@ -964,10 +983,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
+            "h": 11,
             "w": 12,
             "x": 12,
-            "y": 16
+            "y": 31
           },
           "targets": [
             {
@@ -1003,6 +1022,14 @@ data:
                     "value": null
                   }
                 ]
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 3,
+                "fillOpacity": 15,
+                "showPoints": "never",
+                "spanNulls": true,
+                "gradientMode": "opacity"
               }
             },
             "overrides": []
@@ -1232,21 +1259,22 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ]
+          ],
+          "description": "Самые частые действия игроков: кормление, бюджет, события, мини-игры"
         },
         {
           "id": 14,
-          "type": "timeseries",
-          "title": "Покупки и откладывание — всего",
+          "type": "bargauge",
+          "title": "Покупки и откладывание",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 25
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 20
           },
           "targets": [
             {
@@ -1304,21 +1332,22 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ]
+          ],
+          "description": "Сколько желанных покупок совершено, а сколько желаний отложено ради цели"
         },
         {
           "id": 15,
           "type": "timeseries",
-          "title": "Деньги в движении — всего, монет",
+          "title": "Деньги в движении, монет",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 25
+            "h": 11,
+            "w": 6,
+            "x": 6,
+            "y": 44
           },
           "targets": [
             {
@@ -1397,7 +1426,8 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ]
+          ],
+          "description": "Пополнения и снятия накоплений, незапланированные траты и заработок за всю историю"
         },
         {
           "id": 16,
@@ -1408,10 +1438,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
-            "w": 4,
-            "x": 16,
-            "y": 25
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 20
           },
           "targets": [
             {
@@ -1460,21 +1490,22 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Доля правильных ответов в обучающих практиках"
         },
         {
           "id": 17,
           "type": "stat",
-          "title": "Мини-игр на мир",
+          "title": "Мини-игры на игрока",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
-            "w": 4,
-            "x": 20,
-            "y": 25
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 20
           },
           "targets": [
             {
@@ -1512,7 +1543,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Среднее число пройденных мини-игр на игрока"
         },
         {
           "id": 18,
@@ -1522,12 +1554,13 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 33
+            "y": 43
           },
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
-          }
+          },
+          "description": "Балансы и распределение денег у игроков"
         },
         {
           "id": 19,
@@ -1538,10 +1571,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 8,
+            "h": 11,
+            "w": 6,
             "x": 0,
-            "y": 34
+            "y": 44
           },
           "targets": [
             {
@@ -1582,50 +1615,98 @@ data:
               "min": 0,
               "custom": {
                 "drawStyle": "line",
-                "fillOpacity": 15,
-                "lineWidth": 2,
+                "lineWidth": 3,
+                "fillOpacity": 25,
                 "showPoints": "never",
-                "spanNulls": true
+                "spanNulls": true,
+                "gradientMode": "opacity"
               }
             },
-            "overrides": []
-          }
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Доступный"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "green"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Накопления"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Нераспределено"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "description": "Средний доступный баланс, накопления и нераспределённые деньги"
         },
         {
           "id": 20,
           "type": "piechart",
-          "title": "Доли бюджета — всего",
-          "description": "Как игроки делят бюджет: needs / wants / savings / reserve по всем подтверждённым планам",
+          "title": "Доли бюджета",
+          "description": "Как игроки делят бюджет: обязательные нужды, желания, накопления, запас",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 34
+            "h": 11,
+            "w": 6,
+            "x": 12,
+            "y": 44
           },
           "targets": [
             {
               "refId": "A",
               "expr": "max(fin_budget_amount_stored{bucket=\"needs\"}) or vector(0)",
-              "legendFormat": "{{bucket}}"
+              "legendFormat": "Нужды"
             },
             {
               "refId": "B",
               "expr": "max(fin_budget_amount_stored{bucket=\"wants\"}) or vector(0)",
-              "legendFormat": "{{bucket}}"
+              "legendFormat": "Желания"
             },
             {
               "refId": "C",
               "expr": "max(fin_budget_amount_stored{bucket=\"savings\"}) or vector(0)",
-              "legendFormat": "{{bucket}}"
+              "legendFormat": "Накопления"
             },
             {
               "refId": "D",
               "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"}) or vector(0)",
-              "legendFormat": "{{bucket}}"
+              "legendFormat": "Запас"
             }
           ],
           "options": {
@@ -1639,6 +1720,9 @@ data:
               ]
             },
             "pieType": "donut",
+            "displayLabels": [
+              "percent"
+            ],
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -1658,63 +1742,81 @@ data:
             },
             "overrides": []
           },
-          "transformations": [
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "needs",
-                "renamePattern": "Нужды"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "wants",
-                "renamePattern": "Желания"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "savings",
-                "renamePattern": "Накопления"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "reserve",
-                "renamePattern": "Запас"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
-            }
-          ]
+          "transformations": null
         },
         {
           "id": 21,
           "type": "table",
           "title": "Распределение баланса",
-          "description": "Сколько миров попадает в каждый bucket баланса (кумулятивно, ≤ le)",
+          "description": "Сколько игроков в каждом диапазоне доступного баланса, монет",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 34
+            "h": 11,
+            "w": 6,
+            "x": 18,
+            "y": 44
           },
           "targets": [
             {
-              "refId": "A",
-              "expr": "max by (le) (fin_pet_balance_bucket)",
+              "refId": "01",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"0\"}), \"range\", \"01. 0–100\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "02",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"250\"}) - max(fin_pet_balance_bucket{le=\"100\"}), \"range\", \"02. 100–250\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "03",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"500\"}) - max(fin_pet_balance_bucket{le=\"250\"}), \"range\", \"03. 250–500\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "04",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"500\"}), \"range\", \"04. 500–1 000\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "05",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"2500\"}) - max(fin_pet_balance_bucket{le=\"1000\"}), \"range\", \"05. 1 000–2 500\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "06",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"5000\"}) - max(fin_pet_balance_bucket{le=\"2500\"}), \"range\", \"06. 2 500–5 000\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "07",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"10000\"}) - max(fin_pet_balance_bucket{le=\"5000\"}), \"range\", \"07. 5 000–10 000\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "08",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"25000\"}) - max(fin_pet_balance_bucket{le=\"10000\"}), \"range\", \"08. 10 000–25 000\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "09",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"50000\"}) - max(fin_pet_balance_bucket{le=\"25000\"}), \"range\", \"09. 25 000–50 000\", \"\", \"\")",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "10",
+              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"50000\"}), \"range\", \"10. 50 000 и больше\", \"\", \"\")",
               "instant": true,
               "format": "table"
             }
@@ -1727,8 +1829,7 @@ data:
                   "Time": true
                 },
                 "renameByName": {
-                  "le": "Баланс не выше",
-                  "Value": "Миров"
+                  "Value": "Игроков"
                 },
                 "indexByName": {}
               }
@@ -1738,7 +1839,7 @@ data:
               "options": {
                 "sort": [
                   {
-                    "field": "Баланс не выше",
+                    "field": "range",
                     "desc": false
                   }
                 ]
@@ -1769,40 +1870,7 @@ data:
                 "inspect": false
               }
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Баланс не выше"
-                },
-                "properties": [
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "type": "special",
-                        "options": {
-                          "match": "special",
-                          "result": {
-                            "index": 0
-                          }
-                        }
-                      },
-                      {
-                        "type": "value",
-                        "options": {
-                          "match": "+Inf",
-                          "result": {
-                            "text": "Без ограничения",
-                            "index": 1
-                          }
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           }
         },
         {
@@ -1813,12 +1881,13 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 43
+            "y": 56
           },
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
-          }
+          },
+          "description": "Облачная синхронизация и родительские награды"
         },
         {
           "id": 23,
@@ -1829,10 +1898,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 8,
             "x": 0,
-            "y": 44
+            "y": 57
           },
           "targets": [
             {
@@ -1865,10 +1934,11 @@ data:
               "unit": "ops",
               "custom": {
                 "drawStyle": "line",
-                "fillOpacity": 10,
-                "lineWidth": 2,
+                "fillOpacity": 25,
+                "lineWidth": 3,
                 "showPoints": "never",
-                "spanNulls": true
+                "spanNulls": true,
+                "gradientMode": "opacity"
               }
             },
             "overrides": []
@@ -1909,7 +1979,8 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ]
+          ],
+          "description": "Награды от родителей: выдача монет и аксессуаров, подтверждение детьми"
         },
         {
           "id": 24,
@@ -1920,10 +1991,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 8,
             "x": 8,
-            "y": 44
+            "y": 57
           },
           "targets": [
             {
@@ -1961,10 +2032,11 @@ data:
               "unit": "ops",
               "custom": {
                 "drawStyle": "line",
-                "fillOpacity": 10,
-                "lineWidth": 2,
+                "fillOpacity": 25,
+                "lineWidth": 3,
                 "showPoints": "never",
-                "spanNulls": true
+                "spanNulls": true,
+                "gradientMode": "opacity"
               }
             },
             "overrides": []
@@ -1973,25 +2045,26 @@ data:
             {
               "id": "renameByRegex",
               "options": {
-                "regex": "created=True",
+                "regex": "True$",
                 "renamePattern": "новые"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
-                "regex": "created=False",
+                "regex": "False$",
                 "renamePattern": "повторы"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
-                "regex": "created=\\)",
-                "renamePattern": "нет данных)"
+                "regex": " $",
+                "renamePattern": "— нет данных"
               }
             }
-          ]
+          ],
+          "description": "Темп облачной синхронизации устройств: новые сохранения и повторы"
         },
         {
           "id": 25,
@@ -2002,10 +2075,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 4,
             "x": 16,
-            "y": 44
+            "y": 57
           },
           "targets": [
             {
@@ -2052,7 +2125,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Как давно обновлялись агрегаты; норма — меньше двух минут"
         },
         {
           "id": 26,
@@ -2063,10 +2137,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 4,
             "x": 20,
-            "y": 44
+            "y": 57
           },
           "targets": [
             {
@@ -2109,7 +2183,8 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "description": "Число сбоев пересчёта агрегатов за последний час"
         }
       ]
     }
