@@ -1,6 +1,6 @@
 ---
 # Дашборд Game Analytics: бизнес-метрики hackaton-fin-department (префикс fin_).
-# Игроки по главам, активность/евенты, экономика (балансы/бюджет), поведение, здоровье агрегатора.
+# Сетка: ряды по 8-9 юнитов, панели 4/6/8/12 колонок. Источник — /metrics (PodMonitor).
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,7 +12,7 @@ data:
   game-analytics.json: |-
     {
       "annotations": { "list": [] },
-      "description": "Игровая аналитика hackaton-fin-department: главы, активность, экономика, поведение. Источник — бизнес-метрики fin_* c /metrics.",
+      "description": "Игровая аналитика hackaton-fin-department: главы, аудитория, активность, поведение, экономика миров. Источник — бизнес-метрики fin_* на /metrics.",
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
@@ -25,63 +25,102 @@ data:
       "timezone": "browser",
       "title": "Game Analytics",
       "uid": "game-analytics",
-      "version": 1,
+      "version": 2,
       "templating": { "list": [] },
       "panels": [
         {
           "id": 1,
           "type": "row",
-          "title": "Игроки",
+          "title": "Обзор",
           "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "prometheus" }
         },
         {
           "id": 2,
           "type": "stat",
-          "title": "Миры (профили с сохранением)",
-          "description": "Сохранённые облачные миры в snapshot_heads",
+          "title": "Миры",
+          "description": "Сохранённые облачные миры (профили хотя бы с одним снапшотом)",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+          "gridPos": { "h": 7, "w": 4, "x": 0, "y": 1 },
           "targets": [{ "refId": "A", "expr": "fin_worlds_total" }],
           "options": {
             "colorMode": "value",
-            "graphMode": "none",
+            "graphMode": "area",
             "justifyMode": "auto",
+            "orientation": "auto",
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+            },
+            "overrides": []
+          }
         },
         {
           "id": 3,
           "type": "stat",
-          "title": "Профили / прогоны",
+          "title": "Профили",
+          "description": "Зарегистрированные устройства",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
-          "targets": [
-            { "refId": "A", "expr": "fin_profiles_total" },
-            { "refId": "B", "expr": "fin_game_runs_total" }
-          ],
+          "gridPos": { "h": 7, "w": 4, "x": 4, "y": 1 },
+          "targets": [{ "refId": "A", "expr": "fin_profiles_total" }],
           "options": {
             "colorMode": "value",
-            "graphMode": "none",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+            },
+            "overrides": []
+          }
         },
         {
           "id": 4,
+          "type": "stat",
+          "title": "Прогоны кампании",
+          "description": "Уникальные runId: каждый рестарт кампании добавляет прогон",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 7, "w": 4, "x": 8, "y": 1 },
+          "targets": [{ "refId": "A", "expr": "fin_game_runs_total" }],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "purple", "value": null }] }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 5,
           "type": "bargauge",
-          "title": "Игроки по главам (act)",
+          "title": "Игроки по главам",
           "description": "Акт восстанавливается из state.story.currentDayId последнего снапшота",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 1 },
-          "targets": [{
-            "refId": "A",
-            "expr": "fin_players_by_story_act",
-            "legendFormat": "{{act}}"
-          }],
+          "gridPos": { "h": 7, "w": 6, "x": 12, "y": 1 },
+          "targets": [{ "refId": "A", "expr": "fin_players_by_story_act", "legendFormat": "{{act}}" }],
           "options": {
             "displayMode": "gradient",
             "minVizHeight": 10,
@@ -93,162 +132,157 @@ data:
             "sizing": "auto",
             "valueMode": "color"
           },
-          "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
-        },
-        {
-          "id": 5,
-          "type": "piechart",
-          "title": "Темпераменты питомцев",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 1 },
-          "targets": [{
-            "refId": "A",
-            "expr": "fin_players_by_pet_temperament",
-            "legendFormat": "{{temperament}}"
-          }],
-          "options": {
-            "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value"] },
-            "pieType": "pie",
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "tooltip": { "mode": "single", "sort": "none" }
-          },
-          "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
-        },
-        {
-          "id": 6,
-          "type": "timeseries",
-          "title": "Возраст питомца по мирам",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 6, "w": 8, "x": 0, "y": 5 },
-          "targets": [{
-            "refId": "A",
-            "expr": "fin_players_by_pet_age",
-            "legendFormat": "{{age}}"
-          }],
-          "options": {
-            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-            "tooltip": { "mode": "multi", "sort": "desc" }
-          },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "custom": { "fillOpacity": 15, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "decimals": 0,
+              "min": 0,
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
             },
             "overrides": []
           }
         },
         {
-          "id": 7,
-          "type": "stat",
-          "title": "Средний игровой день (прогресс)",
-          "description": "Среднее state.engine.day по мирам",
+          "id": 6,
+          "type": "piechart",
+          "title": "Возраст питомца",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 6, "w": 8, "x": 8, "y": 9 },
-          "targets": [{
-            "refId": "A",
-            "expr": "fin_engine_day_sum / fin_engine_day_count"
-          }],
+          "gridPos": { "h": 7, "w": 6, "x": 18, "y": 1 },
+          "targets": [{ "refId": "A", "expr": "fin_players_by_pet_age", "legendFormat": "{{age}}" }],
           "options": {
-            "colorMode": "value",
-            "graphMode": "area",
+            "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value", "percent"] },
+            "pieType": "donut",
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "textMode": "auto"
+            "tooltip": { "mode": "single", "sort": "none" }
           },
-          "fieldConfig": { "defaults": { "unit": "short", "decimals": 1 }, "overrides": [] }
+          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0 }, "overrides": [] }
+        },
+        {
+          "id": 7,
+          "type": "piechart",
+          "title": "Темперамент",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 7, "w": 6, "x": 0, "y": 8 },
+          "targets": [{ "refId": "A", "expr": "fin_players_by_pet_temperament", "legendFormat": "{{temperament}}" }],
+          "options": {
+            "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value", "percent"] },
+            "pieType": "donut",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "tooltip": { "mode": "single", "sort": "none" }
+          },
+          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0 }, "overrides": [] }
         },
         {
           "id": 8,
-          "type": "bargauge",
-          "title": "Завершённые целевые проекты",
+          "type": "piechart",
+          "title": "Внешний вид",
+          "description": "Выбранный аксессуар питомца",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 6, "w": 8, "x": 16, "y": 9 },
-          "targets": [{
-            "refId": "A",
-            "expr": "fin_goal_projects_completed",
-            "legendFormat": "{{goal}}"
-          }],
+          "gridPos": { "h": 7, "w": 6, "x": 6, "y": 8 },
+          "targets": [{ "refId": "A", "expr": "fin_players_by_pet_look", "legendFormat": "{{look}}" }],
+          "options": {
+            "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value", "percent"] },
+            "pieType": "donut",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "tooltip": { "mode": "single", "sort": "none" }
+          },
+          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0 }, "overrides": [] }
+        },
+        {
+          "id": 9,
+          "type": "stat",
+          "title": "Средний игровой день",
+          "description": "Среднее state.engine.day — глубина прогресса в днях",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 7, "w": 6, "x": 12, "y": 8 },
+          "targets": [{ "refId": "A", "expr": "fin_engine_day_sum / fin_engine_day_count" }],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 2 },
+                  { "color": "green", "value": 5 }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 10,
+          "type": "bargauge",
+          "title": "Целевые проекты завершены",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 7, "w": 6, "x": 18, "y": 8 },
+          "targets": [{ "refId": "A", "expr": "fin_goal_projects_completed", "legendFormat": "{{goal}}" }],
           "options": {
             "displayMode": "gradient",
+            "minVizHeight": 10,
+            "minVizWidth": 0,
+            "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "showUnfilled": true,
             "sizing": "auto",
             "valueMode": "color"
           },
-          "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
-        },
-        {
-          "id": 9,
-          "type": "row",
-          "title": "Активность и события",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
-          "datasource": { "type": "prometheus", "uid": "prometheus" }
-        },
-        {
-          "id": 10,
-          "type": "timeseries",
-          "title": "Факты аналитики по типам (top 7)",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
-          "targets": [{
-            "refId": "A",
-            "expr": "topk(7, sum by (detail_type) (rate(fin_analytics_facts_total[$__rate_interval])))",
-            "legendFormat": "{{detail_type}}"
-          }],
-          "options": {
-            "legend": { "calcs": ["rate", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-            "tooltip": { "mode": "multi", "sort": "desc" }
-          },
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "purple", "value": null }] }
             },
             "overrides": []
           }
         },
         {
           "id": 11,
-          "type": "timeseries",
-          "title": "Действия игроков (interaction, top 8)",
-          "description": "Каждая команда движка пишет факт interaction с именем команды (клики, RenamePet, CompleteStoryGame, …)",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
-          "targets": [{
-            "refId": "A",
-            "expr": "topk(8, sum by (name) (rate(fin_interactions_total[$__rate_interval])))",
-            "legendFormat": "{{name}}"
-          }],
-          "options": {
-            "legend": { "calcs": ["rate"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-            "tooltip": { "mode": "multi", "sort": "desc" }
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "ops",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
-            },
-            "overrides": []
-          }
+          "type": "row",
+          "title": "Активность",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" }
         },
         {
           "id": 12,
           "type": "timeseries",
-          "title": "Покупки против отказа",
+          "title": "Факты аналитики по типам (top 7)",
+          "description": "Темп поступления игровых фактов: бюджет, покупки, накопления, ответы и т.д.",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 7, "w": 8, "x": 0, "y": 24 },
-          "targets": [
-            { "refId": "A", "expr": "sum by (purchased) (rate(fin_optional_purchases_total[$__rate_interval]))", "legendFormat": "куплено={{purchased}}" },
-            { "refId": "B", "expr": "sum(rate(fin_desires_deferred_total[$__rate_interval]))", "legendFormat": "отложено желание" }
-          ],
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 16 },
+          "targets": [{
+            "refId": "A",
+            "expr": "topk(7, sum by (detail_type) (rate(fin_analytics_facts_total[$__rate_interval])))",
+            "legendFormat": "{{detail_type}}"
+          }],
           "options": {
-            "legend": { "calcs": ["rate"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
             "tooltip": { "mode": "multi", "sort": "desc" }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "ops",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth"
+              }
             },
             "overrides": []
           }
@@ -256,33 +290,103 @@ data:
         {
           "id": 13,
           "type": "timeseries",
-          "title": "Накопления и запасы",
+          "title": "Действия игроков (top 8)",
+          "description": "Каждая команда движка пишет interaction-факт: клики, RenamePet, CompleteStoryGame и т.д.",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 7, "w": 8, "x": 8, "y": 24 },
-          "targets": [
-            { "refId": "A", "expr": "sum by (kind) (rate(fin_saving_amount_total[$__rate_interval]))", "legendFormat": "движение {{kind}}" },
-            { "refId": "B", "expr": "sum(rate(fin_unexpected_expense_amount_total[$__rate_interval]))", "legendFormat": "незапланированная трата" },
-            { "refId": "C", "expr": "sum(rate(fin_earning_amount_total[$__rate_interval]))", "legendFormat": "заработок" }
-          ],
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 16 },
+          "targets": [{
+            "refId": "A",
+            "expr": "topk(8, sum by (name) (rate(fin_interactions_total[$__rate_interval])))",
+            "legendFormat": "{{name}}"
+          }],
           "options": {
-            "legend": { "calcs": ["rate"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
             "tooltip": { "mode": "multi", "sort": "desc" }
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "currencyUSD",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth"
+              }
             },
             "overrides": []
           }
         },
         {
           "id": 14,
+          "type": "timeseries",
+          "title": "Покупки и откладывание",
+          "description": "OPTIONAL_PURCHASE по исходу и DESIRE_DEFERRED",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 25 },
+          "targets": [
+            { "refId": "A", "expr": "sum(rate(fin_optional_purchases_total{purchased=\"True\"}[$__rate_interval]))", "legendFormat": "куплено" },
+            { "refId": "B", "expr": "sum(rate(fin_optional_purchases_total{purchased=\"False\"}[$__rate_interval]))", "legendFormat": "не куплено" },
+            { "refId": "C", "expr": "sum(rate(fin_desires_deferred_total[$__rate_interval]))", "legendFormat": "отложено желание" }
+          ],
+          "options": {
+            "legend": { "calcs": ["mean"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "куплено" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "не куплено" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "отложено желание" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } }]
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "type": "timeseries",
+          "title": "Деньги в движении",
+          "description": "Суммы: движения накоплений, незапланированные траты, заработок (монет/с)",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 25 },
+          "targets": [
+            { "refId": "A", "expr": "sum by (kind) (rate(fin_saving_amount_total[$__rate_interval]))", "legendFormat": "накопления {{kind}}" },
+            { "refId": "B", "expr": "sum(rate(fin_unexpected_expense_amount_total[$__rate_interval]))", "legendFormat": "незапланированные траты" },
+            { "refId": "C", "expr": "sum(rate(fin_earning_amount_total[$__rate_interval]))", "legendFormat": "заработок" }
+          ],
+          "options": {
+            "legend": { "calcs": ["mean"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 16,
           "type": "stat",
           "title": "Правильность ответов",
-          "description": "Доля practice_answer с selectedAnswerId == expectedAnswerId",
+          "description": "Доля practice_answer, где ответ совпал с ожидаемым",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 7, "w": 8, "x": 16, "y": 24 },
+          "gridPos": { "h": 8, "w": 4, "x": 16, "y": 25 },
           "targets": [{
             "refId": "A",
             "expr": "sum(rate(fin_practice_answers_total{correct=\"True\"}[$__rate_interval])) / clamp_min(sum(rate(fin_practice_answers_total[$__rate_interval])), 1e-9)"
@@ -290,12 +394,16 @@ data:
           "options": {
             "colorMode": "value",
             "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
+              "decimals": 0,
               "min": 0,
               "max": 1,
               "thresholds": {
@@ -311,20 +419,46 @@ data:
           }
         },
         {
-          "id": 15,
+          "id": 17,
+          "type": "stat",
+          "title": "Мини-игр на мир",
+          "description": "Среднее количество завершённых мини-игр",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 4, "x": 20, "y": 25 },
+          "targets": [{ "refId": "A", "expr": "fin_completed_minigames_sum / fin_completed_minigames_count" }],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 18,
           "type": "row",
           "title": "Экономика миров",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 33 },
           "datasource": { "type": "prometheus", "uid": "prometheus" }
         },
         {
-          "id": 16,
+          "id": 19,
           "type": "timeseries",
-          "title": "Средние балансы",
+          "title": "Средние балансы (монет)",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+          "gridPos": { "h": 9, "w": 8, "x": 0, "y": 34 },
           "targets": [
-            { "refId": "A", "expr": "fin_pet_balance_sum / fin_pet_balance_count", "legendFormat": "доступный баланс" },
+            { "refId": "A", "expr": "fin_pet_balance_sum / fin_pet_balance_count", "legendFormat": "доступный" },
             { "refId": "B", "expr": "fin_pet_savings_balance_sum / fin_pet_savings_balance_count", "legendFormat": "накопления" },
             { "refId": "C", "expr": "fin_pet_unallocated_sum / fin_pet_unallocated_count", "legendFormat": "нераспределено" }
           ],
@@ -335,18 +469,32 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "decimals": 0,
+              "custom": { "drawStyle": "line", "fillOpacity": 15, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "доступный" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "накопления" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "нераспределено" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+              }
+            ]
           }
         },
         {
-          "id": 17,
+          "id": 20,
           "type": "timeseries",
-          "title": "Средние доли плана бюджета",
-          "description": "Доли needs/wants/savings/reserve в подтверждённых бюджетах",
+          "title": "Доли плана бюджета",
+          "description": "Как игроки делят бюджет: needs / wants / savings / reserve (нормировано)",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+          "gridPos": { "h": 9, "w": 8, "x": 8, "y": 34 },
           "targets": [
             { "refId": "A", "expr": "sum(rate(fin_budget_amount_total{bucket=\"needs\"}[$__rate_interval])) / clamp_min(sum(rate(fin_budget_amount_total[$__rate_interval])), 1e-9)", "legendFormat": "needs" },
             { "refId": "B", "expr": "sum(rate(fin_budget_amount_total{bucket=\"wants\"}[$__rate_interval])) / clamp_min(sum(rate(fin_budget_amount_total[$__rate_interval])), 1e-9)", "legendFormat": "wants" },
@@ -360,136 +508,134 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
+              "decimals": 0,
               "min": 0,
-              "custom": { "fillOpacity": 25, "lineWidth": 2, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "normal" } }
+              "max": 1,
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 30,
+                "lineWidth": 1,
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": { "group": "A", "mode": "normal" }
+              }
             },
             "overrides": []
           }
         },
         {
-          "id": 18,
-          "type": "barchart",
+          "id": 21,
+          "type": "table",
           "title": "Распределение доступного баланса",
+          "description": "Сколько миров попадает в каждый bucket баланса (кумулятивно, ≤ le)",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
+          "gridPos": { "h": 9, "w": 8, "x": 16, "y": 34 },
           "targets": [{
             "refId": "A",
             "expr": "fin_pet_balance_bucket",
-            "legendFormat": "≤ {{le}}",
             "instant": true,
             "format": "table"
           }],
-          "options": {
-            "legend": { "showLegend": false },
-            "tooltip": { "mode": "single", "sort": "none" },
-            "xField": "le",
-            "barWidth": 0.7,
-            "groupWidth": 0.7,
-            "orientation": "auto",
-            "showValue": "never",
-            "stacking": "none"
-          },
-          "fieldConfig": {
-            "defaults": { "unit": "short" },
-            "overrides": [
-              {
-                "matcher": { "id": "byName", "options": "Time" },
-                "properties": [{ "id": "custom.hidden", "value": true }]
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": { "Time": true, "__name__": true, "instance": true, "job": true, "namespace": true, "pod": true },
+                "renameByName": { "le": "баланс не выше", "Value": "миров" },
+                "indexByName": {}
               }
-            ]
-          }
-        },
-        {
-          "id": 19,
-          "type": "bargauge",
-          "title": "Мини-игры и предметы (средние на мир)",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
-          "targets": [
-            { "refId": "A", "expr": "fin_completed_minigames_sum / fin_completed_minigames_count", "legendFormat": "мини-игр завершено" },
-            { "refId": "B", "expr": "fin_owned_items_sum / fin_owned_items_count", "legendFormat": "предметов куплено" }
+            },
+            {
+              "id": "sortBy",
+              "options": { "sort": [{ "field": "баланс не выше", "desc": false }] }
+            }
           ],
           "options": {
-            "displayMode": "gradient",
-            "orientation": "horizontal",
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "showUnfilled": true,
-            "sizing": "auto",
-            "valueMode": "color"
-          },
-          "fieldConfig": { "defaults": { "unit": "short", "decimals": 2 }, "overrides": [] }
-        },
-        {
-          "id": 20,
-          "type": "row",
-          "title": "Награды и синхронизация",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 48 },
-          "datasource": { "type": "prometheus", "uid": "prometheus" }
-        },
-        {
-          "id": 21,
-          "type": "timeseries",
-          "title": "Награды родителей",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 7, "w": 8, "x": 0, "y": 49 },
-          "targets": [
-            { "refId": "A", "expr": "sum by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval]))", "legendFormat": "выдано {{reward_type}}" },
-            { "refId": "B", "expr": "sum by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval]))", "legendFormat": "подтверждено {{outcome}}" }
-          ],
-          "options": {
-            "legend": { "calcs": ["rate"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-            "tooltip": { "mode": "multi", "sort": "desc" }
+            "cellHeight": "sm",
+            "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": true },
+            "showHeader": true
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "unit": "short",
+              "decimals": 0,
+              "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false }
             },
             "overrides": []
           }
         },
         {
           "id": 22,
+          "type": "row",
+          "title": "Синхронизация и награды",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 43 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" }
+        },
+        {
+          "id": 23,
           "type": "timeseries",
-          "title": "Загрузки снапшотов и аналитики",
+          "title": "Награды родителей",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 7, "w": 8, "x": 8, "y": 49 },
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 44 },
           "targets": [
-            { "refId": "A", "expr": "sum by (created) (rate(fin_snapshot_uploads_total[$__rate_interval]))", "legendFormat": "снапшоты created={{created}}" },
-            { "refId": "B", "expr": "sum by (created) (rate(fin_analytics_batches_total[$__rate_interval]))", "legendFormat": "батчи аналитики created={{created}}" },
-            { "refId": "C", "expr": "sum by (created) (rate(fin_profile_registrations_total[$__rate_interval]))", "legendFormat": "регистрации created={{created}}" }
+            { "refId": "A", "expr": "sum by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval]))", "legendFormat": "выдано {{reward_type}}" },
+            { "refId": "B", "expr": "sum by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval]))", "legendFormat": "принято {{outcome}}" }
           ],
           "options": {
-            "legend": { "calcs": ["rate"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "legend": { "calcs": ["mean"], "displayMode": "table", "placement": "bottom", "showLegend": true },
             "tooltip": { "mode": "multi", "sort": "desc" }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "ops",
-              "custom": { "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
             },
             "overrides": []
           }
         },
         {
-          "id": 23,
-          "type": "stat",
-          "title": "Свежесть агрегации",
-          "description": "Время с последнего успешного пересчёта миров",
+          "id": 24,
+          "type": "timeseries",
+          "title": "Синхронизация устройств",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "h": 7, "w": 8, "x": 16, "y": 49 },
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 44 },
           "targets": [
-            { "refId": "A", "expr": "time() - fin_aggregation_last_success_unixtime" },
-            { "refId": "B", "expr": "increase(fin_aggregation_errors_total[1h])" }
+            { "refId": "A", "expr": "sum by (created) (rate(fin_snapshot_uploads_total[$__rate_interval]))", "legendFormat": "снапшоты (created={{created}})" },
+            { "refId": "B", "expr": "sum by (created) (rate(fin_analytics_batches_total[$__rate_interval]))", "legendFormat": "батчи аналитики (created={{created}})" },
+            { "refId": "C", "expr": "sum by (created) (rate(fin_profile_registrations_total[$__rate_interval]))", "legendFormat": "регистрации (created={{created}})" }
           ],
           "options": {
-            "colorMode": "background_solid",
-            "graphMode": "none",
-            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-            "textMode": "auto"
+            "legend": { "calcs": ["mean"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
           },
           "fieldConfig": {
             "defaults": {
+              "unit": "ops",
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "showPoints": "never", "spanNulls": true }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 25,
+          "type": "stat",
+          "title": "Агрегация: успех",
+          "description": "Сколько секунд назад пересчитывались мировые метрики",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 4, "x": 16, "y": 44 },
+          "targets": [{ "refId": "A", "expr": "time() - fin_aggregation_last_success_unixtime" }],
+          "options": {
+            "colorMode": "background_solid",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
               "decimals": 0,
               "thresholds": {
                 "mode": "absolute",
@@ -500,23 +646,39 @@ data:
                 ]
               }
             },
-            "overrides": [
-              {
-                "matcher": { "id": "byName", "options": "B" },
-                "properties": [
-                  { "id": "unit", "value": "short" },
-                  { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } },
-                  { "id": "displayName", "value": "ошибки за час" }
-                ]
-              },
-              {
-                "matcher": { "id": "byName", "options": "A" },
-                "properties": [
-                  { "id": "unit", "value": "s" },
-                  { "id": "displayName", "value": "назад" }
+            "overrides": []
+          }
+        },
+        {
+          "id": 26,
+          "type": "stat",
+          "title": "Агрегация: ошибки",
+          "description": "Провальные циклы пересчёта за последний час",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 4, "x": 20, "y": 44 },
+          "targets": [{ "refId": "A", "expr": "increase(fin_aggregation_errors_total[1h])" }],
+          "options": {
+            "colorMode": "background_solid",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 }
                 ]
               }
-            ]
+            },
+            "overrides": []
           }
         }
       ]
