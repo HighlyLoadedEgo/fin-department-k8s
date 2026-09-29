@@ -267,49 +267,49 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "act-1",
-                "rename": "Глава 1"
+                "renamePattern": "Глава 1"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "act-2",
-                "rename": "Глава 2"
+                "renamePattern": "Глава 2"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "act-3",
-                "rename": "Глава 3"
+                "renamePattern": "Глава 3"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "act-4",
-                "rename": "Глава 4"
+                "renamePattern": "Глава 4"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "act-5",
-                "rename": "Глава 5"
+                "renamePattern": "Глава 5"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "not_started",
-                "rename": "Без главы"
+                "renamePattern": "Без главы"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^unknown$",
-                "rename": "Неизвестно"
+                "renamePattern": "Неизвестно"
               }
             }
           ]
@@ -370,28 +370,28 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "CUB",
-                "rename": "Детёныш"
+                "renamePattern": "Детёныш"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "TEEN",
-                "rename": "Подросток"
+                "renamePattern": "Подросток"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "ADULT",
-                "rename": "Взрослый"
+                "renamePattern": "Взрослый"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "SENIOR",
-                "rename": "Старший"
+                "renamePattern": "Старший"
               }
             }
           ]
@@ -452,28 +452,28 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "Curious",
-                "rename": "Любознательный"
+                "renamePattern": "Любознательный"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "Confident",
-                "rename": "Уверенный"
+                "renamePattern": "Уверенный"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "Joyful",
-                "rename": "Радостный"
+                "renamePattern": "Радостный"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^unknown$",
-                "rename": "Неизвестно"
+                "renamePattern": "Неизвестно"
               }
             }
           ]
@@ -535,56 +535,56 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "PLAIN",
-                "rename": "Классика"
+                "renamePattern": "Классика"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "BANDANA",
-                "rename": "Бандана"
+                "renamePattern": "Бандана"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "BACKPACK",
-                "rename": "Рюкзак"
+                "renamePattern": "Рюкзак"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "HAT",
-                "rename": "Шляпа"
+                "renamePattern": "Шляпа"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "GLASSES",
-                "rename": "Очки"
+                "renamePattern": "Очки"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "COMPASS",
-                "rename": "Компас"
+                "renamePattern": "Компас"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "BINOCULARS",
-                "rename": "Бинокль"
+                "renamePattern": "Бинокль"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "ROUTE_PATCH",
-                "rename": "Нашивка"
+                "renamePattern": "Нашивка"
               }
             }
           ]
@@ -705,35 +705,35 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "figma-stargazing-180-v1",
-                "rename": "Наблюдение за звёздами"
+                "renamePattern": "Наблюдение за звёздами"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "campaign-tower-kit-v1",
-                "rename": "Набор для башни"
+                "renamePattern": "Набор для башни"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "campaign-researcher-home-v1",
-                "rename": "Дом исследователя"
+                "renamePattern": "Дом исследователя"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "campaign-kingdom-map-v1",
-                "rename": "Карта королевства"
+                "renamePattern": "Карта королевства"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "campaign-great-expedition-v1",
-                "rename": "Большая экспедиция"
+                "renamePattern": "Большая экспедиция"
               }
             }
           ]
@@ -810,147 +810,147 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "interaction",
-                "rename": "Действия"
+                "renamePattern": "Действия"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "optional_purchase",
-                "rename": "Покупки"
+                "renamePattern": "Покупки"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "budget_confirmed",
-                "rename": "Утверждённый бюджет"
+                "renamePattern": "Утверждённый бюджет"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "saving_movement",
-                "rename": "Движение накоплений"
+                "renamePattern": "Движение накоплений"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "saving_cycle_closed",
-                "rename": "Цель накопления закрыта"
+                "renamePattern": "Цель накопления закрыта"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "saving_intention_resolved",
-                "rename": "Намерение накопления"
+                "renamePattern": "Намерение накопления"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "desire_deferred",
-                "rename": "Отложенные желания"
+                "renamePattern": "Отложенные желания"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "priority_applied",
-                "rename": "Приоритет применён"
+                "renamePattern": "Приоритет применён"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "priority_conflict",
-                "rename": "Конфликт приоритетов"
+                "renamePattern": "Конфликт приоритетов"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "reserve_decision",
-                "rename": "Решение о запасе"
+                "renamePattern": "Решение о запасе"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "unexpected_expense",
-                "rename": "Незапланированные траты"
+                "renamePattern": "Незапланированные траты"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "recovery_action",
-                "rename": "Восстановление после траты"
+                "renamePattern": "Восстановление после траты"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "resource_choice",
-                "rename": "Выбор ресурса"
+                "renamePattern": "Выбор ресурса"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "earning_plan",
-                "rename": "Планы заработка"
+                "renamePattern": "Планы заработка"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "earning_completed",
-                "rename": "Заработок получен"
+                "renamePattern": "Заработок получен"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "question_answer",
-                "rename": "Ответы на вопросы"
+                "renamePattern": "Ответы на вопросы"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "comparable_application",
-                "rename": "Сравнение затрат"
+                "renamePattern": "Сравнение затрат"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "income_window",
-                "rename": "Окна дохода"
+                "renamePattern": "Окна дохода"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "time_machine_lifecycle",
-                "rename": "Машина времени"
+                "renamePattern": "Машина времени"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "practice_answer",
-                "rename": "Ответы на практике"
+                "renamePattern": "Ответы на практике"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^$",
-                "rename": "нет данных"
+                "renamePattern": "нет данных"
               }
             }
           ]
@@ -1012,224 +1012,224 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "BeginDay",
-                "rename": "Начало дня"
+                "renamePattern": "Начало дня"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "FinishDay",
-                "rename": "Конец дня"
+                "renamePattern": "Конец дня"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "FinishDayFromEvent",
-                "rename": "День завершён событием"
+                "renamePattern": "День завершён событием"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "StartBudgetAllocation",
-                "rename": "Начало планирования"
+                "renamePattern": "Начало планирования"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "ChangeBudgetAllocation",
-                "rename": "Изменение бюджета"
+                "renamePattern": "Изменение бюджета"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "ConfirmBudget",
-                "rename": "Бюджет утверждён"
+                "renamePattern": "Бюджет утверждён"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "DepositSavings",
-                "rename": "Пополнение накоплений"
+                "renamePattern": "Пополнение накоплений"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "WithdrawSavings",
-                "rename": "Снятие накоплений"
+                "renamePattern": "Снятие накоплений"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "RequestFinancialPractice",
-                "rename": "Финансовая практика"
+                "renamePattern": "Финансовая практика"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "AnswerFinancialQuestion",
-                "rename": "Ответ на вопрос"
+                "renamePattern": "Ответ на вопрос"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "AdvanceFinancialPractice",
-                "rename": "Следующий вопрос"
+                "renamePattern": "Следующий вопрос"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "CloseFinancialPractice",
-                "rename": "Практика завершена"
+                "renamePattern": "Практика завершена"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "RenamePet",
-                "rename": "Переименовал питомца"
+                "renamePattern": "Переименовал питомца"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "SetPetColor",
-                "rename": "Смена цвета"
+                "renamePattern": "Смена цвета"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "SetPetLook",
-                "rename": "Смена образа"
+                "renamePattern": "Смена образа"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "OpenNextEvent",
-                "rename": "Открыл событие"
+                "renamePattern": "Открыл событие"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "SelectGoal",
-                "rename": "Выбор цели"
+                "renamePattern": "Выбор цели"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "SelectSavingGoal",
-                "rename": "Выбор цели накопления"
+                "renamePattern": "Выбор цели накопления"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "BuyGoalItem",
-                "rename": "Покупка цели"
+                "renamePattern": "Покупка цели"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "Choose",
-                "rename": "Выбор"
+                "renamePattern": "Выбор"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "CompleteEvent",
-                "rename": "Завершил событие"
+                "renamePattern": "Завершил событие"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "AcknowledgeResult",
-                "rename": "Закрыл результат"
+                "renamePattern": "Закрыл результат"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "StartDeed",
-                "rename": "Начал подработку"
+                "renamePattern": "Начал подработку"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "AcceptDeedProposal",
-                "rename": "Принял подработку"
+                "renamePattern": "Принял подработку"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "CompleteDeed",
-                "rename": "Завершил подработку"
+                "renamePattern": "Завершил подработку"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "StartStoryGame",
-                "rename": "Начал мини-игру"
+                "renamePattern": "Начал мини-игру"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "CompleteStoryGame",
-                "rename": "Прошёл мини-игру"
+                "renamePattern": "Прошёл мини-игру"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "SkipMiniGame",
-                "rename": "Пропустил мини-игру"
+                "renamePattern": "Пропустил мини-игру"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "DismissDeedProposal",
-                "rename": "Отклонил подработку"
+                "renamePattern": "Отклонил подработку"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "PauseEvent",
-                "rename": "Пауза события"
+                "renamePattern": "Пауза события"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "Feed",
-                "rename": "Кормление"
+                "renamePattern": "Кормление"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^$",
-                "rename": "нет данных"
+                "renamePattern": "нет данных"
               }
             }
           ]
@@ -1301,7 +1301,7 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "^$",
-                "rename": "нет данных"
+                "renamePattern": "нет данных"
               }
             }
           ]
@@ -1373,28 +1373,28 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "DEPOSIT",
-                "rename": "Пополнение"
+                "renamePattern": "Пополнение"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "WITHDRAW",
-                "rename": "Снятие"
+                "renamePattern": "Снятие"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "GOAL_PURCHASE",
-                "rename": "Покупка цели"
+                "renamePattern": "Покупка цели"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^$",
-                "rename": "нет данных"
+                "renamePattern": "нет данных"
               }
             }
           ]
@@ -1663,35 +1663,35 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "needs",
-                "rename": "Нужды"
+                "renamePattern": "Нужды"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "wants",
-                "rename": "Желания"
+                "renamePattern": "Желания"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "savings",
-                "rename": "Накопления"
+                "renamePattern": "Накопления"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "reserve",
-                "rename": "Запас"
+                "renamePattern": "Запас"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^$",
-                "rename": "нет данных"
+                "renamePattern": "нет данных"
               }
             }
           ]
@@ -1878,35 +1878,35 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "COINS",
-                "rename": "Монеты"
+                "renamePattern": "Монеты"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "ACCESSORY",
-                "rename": "Аксессуар"
+                "renamePattern": "Аксессуар"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "APPLIED",
-                "rename": "Принято"
+                "renamePattern": "Принято"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "ALREADY_OWNED",
-                "rename": "Уже был"
+                "renamePattern": "Уже был"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "^$",
-                "rename": "нет данных"
+                "renamePattern": "нет данных"
               }
             }
           ]
@@ -1974,21 +1974,21 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "created=True",
-                "rename": "новые"
+                "renamePattern": "новые"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "created=False",
-                "rename": "повторы"
+                "renamePattern": "повторы"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "created=\\)",
-                "rename": "нет данных)"
+                "renamePattern": "нет данных)"
               }
             }
           ]
