@@ -1,5 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v12: бизнес-метрики hackaton-fin-department (fin_*).
+# Дашборд «Игровая аналитика» v13: бизнес-метрики hackaton-fin-department (fin_*).
 # Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
 # палитра Tableau (насыщенная, без кислоты); проценты в легенде под донатами;
 apiVersion: v1
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 12,
+      "version": 13,
       "templating": {
         "list": []
       },
@@ -251,7 +251,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden"
           },
           "fieldConfig": {
             "defaults": {
@@ -266,7 +266,99 @@ data:
                     "value": null
                   }
                 ]
-              }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Глава 1"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#4E79A7"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Глава 2"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#59A14F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Глава 3"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#F28E2B"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Глава 4"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#B07AA1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Без главы"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#76B7B2"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Неизвестно"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#E15759"
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "overrides": []
           }
@@ -412,8 +504,8 @@ data:
           "gridPos": {
             "h": 11,
             "w": 12,
-            "x": 12,
-            "y": 13
+            "x": 0,
+            "y": 25
           },
           "targets": [
             {
@@ -481,7 +573,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden"
           },
           "fieldConfig": {
             "defaults": {
@@ -496,7 +588,159 @@ data:
                     "value": null
                   }
                 ]
-              }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "01. 0–50"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#4E79A7"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "02. 50–100"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#59A14F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "03. 100–150"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#F28E2B"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "04. 150–200"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#B07AA1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "05. 200–300"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#76B7B2"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "06. 300–400"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#E15759"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "07. 400–600"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#EDC948"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "08. 600–800"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#9C755F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "09. 800–1 000"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#86BCB6"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "10. 1 000 и больше"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#D37295"
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "overrides": []
           }
@@ -513,8 +757,8 @@ data:
           "gridPos": {
             "h": 11,
             "w": 12,
-            "x": 0,
-            "y": 25
+            "x": 12,
+            "y": 13
           },
           "targets": [
             {
@@ -714,7 +958,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden"
           },
           "fieldConfig": {
             "defaults": {
@@ -1714,7 +1958,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden"
           },
           "fieldConfig": {
             "defaults": {
@@ -2179,7 +2423,7 @@ data:
         },
         {
           "id": 13,
-          "type": "timeseries",
+          "type": "bargauge",
           "title": "Действия игроков",
           "description": "Самые частые действия: кормление, бюджет, события, мини-игры",
           "datasource": {
@@ -2195,24 +2439,24 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(8, max by (name) (fin_interactions_stored))",
+              "expr": "topk(10, max by (name) (fin_interactions_stored))",
               "legendFormat": "{{name}}"
             }
           ],
           "options": {
-            "legend": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
               "calcs": [
-                "mean",
                 "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "hidden"
           },
           "fieldConfig": {
             "defaults": {
@@ -2222,14 +2466,7 @@ data:
               "color": {
                 "mode": "palette-classic"
               },
-              "custom": {
-                "drawStyle": "line",
-                "lineWidth": 3,
-                "fillOpacity": 25,
-                "showPoints": "never",
-                "spanNulls": true,
-                "gradientMode": "opacity"
-              },
+              "custom": null,
               "overrides": [
                 {
                   "matcher": {
@@ -2711,7 +2948,7 @@ data:
             },
             "showUnfilled": true,
             "sizing": "auto",
-            "valueMode": "color"
+            "valueMode": "hidden"
           },
           "fieldConfig": {
             "defaults": {
