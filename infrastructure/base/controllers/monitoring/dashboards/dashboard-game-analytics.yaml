@@ -1,7 +1,7 @@
 ---
-# Дашборд «Игровая аналитика» v6: бизнес-метрики hackaton-fin-department (fin_*).
-# EN-лейблы на бэке, перевод — renameByRegex; агрегаты max by от дублей серий;
-# диапазоны баланса считаются из bucket'ов прямо в запросах; описание у каждой панели.
+# Дашборд «Игровая аналитика» v7: бизнес-метрики hackaton-fin-department (fin_*).
+# Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
+# мягкая палитра (Nord); перевод через renameByRegex; агрегаты max by от дублей.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 6,
+      "version": 7,
       "templating": {
         "list": []
       },
@@ -43,36 +43,48 @@ data:
           "id": 1,
           "type": "row",
           "title": "Обзор",
+          "description": "Сводка по аудитории и прогрессу игроков",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 0
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "description": "Сводка по аудитории и прогрессу игроков"
+            "y": 1
+          }
         },
         {
           "id": 2,
           "type": "stat",
-          "title": "Миры",
+          "title": "Аудитория",
+          "description": "Сохранённые миры, зарегистрированные устройства и запуски кампании",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
-            "w": 4,
+            "h": 9,
+            "w": 12,
             "x": 0,
-            "y": 1
+            "y": 2
           },
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_worlds_total)"
+              "expr": "max(fin_worlds_total)",
+              "legendFormat": "Миры"
+            },
+            {
+              "refId": "B",
+              "expr": "max(fin_profiles_total)",
+              "legendFormat": "Профили"
+            },
+            {
+              "refId": "C",
+              "expr": "max(fin_game_runs_total)",
+              "legendFormat": "Прогоны"
             }
           ],
           "options": {
@@ -98,174 +110,83 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "blue",
+                    "color": "#81A1C1",
                     "value": null
                   }
                 ]
               }
             },
-            "overrides": []
-          },
-          "description": "Сколько игроков сохранили прогресс в облаке"
-        },
-        {
-          "id": 3,
-          "type": "stat",
-          "title": "Профили",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 4,
-            "x": 4,
-            "y": 1
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(fin_profiles_total)"
-            }
-          ],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Миры"
+                },
+                "properties": [
                   {
-                    "color": "blue",
-                    "value": null
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#81A1C1"
+                    }
                   }
                 ]
-              }
-            },
-            "overrides": []
-          },
-          "description": "Сколько устройств зарегистрировано в игре"
-        },
-        {
-          "id": 4,
-          "type": "stat",
-          "title": "Прогоны",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 4,
-            "x": 8,
-            "y": 1
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(fin_game_runs_total)"
-            }
-          ],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Профили"
+                },
+                "properties": [
                   {
-                    "color": "purple",
-                    "value": null
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#88C0D0"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Прогоны"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B48EAD"
+                    }
                   }
                 ]
               }
-            },
-            "overrides": []
-          },
-          "description": "Сколько раз игроки начинали кампанию заново: каждый рестарт истории — новый прогон"
+            ]
+          }
         },
         {
           "id": 5,
           "type": "bargauge",
           "title": "Игроки по главам",
+          "description": "На какой главе истории сейчас находятся игроки",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 8,
+            "h": 11,
             "w": 12,
             "x": 12,
-            "y": 1
+            "y": 2
           },
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (act) (fin_players_by_story_act)",
+              "expr": "max by (act) (fin_players_by_story_act) or on() label_replace(vector(0), \"act\", \"нет данных\", \"\", \"\")",
               "legendFormat": "{{act}}"
             }
           ],
-          "options": {
-            "displayMode": "gradient",
-            "namePlacement": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showUnfilled": true,
-            "sizing": "auto",
-            "valueMode": "color"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
           "transformations": [
             {
               "id": "renameByRegex",
@@ -315,42 +236,321 @@ data:
                 "regex": "^unknown$",
                 "renamePattern": "Неизвестно"
               }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "renamePattern": "нет данных"
+              }
             }
           ],
-          "description": "На какой главе истории сейчас находятся игроки"
+          "options": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#A3BE8C",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          }
         },
         {
-          "id": 6,
-          "type": "piechart",
-          "title": "Возраст питомца",
+          "id": 18,
+          "type": "row",
+          "title": "Экономика миров",
+          "description": "Балансы и распределение денег у игроков",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 6,
+            "h": 1,
+            "w": 24,
             "x": 0,
-            "y": 10
+            "y": 12
+          }
+        },
+        {
+          "id": 19,
+          "type": "timeseries",
+          "title": "Средние балансы, монет",
+          "description": "Средний доступный баланс, накопления и нераспределённые деньги",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 13
           },
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (age) (fin_players_by_pet_age)",
-              "legendFormat": "{{age}}"
+              "expr": "max(fin_pet_balance_sum) / max(fin_pet_balance_count)",
+              "legendFormat": "Доступный"
+            },
+            {
+              "refId": "B",
+              "expr": "max(fin_pet_savings_balance_sum) / max(fin_pet_savings_balance_count)",
+              "legendFormat": "Накопления"
+            },
+            {
+              "refId": "C",
+              "expr": "max(fin_pet_unallocated_sum) / max(fin_pet_unallocated_count)",
+              "legendFormat": "Нераспределено"
             }
           ],
           "options": {
             "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull"
+              ],
               "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
+              "placement": "bottom",
+              "showLegend": true
             },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 3,
+                "fillOpacity": 25,
+                "showPoints": "never",
+                "spanNulls": true,
+                "gradientMode": "opacity"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Доступный"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A3BE8C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Накопления"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#81A1C1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Нераспределено"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D08770"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 21,
+          "type": "bargauge",
+          "title": "Распределение баланса",
+          "description": "Сколько игроков в каждом диапазоне доступного баланса, монет",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 13
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
+              "legendFormat": "01. 0–100"
+            },
+            {
+              "refId": "B",
+              "expr": "max(fin_pet_balance_bucket{le=\"250\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
+              "legendFormat": "02. 100–250"
+            },
+            {
+              "refId": "C",
+              "expr": "max(fin_pet_balance_bucket{le=\"500\"}) - max(fin_pet_balance_bucket{le=\"250\"})",
+              "legendFormat": "03. 250–500"
+            },
+            {
+              "refId": "D",
+              "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"500\"})",
+              "legendFormat": "04. 500–1 000"
+            },
+            {
+              "refId": "E",
+              "expr": "max(fin_pet_balance_bucket{le=\"2500\"}) - max(fin_pet_balance_bucket{le=\"1000\"})",
+              "legendFormat": "05. 1 000–2 500"
+            },
+            {
+              "refId": "F",
+              "expr": "max(fin_pet_balance_bucket{le=\"5000\"}) - max(fin_pet_balance_bucket{le=\"2500\"})",
+              "legendFormat": "06. 2 500–5 000"
+            },
+            {
+              "refId": "G",
+              "expr": "max(fin_pet_balance_bucket{le=\"10000\"}) - max(fin_pet_balance_bucket{le=\"5000\"})",
+              "legendFormat": "07. 5 000–10 000"
+            },
+            {
+              "refId": "H",
+              "expr": "max(fin_pet_balance_bucket{le=\"25000\"}) - max(fin_pet_balance_bucket{le=\"10000\"})",
+              "legendFormat": "08. 10 000–25 000"
+            },
+            {
+              "refId": "I",
+              "expr": "max(fin_pet_balance_bucket{le=\"50000\"}) - max(fin_pet_balance_bucket{le=\"25000\"})",
+              "legendFormat": "09. 25 000–50 000"
+            },
+            {
+              "refId": "J",
+              "expr": "max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"50000\"})",
+              "legendFormat": "10. 50 000 и больше"
+            }
+          ],
+          "transformations": [],
+          "options": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#88C0D0",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 20,
+          "type": "piechart",
+          "title": "Доли бюджета",
+          "description": "Как игроки делят бюджет: обязательные нужды, желания, накопления, запас",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max(fin_budget_amount_stored{bucket=\"needs\"}) or vector(0)",
+              "legendFormat": "Нужды"
+            },
+            {
+              "refId": "B",
+              "expr": "max(fin_budget_amount_stored{bucket=\"wants\"}) or vector(0)",
+              "legendFormat": "Желания"
+            },
+            {
+              "refId": "C",
+              "expr": "max(fin_budget_amount_stored{bucket=\"savings\"}) or vector(0)",
+              "legendFormat": "Накопления"
+            },
+            {
+              "refId": "D",
+              "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"}) or vector(0)",
+              "legendFormat": "Запас"
+            }
+          ],
+          "options": {
             "pieType": "donut",
+            "displayLabels": [
+              "name",
+              "percent"
+            ],
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -361,60 +561,219 @@ data:
             "tooltip": {
               "mode": "single",
               "sort": "none"
+            },
+            "legend": {
+              "showLegend": false
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "decimals": 0
-            },
-            "overrides": []
-          },
-          "transformations": [
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "CUB",
-                "renamePattern": "Детёныш"
+              "decimals": 0,
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
               }
             },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "TEEN",
-                "renamePattern": "Подросток"
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Нужды"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#81A1C1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Желания"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D08770"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Накопления"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#88C0D0"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Запас"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EBCB8B"
+                    }
+                  }
+                ]
               }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "ADULT",
-                "renamePattern": "Взрослый"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "SENIOR",
-                "renamePattern": "Старший"
-              }
-            }
-          ],
-          "description": "На сколько выросли питомцы игроков"
+            ]
+          }
         },
         {
-          "id": 7,
-          "type": "piechart",
-          "title": "Темперамент",
+          "id": 15,
+          "type": "bargauge",
+          "title": "Деньги в движении, монет",
+          "description": "Пополнения и снятия накоплений, незапланированные траты и заработок за всю историю",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 6,
-            "y": 10
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 25
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max by (kind) (fin_saving_amount_stored) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
+              "legendFormat": "{{kind}}"
+            },
+            {
+              "refId": "B",
+              "expr": "max(fin_unexpected_expense_amount_stored) or vector(0)",
+              "legendFormat": "Незапланированные траты"
+            },
+            {
+              "refId": "C",
+              "expr": "max(fin_earning_amount_stored) or vector(0)",
+              "legendFormat": "Заработок"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "DEPOSIT",
+                "renamePattern": "Пополнение"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "WITHDRAW",
+                "renamePattern": "Снятие"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "GOAL_PURCHASE",
+                "renamePattern": "Покупка цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^unknown$",
+                "renamePattern": "Неизвестно"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "renamePattern": "нет данных"
+              }
+            }
+          ],
+          "options": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#EBCB8B",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 6,
+          "type": "row",
+          "title": "Питомцы",
+          "description": "Возраст, характер и образ питомца у игроков",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 37
+          }
+        },
+        {
+          "id": 7,
+          "type": "piechart",
+          "title": "Темперамент",
+          "description": "Какие характеры выбирают игроки",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 38
           },
           "targets": [
             {
@@ -424,16 +783,11 @@ data:
             }
           ],
           "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
-            },
             "pieType": "donut",
+            "displayLabels": [
+              "name",
+              "percent"
+            ],
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -444,14 +798,85 @@ data:
             "tooltip": {
               "mode": "single",
               "sort": "none"
+            },
+            "legend": {
+              "showLegend": false
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "decimals": 0
+              "decimals": 0,
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Любознательный"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#88C0D0"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Уверенный"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A3BE8C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Радостный"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EBCB8B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Неизвестно"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B48EAD"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -482,8 +907,7 @@ data:
                 "renamePattern": "Неизвестно"
               }
             }
-          ],
-          "description": "Какие характеры выбирают игроки"
+          ]
         },
         {
           "id": 8,
@@ -495,10 +919,10 @@ data:
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 12,
-            "y": 10
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 38
           },
           "targets": [
             {
@@ -508,16 +932,11 @@ data:
             }
           ],
           "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
-            },
             "pieType": "donut",
+            "displayLabels": [
+              "name",
+              "percent"
+            ],
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -528,14 +947,145 @@ data:
             "tooltip": {
               "mode": "single",
               "sort": "none"
+            },
+            "legend": {
+              "showLegend": false
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "decimals": 0
+              "decimals": 0,
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Очки"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#88C0D0"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Рюкзак"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A3BE8C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Компас"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EBCB8B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Шляпа"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D08770"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Классика"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B48EAD"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Бандана"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#81A1C1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Бинокль"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8FBCBB"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Нашивка"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#BF616A"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -597,79 +1147,19 @@ data:
           ]
         },
         {
-          "id": 9,
-          "type": "stat",
-          "title": "Средний игровой день",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 18,
-            "y": 10
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(fin_engine_day_sum) / max(fin_engine_day_count)"
-            }
-          ],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 1,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 2
-                  },
-                  {
-                    "color": "green",
-                    "value": 5
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "description": "Средний игровой день: насколько глубоко игроки продвинулись по кампании"
-        },
-        {
           "id": 10,
           "type": "piechart",
           "title": "Целевые проекты",
+          "description": "Сколько игроков завершили большие целевые проекты кампании",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 6,
+            "h": 11,
+            "w": 12,
             "x": 0,
-            "y": 20
+            "y": 49
           },
           "targets": [
             {
@@ -679,16 +1169,11 @@ data:
             }
           ],
           "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
-            },
             "pieType": "donut",
+            "displayLabels": [
+              "name",
+              "percent"
+            ],
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -699,14 +1184,100 @@ data:
             "tooltip": {
               "mode": "single",
               "sort": "none"
+            },
+            "legend": {
+              "showLegend": false
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
-              "decimals": 0
+              "decimals": 0,
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Наблюдение за звёздами"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#88C0D0"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Набор для башни"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A3BE8C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Дом исследователя"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EBCB8B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Карта королевства"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D08770"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Большая экспедиция"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B48EAD"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -744,29 +1315,90 @@ data:
                 "renamePattern": "Большая экспедиция"
               }
             }
-          ],
-          "description": "Сколько игроков завершили большие целевые проекты кампании"
+          ]
         },
         {
-          "id": 11,
-          "type": "row",
-          "title": "Активность",
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 30
-          },
+          "id": 9,
+          "type": "stat",
+          "title": "Средний игровой день",
+          "description": "Насколько глубоко игроки продвинулись по кампании",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "description": "Игровые события и поведение игроков"
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 49
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max(fin_engine_day_sum) / max(fin_engine_day_count)"
+            }
+          ],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#BF616A",
+                    "value": null
+                  },
+                  {
+                    "color": "#EBCB8B",
+                    "value": 2
+                  },
+                  {
+                    "color": "#A3BE8C",
+                    "value": 5
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 11,
+          "type": "row",
+          "title": "Активность и поведение",
+          "description": "Игровые события и решения игроков",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 60
+          }
         },
         {
           "id": 12,
-          "type": "bargauge",
-          "title": "Факты по типам — всего",
+          "type": "timeseries",
+          "title": "Факты по типам",
+          "description": "Все игровые события в базе по типам: бюджеты, покупки, ответы, заработок",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -775,7 +1407,7 @@ data:
             "h": 11,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 61
           },
           "targets": [
             {
@@ -785,32 +1417,28 @@ data:
             }
           ],
           "options": {
-            "displayMode": "gradient",
-            "namePlacement": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
+            "legend": {
               "calcs": [
+                "mean",
                 "lastNotNull"
               ],
-              "fields": "",
-              "values": false
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
             },
-            "showUnfilled": true,
-            "sizing": "auto",
-            "valueMode": "color"
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
               "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
+              "min": 0,
+              "color": {
+                "mode": "shades",
+                "value": "#A3BE8C"
               },
               "custom": {
                 "drawStyle": "bars",
@@ -905,7 +1533,7 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "recovery_action",
-                "renamePattern": "Восстановление после траты"
+                "renamePattern": "Восстановление"
               }
             },
             {
@@ -971,13 +1599,13 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ],
-          "description": "Все игровые события в базе по типам: бюджеты, покупки, ответы, заработок"
+          ]
         },
         {
           "id": 13,
-          "type": "bargauge",
-          "title": "Действия игроков — всего",
+          "type": "timeseries",
+          "title": "Действия игроков",
+          "description": "Самые частые действия: кормление, бюджет, события, мини-игры",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -986,7 +1614,7 @@ data:
             "h": 11,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 61
           },
           "targets": [
             {
@@ -996,37 +1624,33 @@ data:
             }
           ],
           "options": {
-            "displayMode": "gradient",
-            "namePlacement": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
+            "legend": {
               "calcs": [
+                "mean",
                 "lastNotNull"
               ],
-              "fields": "",
-              "values": false
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
             },
-            "showUnfilled": true,
-            "sizing": "auto",
-            "valueMode": "color"
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
               "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  }
-                ]
+              "min": 0,
+              "color": {
+                "mode": "shades",
+                "value": "#81A1C1"
               },
               "custom": {
                 "drawStyle": "line",
                 "lineWidth": 3,
-                "fillOpacity": 15,
+                "fillOpacity": 25,
                 "showPoints": "never",
                 "spanNulls": true,
                 "gradientMode": "opacity"
@@ -1259,22 +1883,22 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ],
-          "description": "Самые частые действия игроков: кормление, бюджет, события, мини-игры"
+          ]
         },
         {
           "id": 14,
           "type": "bargauge",
           "title": "Покупки и откладывание",
+          "description": "Сколько желанных покупок совершено, а сколько желаний отложено ради цели",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 18,
-            "y": 20
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 72
           },
           "targets": [
             {
@@ -1293,6 +1917,7 @@ data:
               "legendFormat": "Отложено желание"
             }
           ],
+          "transformations": [],
           "options": {
             "displayMode": "gradient",
             "namePlacement": "auto",
@@ -1312,136 +1937,34 @@ data:
             "defaults": {
               "unit": "short",
               "decimals": 0,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "purple",
+                    "color": "#B48EAD",
                     "value": null
                   }
                 ]
               }
             },
             "overrides": []
-          },
-          "transformations": [
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
-            }
-          ],
-          "description": "Сколько желанных покупок совершено, а сколько желаний отложено ради цели"
-        },
-        {
-          "id": 15,
-          "type": "timeseries",
-          "title": "Деньги в движении, монет",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 11,
-            "w": 6,
-            "x": 6,
-            "y": 44
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max by (kind) (fin_saving_amount_stored) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
-              "legendFormat": "{{kind}}"
-            },
-            {
-              "refId": "B",
-              "expr": "max(fin_unexpected_expense_amount_stored) or vector(0)",
-              "legendFormat": "Незапланированные траты"
-            },
-            {
-              "refId": "C",
-              "expr": "max(fin_earning_amount_stored) or vector(0)",
-              "legendFormat": "Заработок"
-            }
-          ],
-          "options": {
-            "displayMode": "gradient",
-            "namePlacement": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showUnfilled": true,
-            "sizing": "auto",
-            "valueMode": "color"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "yellow",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "transformations": [
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "DEPOSIT",
-                "renamePattern": "Пополнение"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "WITHDRAW",
-                "renamePattern": "Снятие"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "GOAL_PURCHASE",
-                "renamePattern": "Покупка цели"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
-            }
-          ],
-          "description": "Пополнения и снятия накоплений, незапланированные траты и заработок за всю историю"
+          }
         },
         {
           "id": 16,
           "type": "stat",
           "title": "Верные ответы",
+          "description": "Доля правильных ответов в обучающих практиках",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 12,
-            "y": 20
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 72
           },
           "targets": [
             {
@@ -1462,412 +1985,28 @@ data:
               "values": false
             },
             "textMode": "auto",
-            "wideLayout": true,
-            "noValue": "нет данных"
+            "wideLayout": true
           },
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
               "decimals": 0,
-              "min": 0,
-              "max": 1,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "red",
+                    "color": "#BF616A",
                     "value": null
                   },
                   {
-                    "color": "yellow",
+                    "color": "#EBCB8B",
                     "value": 0.5
                   },
                   {
-                    "color": "green",
+                    "color": "#A3BE8C",
                     "value": 0.75
                   }
                 ]
-              }
-            },
-            "overrides": []
-          },
-          "description": "Доля правильных ответов в обучающих практиках"
-        },
-        {
-          "id": 17,
-          "type": "stat",
-          "title": "Мини-игры на игрока",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 6,
-            "y": 20
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(fin_completed_minigames_sum) / max(fin_completed_minigames_count)"
-            }
-          ],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 1,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "description": "Среднее число пройденных мини-игр на игрока"
-        },
-        {
-          "id": 18,
-          "type": "row",
-          "title": "Экономика миров",
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 43
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "description": "Балансы и распределение денег у игроков"
-        },
-        {
-          "id": 19,
-          "type": "timeseries",
-          "title": "Средние балансы, монет",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 11,
-            "w": 6,
-            "x": 0,
-            "y": 44
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(fin_pet_balance_sum) / max(fin_pet_balance_count)",
-              "legendFormat": "Доступный"
-            },
-            {
-              "refId": "B",
-              "expr": "max(fin_pet_savings_balance_sum) / max(fin_pet_savings_balance_count)",
-              "legendFormat": "Накопления"
-            },
-            {
-              "refId": "C",
-              "expr": "max(fin_pet_unallocated_sum) / max(fin_pet_unallocated_count)",
-              "legendFormat": "Нераспределено"
-            }
-          ],
-          "options": {
-            "legend": {
-              "calcs": [
-                "lastNotNull",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "min": 0,
-              "custom": {
-                "drawStyle": "line",
-                "lineWidth": 3,
-                "fillOpacity": 25,
-                "showPoints": "never",
-                "spanNulls": true,
-                "gradientMode": "opacity"
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Доступный"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "green"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Накопления"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "blue"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Нераспределено"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "orange"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "description": "Средний доступный баланс, накопления и нераспределённые деньги"
-        },
-        {
-          "id": 20,
-          "type": "piechart",
-          "title": "Доли бюджета",
-          "description": "Как игроки делят бюджет: обязательные нужды, желания, накопления, запас",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 11,
-            "w": 6,
-            "x": 12,
-            "y": 44
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(fin_budget_amount_stored{bucket=\"needs\"}) or vector(0)",
-              "legendFormat": "Нужды"
-            },
-            {
-              "refId": "B",
-              "expr": "max(fin_budget_amount_stored{bucket=\"wants\"}) or vector(0)",
-              "legendFormat": "Желания"
-            },
-            {
-              "refId": "C",
-              "expr": "max(fin_budget_amount_stored{bucket=\"savings\"}) or vector(0)",
-              "legendFormat": "Накопления"
-            },
-            {
-              "refId": "D",
-              "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"}) or vector(0)",
-              "legendFormat": "Запас"
-            }
-          ],
-          "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
-            },
-            "pieType": "donut",
-            "displayLabels": [
-              "percent"
-            ],
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0
-            },
-            "overrides": []
-          },
-          "transformations": null
-        },
-        {
-          "id": 21,
-          "type": "table",
-          "title": "Распределение баланса",
-          "description": "Сколько игроков в каждом диапазоне доступного баланса, монет",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "gridPos": {
-            "h": 11,
-            "w": 6,
-            "x": 18,
-            "y": 44
-          },
-          "targets": [
-            {
-              "refId": "01",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"0\"}), \"range\", \"01. 0–100\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "02",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"250\"}) - max(fin_pet_balance_bucket{le=\"100\"}), \"range\", \"02. 100–250\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "03",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"500\"}) - max(fin_pet_balance_bucket{le=\"250\"}), \"range\", \"03. 250–500\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "04",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"500\"}), \"range\", \"04. 500–1 000\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "05",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"2500\"}) - max(fin_pet_balance_bucket{le=\"1000\"}), \"range\", \"05. 1 000–2 500\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "06",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"5000\"}) - max(fin_pet_balance_bucket{le=\"2500\"}), \"range\", \"06. 2 500–5 000\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "07",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"10000\"}) - max(fin_pet_balance_bucket{le=\"5000\"}), \"range\", \"07. 5 000–10 000\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "08",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"25000\"}) - max(fin_pet_balance_bucket{le=\"10000\"}), \"range\", \"08. 10 000–25 000\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "09",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"50000\"}) - max(fin_pet_balance_bucket{le=\"25000\"}), \"range\", \"09. 25 000–50 000\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            },
-            {
-              "refId": "10",
-              "expr": "label_replace(max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"50000\"}), \"range\", \"10. 50 000 и больше\", \"\", \"\")",
-              "instant": true,
-              "format": "table"
-            }
-          ],
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true
-                },
-                "renameByName": {
-                  "Value": "Игроков"
-                },
-                "indexByName": {}
-              }
-            },
-            {
-              "id": "sortBy",
-              "options": {
-                "sort": [
-                  {
-                    "field": "range",
-                    "desc": false
-                  }
-                ]
-              }
-            }
-          ],
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": true
-            },
-            "showHeader": true
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
               }
             },
             "overrides": []
@@ -1877,31 +2016,32 @@ data:
           "id": 22,
           "type": "row",
           "title": "Синхронизация и награды",
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 56
-          },
+          "description": "Облачная синхронизация и родительские награды",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "description": "Облачная синхронизация и родительские награды"
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 83
+          }
         },
         {
           "id": 23,
           "type": "timeseries",
           "title": "Награды родителей",
+          "description": "Выдача монет и аксессуаров, подтверждение детьми",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 0,
-            "y": 57
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 84
           },
           "targets": [
             {
@@ -1918,7 +2058,8 @@ data:
           "options": {
             "legend": {
               "calcs": [
-                "mean"
+                "mean",
+                "lastNotNull"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1932,16 +2073,97 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "ops",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
               "custom": {
                 "drawStyle": "line",
-                "fillOpacity": 25,
                 "lineWidth": 3,
+                "fillOpacity": 25,
                 "showPoints": "never",
                 "spanNulls": true,
                 "gradientMode": "opacity"
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Монеты"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EBCB8B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Аксессуары"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B48EAD"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Принято"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A3BE8C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Уже был"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#81A1C1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "нет данных"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4C566A"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -1955,7 +2177,7 @@ data:
               "id": "renameByRegex",
               "options": {
                 "regex": "ACCESSORY",
-                "renamePattern": "Аксессуар"
+                "renamePattern": "Аксессуары"
               }
             },
             {
@@ -1979,22 +2201,22 @@ data:
                 "renamePattern": "нет данных"
               }
             }
-          ],
-          "description": "Награды от родителей: выдача монет и аксессуаров, подтверждение детьми"
+          ]
         },
         {
           "id": 24,
           "type": "timeseries",
           "title": "Синхронизация устройств",
+          "description": "Темп облачной синхронизации: новые сохранения и повторы",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 8,
-            "y": 57
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 84
           },
           "targets": [
             {
@@ -2016,7 +2238,8 @@ data:
           "options": {
             "legend": {
               "calcs": [
-                "mean"
+                "mean",
+                "lastNotNull"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2030,14 +2253,81 @@ data:
           "fieldConfig": {
             "defaults": {
               "unit": "ops",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
               "custom": {
                 "drawStyle": "line",
-                "fillOpacity": 25,
                 "lineWidth": 3,
+                "fillOpacity": 25,
                 "showPoints": "never",
                 "spanNulls": true,
                 "gradientMode": "opacity"
-              }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byRegexp",
+                    "options": "/Снапшоты/"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#88C0D0"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byRegexp",
+                    "options": "/Аналитика/"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#81A1C1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byRegexp",
+                    "options": "/Регистрации/"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#B48EAD"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byRegexp",
+                    "options": "/нет данных/"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#4C566A"
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "overrides": []
           },
@@ -2063,22 +2353,22 @@ data:
                 "renamePattern": "— нет данных"
               }
             }
-          ],
-          "description": "Темп облачной синхронизации устройств: новые сохранения и повторы"
+          ]
         },
         {
           "id": 25,
           "type": "stat",
           "title": "Агрегация",
+          "description": "Как давно обновлялись агрегаты; норма — меньше двух минут",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
             "h": 9,
-            "w": 4,
-            "x": 16,
-            "y": 57
+            "w": 12,
+            "x": 12,
+            "y": 95
           },
           "targets": [
             {
@@ -2099,8 +2389,7 @@ data:
               "values": false
             },
             "textMode": "auto",
-            "wideLayout": true,
-            "noValue": "нет данных"
+            "wideLayout": true
           },
           "fieldConfig": {
             "defaults": {
@@ -2110,37 +2399,37 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "#A3BE8C",
                     "value": null
                   },
                   {
-                    "color": "yellow",
+                    "color": "#EBCB8B",
                     "value": 300
                   },
                   {
-                    "color": "red",
+                    "color": "#BF616A",
                     "value": 900
                   }
                 ]
               }
             },
             "overrides": []
-          },
-          "description": "Как давно обновлялись агрегаты; норма — меньше двух минут"
+          }
         },
         {
           "id": 26,
           "type": "stat",
           "title": "Ошибки за час",
+          "description": "Число сбоев пересчёта агрегатов за последний час",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "gridPos": {
             "h": 9,
-            "w": 4,
-            "x": 20,
-            "y": 57
+            "w": 12,
+            "x": 0,
+            "y": 95
           },
           "targets": [
             {
@@ -2161,8 +2450,7 @@ data:
               "values": false
             },
             "textMode": "auto",
-            "wideLayout": true,
-            "noValue": "нет данных"
+            "wideLayout": true
           },
           "fieldConfig": {
             "defaults": {
@@ -2172,19 +2460,18 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "#A3BE8C",
                     "value": null
                   },
                   {
-                    "color": "red",
+                    "color": "#BF616A",
                     "value": 1
                   }
                 ]
               }
             },
             "overrides": []
-          },
-          "description": "Число сбоев пересчёта агрегатов за последний час"
+          }
         }
       ]
     }
