@@ -1,5 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v9: бизнес-метрики hackaton-fin-department (fin_*).
+# Дашборд «Игровая аналитика» v12: бизнес-метрики hackaton-fin-department (fin_*).
 # Не больше двух панелей в ряду; донаты крупным планом с подписями на срезах;
 # палитра Tableau (насыщенная, без кислоты); проценты в легенде под донатами;
 apiVersion: v1
@@ -34,7 +34,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 9,
+      "version": 12,
       "templating": {
         "list": []
       },
@@ -183,7 +183,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (act) (fin_players_by_story_act) or on() label_replace(vector(0), \"act\", \"нет данных\", \"\", \"\")",
+              "expr": "max by (act) (fin_players_by_story_act)",
               "legendFormat": "{{act}}"
             }
           ],
@@ -526,22 +526,22 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_budget_amount_stored{bucket=\"needs\"}) or vector(0)",
+              "expr": "max(fin_budget_amount_stored{bucket=\"needs\"})",
               "legendFormat": "Нужды"
             },
             {
               "refId": "B",
-              "expr": "max(fin_budget_amount_stored{bucket=\"wants\"}) or vector(0)",
+              "expr": "max(fin_budget_amount_stored{bucket=\"wants\"})",
               "legendFormat": "Желания"
             },
             {
               "refId": "C",
-              "expr": "max(fin_budget_amount_stored{bucket=\"savings\"}) or vector(0)",
+              "expr": "max(fin_budget_amount_stored{bucket=\"savings\"})",
               "legendFormat": "Накопления"
             },
             {
               "refId": "D",
-              "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"}) or vector(0)",
+              "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"})",
               "legendFormat": "Запас"
             }
           ],
@@ -664,17 +664,17 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (kind) (fin_saving_amount_stored) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
+              "expr": "max by (kind) (fin_saving_amount_stored)",
               "legendFormat": "{{kind}}"
             },
             {
               "refId": "B",
-              "expr": "max(fin_unexpected_expense_amount_stored) or vector(0)",
+              "expr": "max(fin_unexpected_expense_amount_stored)",
               "legendFormat": "Незапланированные траты"
             },
             {
               "refId": "C",
-              "expr": "max(fin_earning_amount_stored) or vector(0)",
+              "expr": "max(fin_earning_amount_stored)",
               "legendFormat": "Заработок"
             }
           ],
@@ -743,7 +743,99 @@ data:
                     "value": null
                   }
                 ]
-              }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Пополнение"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#59A14F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Снятие"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#E15759"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Покупка цели"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#4E79A7"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Незапланированные траты"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#D37295"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Заработок"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#EDC948"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "нет данных"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#79706E"
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "overrides": []
           }
@@ -1520,8 +1612,29 @@ data:
             {
               "id": "renameByRegex",
               "options": {
-                "regex": "age",
-                "renamePattern": ""
+                "regex": "CUB",
+                "renamePattern": "Детёныш"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "TEEN",
+                "renamePattern": "Подросток"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ADULT",
+                "renamePattern": "Взрослый"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SENIOR",
+                "renamePattern": "Старший"
               }
             }
           ]
@@ -1597,7 +1710,7 @@ data:
         },
         {
           "id": 12,
-          "type": "timeseries",
+          "type": "bargauge",
           "title": "Факты по типам",
           "description": "Все игровые события в базе по типам: бюджеты, покупки, ответы, заработок",
           "datasource": {
@@ -1613,44 +1726,357 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(7, max by (detail_type) (fin_facts_stored)) or on() label_replace(vector(0), \"detail_type\", \"нет данных\", \"\", \"\")",
+              "expr": "topk(10, max by (detail_type) (fin_facts_stored))",
               "legendFormat": "{{detail_type}}"
             }
           ],
           "options": {
-            "legend": {
+            "displayMode": "gradient",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
               "calcs": [
-                "mean",
                 "lastNotNull"
               ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
           },
           "fieldConfig": {
             "defaults": {
               "unit": "short",
               "decimals": 0,
               "min": 0,
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "#59A14F"
-              },
-              "custom": {
-                "drawStyle": "bars",
-                "lineWidth": 1,
-                "fillOpacity": 80,
-                "gradientMode": "opacity",
-                "showPoints": "never",
-                "spanNulls": true
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#59A14F",
+                    "value": null
+                  }
+                ]
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Действия"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Покупки"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#F28E2B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Утверждённый бюджет"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#59A14F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Заработок получен"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EDC948"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Планы заработка"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B07AA1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Отложенные желания"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#76B7B2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Ответы на практике"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E15759"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Движение накоплений"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#9C755F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Решение о запасе"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#86BCB6"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Незапланированные траты"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D37295"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Окна дохода"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#BAB0AC"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Машина времени"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D4A6C8"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Цель накопления закрыта"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8CD17D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Намерение накопления"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FABFD2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Приоритет применён"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B6992D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Конфликт приоритетов"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#499894"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Восстановление"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#DDB6A9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Выбор ресурса"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A0CBE8"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Сравнение затрат"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FFBE7D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Ответы на вопросы"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#79706E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "нет данных"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3B4252"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -1820,7 +2246,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(8, max by (name) (fin_interactions_stored)) or on() label_replace(vector(0), \"name\", \"нет данных\", \"\", \"\")",
+              "expr": "topk(8, max by (name) (fin_interactions_stored))",
               "legendFormat": "{{name}}"
             }
           ],
@@ -1845,8 +2271,7 @@ data:
               "decimals": 0,
               "min": 0,
               "color": {
-                "mode": "shades",
-                "value": "#4E79A7"
+                "mode": "palette-classic"
               },
               "custom": {
                 "drawStyle": "line",
@@ -1855,7 +2280,234 @@ data:
                 "showPoints": "never",
                 "spanNulls": true,
                 "gradientMode": "opacity"
-              }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Изменение бюджета"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#4E79A7"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Завершил событие"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#F28E2B"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Начало дня"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#59A14F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Принял подработку"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#EDC948"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Завершил подработку"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#B07AA1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Кормление"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#76B7B2"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Бюджет утверждён"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#E15759"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Выбор"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#FF9DA7"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Открыл событие"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#9C755F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Пополнение накоплений"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#86BCB6"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Закрыл результат"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#D37295"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Пропустил мини-игру"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#BAB0AC"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Снятие накоплений"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#499894"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Конец дня"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#DDB6A9"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "нет данных"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#3B4252"
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "overrides": []
           },
@@ -2076,13 +2728,6 @@ data:
                 "regex": "Feed",
                 "renamePattern": "Кормление"
               }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
             }
           ]
         },
@@ -2104,17 +2749,17 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_purchases_stored{purchased=\"True\"}) or vector(0)",
+              "expr": "max(fin_purchases_stored{purchased=\"True\"})",
               "legendFormat": "Куплено"
             },
             {
               "refId": "B",
-              "expr": "max(fin_purchases_stored{purchased=\"False\"}) or vector(0)",
+              "expr": "max(fin_purchases_stored{purchased=\"False\"})",
               "legendFormat": "Не куплено"
             },
             {
               "refId": "C",
-              "expr": "max(fin_desires_stored{declared=\"True\"}) or vector(0)",
+              "expr": "max(fin_desires_stored{declared=\"True\"})",
               "legendFormat": "Отложено желание"
             }
           ],
@@ -2147,7 +2792,54 @@ data:
                     "value": null
                   }
                 ]
-              }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Куплено"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#59A14F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Не куплено"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#E15759"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Отложено желание"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "mode": "fixed",
+                        "fixedColor": "#4E79A7"
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "overrides": []
           }
@@ -2170,7 +2862,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(max by (correct) (fin_practice_stored) or vector(0)) / clamp_min(sum(max by (correct) (fin_practice_stored) or vector(0)), 1e-9)"
+              "expr": "sum(max by (correct) (fin_practice_stored)) / clamp_min(sum(max by (correct) (fin_practice_stored)), 1e-9)"
             }
           ],
           "options": {
@@ -2247,12 +2939,12 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval])) or on() label_replace(vector(0), \"reward_type\", \"нет данных\", \"\", \"\")",
+              "expr": "max by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval]))",
               "legendFormat": "{{reward_type}}"
             },
             {
               "refId": "B",
-              "expr": "max by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval])) or on() label_replace(vector(0), \"outcome\", \"нет данных\", \"\", \"\")",
+              "expr": "max by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval]))",
               "legendFormat": "{{outcome}}"
             }
           ],
@@ -2394,13 +3086,6 @@ data:
                 "regex": "ALREADY_OWNED",
                 "renamePattern": "Уже был"
               }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "^$",
-                "renamePattern": "нет данных"
-              }
             }
           ]
         },
@@ -2422,17 +3107,17 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (created) (rate(fin_snapshot_uploads_total[$__rate_interval])) or vector(0)",
+              "expr": "max by (created) (rate(fin_snapshot_uploads_total[$__rate_interval]))",
               "legendFormat": "Снапшоты {{created}}"
             },
             {
               "refId": "B",
-              "expr": "max by (created) (rate(fin_analytics_batches_total[$__rate_interval])) or vector(0)",
+              "expr": "max by (created) (rate(fin_analytics_batches_total[$__rate_interval]))",
               "legendFormat": "Аналитика {{created}}"
             },
             {
               "refId": "C",
-              "expr": "max by (created) (rate(fin_profile_registrations_total[$__rate_interval])) or vector(0)",
+              "expr": "max by (created) (rate(fin_profile_registrations_total[$__rate_interval]))",
               "legendFormat": "Регистрации {{created}}"
             }
           ],
