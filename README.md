@@ -41,11 +41,11 @@ apps/                            # приложения + image-automation
 | `cnpg-system` | CloudNativePG operator + barman-cloud plugin | 0.29.0 |
 | `postgres` | кластер CNPG `infra-db` + Database CR (`harbor-db`, `hackaton-fin-db`), бэкапы → Yandex S3, PodMonitor метрик | — |
 | `harbor` | registry.mortypython.ru (PG на infra-db, redis internal, S3 → Yandex Object Storage) | 1.17.4 |
-| `monitoring` | kube-prometheus-stack + Grafana + дашборды (Grafana Alerting, datasource-managed) | 87.21.0 |
+| `monitoring` | kube-prometheus-stack + Grafana + 2 дашборда (configmap → sidecar: «Grafana Alerting», «Игровая аналитика») | 87.21.0 |
 | `jaeger` | Jaeger v2, storage badger на PVC 5Gi, TTL 7d, UI на jaeger.mortypython.ru | 4.13.1 |
 | `opentelemetry-system` | OTel Operator (CR `Instrumentation` / `OpenTelemetryCollector` в ns приложений) | 0.123.0 |
 | `headlamp` | Kubernetes UI (вход SA-token) | 0.43.0 |
-| `weave` | Weave GitOps UI (admin-пароль из секрета) | weave-gitops |
+| `weave` | Weave GitOps UI (admin-пароль из секрета) | weave-gitops (GitRepository, v0.38.0) |
 
 Auth без Keycloak: Grafana — admin-пароль из Vault, Headlamp —
 `kubectl -n headlamp create token headlamp`, Weave — admin-пароль
@@ -59,7 +59,8 @@ Auth без Keycloak: Grafana — admin-пароль из Vault, Headlamp —
 ```
 
 - публичные хосты (`grafana`, `jaeger`, `headlamp`, `weave`, `registry`,
-  `fin-api.mortypython.ru`) — серт LE, DNS A → VIP;
+  `otel`, `fin-api.mortypython.ru`) — серт LE, DNS A → VIP; `otel` —
+  публичный приём трейсов OTLP/HTTP (`POST /v1/traces` → jaeger `:4318`);
 - `vault.mortypython.local` — только через `/etc/hosts` → VIP, серт
   self-signed CA `fin-department Root CA` (секрет `cert-manager/ca-key-pair`,
   импортировать в браузер/ОС).
@@ -122,14 +123,17 @@ Robot-аккаунты Harbor: `fin+ci` (push, секреты CI), pull-секр
   (`istio-system/istiod.yaml`);
 - приложения: OTel SDK, OTLP gRPC `jaeger-collector.jaeger.svc:4317`
   (HTTP `:4318`), env `OTEL_ENDPOINT` в deployment;
+- внешний приём — `otel.mortypython.ru` (SAN в `fin-tls`, VS `otel-ingest`
+  → jaeger `:4318`) — для мобильного приложения;
 - недоступный коллектор приложению не мешает — экспортер только логирует;
 - OTel Operator (`opentelemetry-system`) — для `Instrumentation` CR
   в ns приложений, если нужна auto-instrumentation.
 
 ## Приоритеты (single-node)
 
-`fin-critical` (Vault, CNPG) > `fin-platform` (gateway, MinIO, Loki)
-> `fin-apps` > `fin-batch` — `infrastructure/base/controllers/priority-classes/`.
+`fin-critical` (Vault, CNPG) > `fin-platform` (ingressgateway,
+платформенные сервисы) > `fin-apps` > `fin-batch` (CI/Jobs) —
+описания в `infrastructure/base/controllers/priority-classes/`.
 
 ## Conventions
 
