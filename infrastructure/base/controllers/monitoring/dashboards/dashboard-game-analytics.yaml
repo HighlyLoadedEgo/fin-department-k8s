@@ -1,7 +1,7 @@
 ---
-# Дашборд Game Analytics v4: бизнес-метрики hackaton-fin-department (fin_*).
-# Событийные панели читают fin_*_stored (агрегат всей БД, пересчёт раз в минуту),
-# потоковые панели — rate-счётчики. Везде фолбэк vector(0) вместо No data.
+# Дашборд «Игровая аналитика» v5: бизнес-метрики hackaton-fin-department (fin_*).
+# Перевод значений — renameByRegex/valueMappings (бэк отдаёт стабильные EN-лейблы).
+# Все агрегаты с max by — защита от дублей серий при нескольких подах/переходах.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,7 +15,7 @@ data:
       "annotations": {
         "list": []
       },
-      "description": "Игровая аналитика hackaton-fin-department: главы, аудитория, активность, поведение, экономика миров. Источник — бизнес-метрики fin_* на /metrics.",
+      "description": "Аналитика игры: главы, аудитория, активность, поведение, экономика миров.",
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
@@ -32,9 +32,9 @@ data:
         "to": "now"
       },
       "timezone": "browser",
-      "title": "Game Analytics",
+      "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 4,
+      "version": 5,
       "templating": {
         "list": []
       },
@@ -58,7 +58,6 @@ data:
           "id": 2,
           "type": "stat",
           "title": "Миры",
-          "description": "Сохранённые облачные миры (профили хотя бы с одним снапшотом)",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -72,7 +71,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_worlds_total"
+              "expr": "max(fin_worlds_total)"
             }
           ],
           "options": {
@@ -111,7 +110,6 @@ data:
           "id": 3,
           "type": "stat",
           "title": "Профили",
-          "description": "Зарегистрированные устройства",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -125,7 +123,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_profiles_total"
+              "expr": "max(fin_profiles_total)"
             }
           ],
           "options": {
@@ -163,8 +161,7 @@ data:
         {
           "id": 4,
           "type": "stat",
-          "title": "Прогоны кампании",
-          "description": "Уникальные runId: каждый рестарт кампании добавляет прогон",
+          "title": "Прогоны",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -178,7 +175,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_game_runs_total"
+              "expr": "max(fin_game_runs_total)"
             }
           ],
           "options": {
@@ -217,7 +214,6 @@ data:
           "id": 5,
           "type": "bargauge",
           "title": "Игроки по главам",
-          "description": "Акт восстанавливается из state.story.currentDayId последнего снапшота",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -231,14 +227,12 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_players_by_story_act",
+              "expr": "max by (act) (fin_players_by_story_act)",
               "legendFormat": "{{act}}"
             }
           ],
           "options": {
             "displayMode": "gradient",
-            "minVizHeight": 10,
-            "minVizWidth": 0,
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -256,7 +250,6 @@ data:
             "defaults": {
               "unit": "short",
               "decimals": 0,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -268,7 +261,58 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "act-1",
+                "rename": "Глава 1"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "act-2",
+                "rename": "Глава 2"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "act-3",
+                "rename": "Глава 3"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "act-4",
+                "rename": "Глава 4"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "act-5",
+                "rename": "Глава 5"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "not_started",
+                "rename": "Без главы"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^unknown$",
+                "rename": "Неизвестно"
+              }
+            }
+          ]
         },
         {
           "id": 6,
@@ -287,7 +331,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_players_by_pet_age",
+              "expr": "max by (age) (fin_players_by_pet_age)",
               "legendFormat": "{{age}}"
             }
           ],
@@ -320,7 +364,37 @@ data:
               "decimals": 0
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "CUB",
+                "rename": "Детёныш"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "TEEN",
+                "rename": "Подросток"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ADULT",
+                "rename": "Взрослый"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SENIOR",
+                "rename": "Старший"
+              }
+            }
+          ]
         },
         {
           "id": 7,
@@ -339,7 +413,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_players_by_pet_temperament",
+              "expr": "max by (temperament) (fin_players_by_pet_temperament)",
               "legendFormat": "{{temperament}}"
             }
           ],
@@ -372,7 +446,37 @@ data:
               "decimals": 0
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Curious",
+                "rename": "Любознательный"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Confident",
+                "rename": "Уверенный"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Joyful",
+                "rename": "Радостный"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^unknown$",
+                "rename": "Неизвестно"
+              }
+            }
+          ]
         },
         {
           "id": 8,
@@ -392,7 +496,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_players_by_pet_look",
+              "expr": "max by (look) (fin_players_by_pet_look)",
               "legendFormat": "{{look}}"
             }
           ],
@@ -425,13 +529,70 @@ data:
               "decimals": 0
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "PLAIN",
+                "rename": "Классика"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "BANDANA",
+                "rename": "Бандана"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "BACKPACK",
+                "rename": "Рюкзак"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "HAT",
+                "rename": "Шляпа"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "GLASSES",
+                "rename": "Очки"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "COMPASS",
+                "rename": "Компас"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "BINOCULARS",
+                "rename": "Бинокль"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ROUTE_PATCH",
+                "rename": "Нашивка"
+              }
+            }
+          ]
         },
         {
           "id": 9,
           "type": "stat",
           "title": "Средний игровой день",
-          "description": "Среднее state.engine.day — глубина прогресса в днях",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -445,7 +606,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_engine_day_sum / fin_engine_day_count"
+              "expr": "max(fin_engine_day_sum) / max(fin_engine_day_count)"
             }
           ],
           "options": {
@@ -491,7 +652,7 @@ data:
         {
           "id": 10,
           "type": "piechart",
-          "title": "Целевые проекты завершены",
+          "title": "Целевые проекты",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -505,7 +666,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_goal_projects_completed",
+              "expr": "max by (goal) (fin_goal_projects_completed)",
               "legendFormat": "{{goal}}"
             }
           ],
@@ -538,7 +699,44 @@ data:
               "decimals": 0
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "figma-stargazing-180-v1",
+                "rename": "Наблюдение за звёздами"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "campaign-tower-kit-v1",
+                "rename": "Набор для башни"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "campaign-researcher-home-v1",
+                "rename": "Дом исследователя"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "campaign-kingdom-map-v1",
+                "rename": "Карта королевства"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "campaign-great-expedition-v1",
+                "rename": "Большая экспедиция"
+              }
+            }
+          ]
         },
         {
           "id": 11,
@@ -558,8 +756,7 @@ data:
         {
           "id": 12,
           "type": "bargauge",
-          "title": "Факты по типам — всего в базе",
-          "description": "Все сохранённые факты: история снапшотов + аналитика (пересчёт раз в минуту)",
+          "title": "Факты по типам — всего",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -573,7 +770,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(7, sum by (detail_type) (fin_facts_stored)) or on() label_replace(vector(0), \"detail_type\", \"нет данных\", \"\", \"\")",
+              "expr": "topk(7, max by (detail_type) (fin_facts_stored)) or on() label_replace(vector(0), \"detail_type\", \"нет данных\", \"\", \"\")",
               "legendFormat": "{{detail_type}}"
             }
           ],
@@ -594,29 +791,174 @@ data:
           },
           "fieldConfig": {
             "defaults": {
-              "defaults": {
-                "unit": "short",
-                "decimals": 0,
-                "min": 0,
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    }
-                  ]
-                }
-              },
-              "overrides": []
+              "unit": "short",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "interaction",
+                "rename": "Действия"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "optional_purchase",
+                "rename": "Покупки"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "budget_confirmed",
+                "rename": "Утверждённый бюджет"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "saving_movement",
+                "rename": "Движение накоплений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "saving_cycle_closed",
+                "rename": "Цель накопления закрыта"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "saving_intention_resolved",
+                "rename": "Намерение накопления"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "desire_deferred",
+                "rename": "Отложенные желания"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "priority_applied",
+                "rename": "Приоритет применён"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "priority_conflict",
+                "rename": "Конфликт приоритетов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "reserve_decision",
+                "rename": "Решение о запасе"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "unexpected_expense",
+                "rename": "Незапланированные траты"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "recovery_action",
+                "rename": "Восстановление после траты"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "resource_choice",
+                "rename": "Выбор ресурса"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "earning_plan",
+                "rename": "Планы заработка"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "earning_completed",
+                "rename": "Заработок получен"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "question_answer",
+                "rename": "Ответы на вопросы"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "comparable_application",
+                "rename": "Сравнение затрат"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "income_window",
+                "rename": "Окна дохода"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "time_machine_lifecycle",
+                "rename": "Машина времени"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "practice_answer",
+                "rename": "Ответы на практике"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "rename": "нет данных"
+              }
             }
-          }
+          ]
         },
         {
           "id": 13,
           "type": "bargauge",
-          "title": "Действия игроков — всего в базе",
-          "description": "Interaction-факты по командам движка: клики, RenamePet, CompleteStoryGame, …",
+          "title": "Действия игроков — всего",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -630,7 +972,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "topk(8, sum by (name) (fin_interactions_stored)) or on() label_replace(vector(0), \"name\", \"нет данных\", \"\", \"\")",
+              "expr": "topk(8, max by (name) (fin_interactions_stored)) or on() label_replace(vector(0), \"name\", \"нет данных\", \"\", \"\")",
               "legendFormat": "{{name}}"
             }
           ],
@@ -653,7 +995,6 @@ data:
             "defaults": {
               "unit": "short",
               "decimals": 0,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -665,13 +1006,238 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "BeginDay",
+                "rename": "Начало дня"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "FinishDay",
+                "rename": "Конец дня"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "FinishDayFromEvent",
+                "rename": "День завершён событием"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "StartBudgetAllocation",
+                "rename": "Начало планирования"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ChangeBudgetAllocation",
+                "rename": "Изменение бюджета"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ConfirmBudget",
+                "rename": "Бюджет утверждён"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "DepositSavings",
+                "rename": "Пополнение накоплений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "WithdrawSavings",
+                "rename": "Снятие накоплений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "RequestFinancialPractice",
+                "rename": "Финансовая практика"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "AnswerFinancialQuestion",
+                "rename": "Ответ на вопрос"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "AdvanceFinancialPractice",
+                "rename": "Следующий вопрос"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "CloseFinancialPractice",
+                "rename": "Практика завершена"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "RenamePet",
+                "rename": "Переименовал питомца"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SetPetColor",
+                "rename": "Смена цвета"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SetPetLook",
+                "rename": "Смена образа"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "OpenNextEvent",
+                "rename": "Открыл событие"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SelectGoal",
+                "rename": "Выбор цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SelectSavingGoal",
+                "rename": "Выбор цели накопления"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "BuyGoalItem",
+                "rename": "Покупка цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Choose",
+                "rename": "Выбор"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "CompleteEvent",
+                "rename": "Завершил событие"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "AcknowledgeResult",
+                "rename": "Закрыл результат"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "StartDeed",
+                "rename": "Начал подработку"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "AcceptDeedProposal",
+                "rename": "Принял подработку"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "CompleteDeed",
+                "rename": "Завершил подработку"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "StartStoryGame",
+                "rename": "Начал мини-игру"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "CompleteStoryGame",
+                "rename": "Прошёл мини-игру"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "SkipMiniGame",
+                "rename": "Пропустил мини-игру"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "DismissDeedProposal",
+                "rename": "Отклонил подработку"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "PauseEvent",
+                "rename": "Пауза события"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Feed",
+                "rename": "Кормление"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "rename": "нет данных"
+              }
+            }
+          ]
         },
         {
           "id": 14,
           "type": "timeseries",
           "title": "Покупки и откладывание — всего",
-          "description": "OPTIONAL_PURCHASE по исходу и DESIRE_DEFERRED за всю историю",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -685,18 +1251,18 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(fin_purchases_stored{purchased=\"True\"}) or vector(0)",
-              "legendFormat": "куплено"
+              "expr": "max(fin_purchases_stored{purchased=\"True\"}) or vector(0)",
+              "legendFormat": "Куплено"
             },
             {
               "refId": "B",
-              "expr": "sum(fin_purchases_stored{purchased=\"False\"}) or vector(0)",
-              "legendFormat": "не куплено"
+              "expr": "max(fin_purchases_stored{purchased=\"False\"}) or vector(0)",
+              "legendFormat": "Не куплено"
             },
             {
               "refId": "C",
-              "expr": "sum(fin_desires_stored{declared=\"True\"}) or vector(0)",
-              "legendFormat": "отложено желание"
+              "expr": "max(fin_desires_stored{declared=\"True\"}) or vector(0)",
+              "legendFormat": "Отложено желание"
             }
           ],
           "options": {
@@ -718,7 +1284,6 @@ data:
             "defaults": {
               "unit": "short",
               "decimals": 0,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -730,13 +1295,21 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "rename": "нет данных"
+              }
+            }
+          ]
         },
         {
           "id": 15,
           "type": "timeseries",
-          "title": "Деньги в движении — всего (монет)",
-          "description": "Суммы по всем сохранённым фактам: накопления, незапланированные траты, заработок",
+          "title": "Деньги в движении — всего, монет",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -750,18 +1323,18 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (kind) (fin_saving_amount_stored) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
-              "legendFormat": "накопления {{kind}}"
+              "expr": "max by (kind) (fin_saving_amount_stored) or on() label_replace(vector(0), \"kind\", \"нет данных\", \"\", \"\")",
+              "legendFormat": "{{kind}}"
             },
             {
               "refId": "B",
-              "expr": "fin_unexpected_expense_amount_stored or vector(0)",
-              "legendFormat": "незапланированные траты"
+              "expr": "max(fin_unexpected_expense_amount_stored) or vector(0)",
+              "legendFormat": "Незапланированные траты"
             },
             {
               "refId": "C",
-              "expr": "fin_earning_amount_stored or vector(0)",
-              "legendFormat": "заработок"
+              "expr": "max(fin_earning_amount_stored) or vector(0)",
+              "legendFormat": "Заработок"
             }
           ],
           "options": {
@@ -783,7 +1356,6 @@ data:
             "defaults": {
               "unit": "short",
               "decimals": 0,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -795,13 +1367,42 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "DEPOSIT",
+                "rename": "Пополнение"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "WITHDRAW",
+                "rename": "Снятие"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "GOAL_PURCHASE",
+                "rename": "Покупка цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "rename": "нет данных"
+              }
+            }
+          ]
         },
         {
           "id": 16,
           "type": "stat",
-          "title": "Правильность ответов",
-          "description": "Доля верных practice_answer среди всех сохранённых",
+          "title": "Верные ответы",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -815,7 +1416,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(fin_practice_stored{correct=\"True\"} or vector(0)) / clamp_min(sum(fin_practice_stored or vector(0)), 1e-9)"
+              "expr": "sum(max by (correct) (fin_practice_stored) or vector(0)) / clamp_min(sum(max by (correct) (fin_practice_stored) or vector(0)), 1e-9)"
             }
           ],
           "options": {
@@ -865,7 +1466,6 @@ data:
           "id": 17,
           "type": "stat",
           "title": "Мини-игр на мир",
-          "description": "Среднее количество завершённых мини-игр",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -879,7 +1479,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_completed_minigames_sum / fin_completed_minigames_count"
+              "expr": "max(fin_completed_minigames_sum) / max(fin_completed_minigames_count)"
             }
           ],
           "options": {
@@ -932,7 +1532,7 @@ data:
         {
           "id": 19,
           "type": "timeseries",
-          "title": "Средние балансы (монет)",
+          "title": "Средние балансы, монет",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -946,18 +1546,18 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_pet_balance_sum / fin_pet_balance_count",
-              "legendFormat": "доступный"
+              "expr": "max(fin_pet_balance_sum) / max(fin_pet_balance_count)",
+              "legendFormat": "Доступный"
             },
             {
               "refId": "B",
-              "expr": "fin_pet_savings_balance_sum / fin_pet_savings_balance_count",
-              "legendFormat": "накопления"
+              "expr": "max(fin_pet_savings_balance_sum) / max(fin_pet_savings_balance_count)",
+              "legendFormat": "Накопления"
             },
             {
               "refId": "C",
-              "expr": "fin_pet_unallocated_sum / fin_pet_unallocated_count",
-              "legendFormat": "нераспределено"
+              "expr": "max(fin_pet_unallocated_sum) / max(fin_pet_unallocated_count)",
+              "legendFormat": "Нераспределено"
             }
           ],
           "options": {
@@ -979,68 +1579,22 @@ data:
             "defaults": {
               "unit": "short",
               "decimals": 0,
+              "min": 0,
               "custom": {
                 "drawStyle": "line",
                 "fillOpacity": 15,
                 "lineWidth": 2,
                 "showPoints": "never",
                 "spanNulls": true
-              },
-              "min": 0
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "доступный"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "green"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "накопления"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "blue"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "нераспределено"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "fixed",
-                      "fixedColor": "orange"
-                    }
-                  }
-                ]
               }
-            ]
+            },
+            "overrides": []
           }
         },
         {
           "id": 20,
           "type": "piechart",
-          "title": "Доли плана бюджета — всего",
+          "title": "Доли бюджета — всего",
           "description": "Как игроки делят бюджет: needs / wants / savings / reserve по всем подтверждённым планам",
           "datasource": {
             "type": "prometheus",
@@ -1055,23 +1609,23 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "fin_budget_amount_stored{bucket=\"needs\"} or vector(0)",
-              "legendFormat": "needs"
+              "expr": "max(fin_budget_amount_stored{bucket=\"needs\"}) or vector(0)",
+              "legendFormat": "{{bucket}}"
             },
             {
               "refId": "B",
-              "expr": "fin_budget_amount_stored{bucket=\"wants\"} or vector(0)",
-              "legendFormat": "wants"
+              "expr": "max(fin_budget_amount_stored{bucket=\"wants\"}) or vector(0)",
+              "legendFormat": "{{bucket}}"
             },
             {
               "refId": "C",
-              "expr": "fin_budget_amount_stored{bucket=\"savings\"} or vector(0)",
-              "legendFormat": "savings"
+              "expr": "max(fin_budget_amount_stored{bucket=\"savings\"}) or vector(0)",
+              "legendFormat": "{{bucket}}"
             },
             {
               "refId": "D",
-              "expr": "fin_budget_amount_stored{bucket=\"reserve\"} or vector(0)",
-              "legendFormat": "reserve"
+              "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"}) or vector(0)",
+              "legendFormat": "{{bucket}}"
             }
           ],
           "options": {
@@ -1103,12 +1657,49 @@ data:
               "decimals": 0
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "needs",
+                "rename": "Нужды"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "wants",
+                "rename": "Желания"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "savings",
+                "rename": "Накопления"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "reserve",
+                "rename": "Запас"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "rename": "нет данных"
+              }
+            }
+          ]
         },
         {
           "id": 21,
           "type": "table",
-          "title": "Распределение доступного баланса",
+          "title": "Распределение баланса",
           "description": "Сколько миров попадает в каждый bucket баланса (кумулятивно, ≤ le)",
           "datasource": {
             "type": "prometheus",
@@ -1123,7 +1714,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (le) (fin_pet_balance_bucket)",
+              "expr": "max by (le) (fin_pet_balance_bucket)",
               "instant": true,
               "format": "table"
             }
@@ -1136,8 +1727,8 @@ data:
                   "Time": true
                 },
                 "renameByName": {
-                  "le": "баланс не выше",
-                  "Value": "миров"
+                  "le": "Баланс не выше",
+                  "Value": "Миров"
                 },
                 "indexByName": {}
               }
@@ -1147,7 +1738,7 @@ data:
               "options": {
                 "sort": [
                   {
-                    "field": "баланс не выше",
+                    "field": "Баланс не выше",
                     "desc": false
                   }
                 ]
@@ -1178,7 +1769,40 @@ data:
                 "inspect": false
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Баланс не выше"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "special",
+                        "options": {
+                          "match": "special",
+                          "result": {
+                            "index": 0
+                          }
+                        }
+                      },
+                      {
+                        "type": "value",
+                        "options": {
+                          "match": "+Inf",
+                          "result": {
+                            "text": "Без ограничения",
+                            "index": 1
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           }
         },
         {
@@ -1213,13 +1837,13 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval])) or on() label_replace(vector(0), \"reward_type\", \"нет данных\", \"\", \"\")",
-              "legendFormat": "выдано {{reward_type}}"
+              "expr": "max by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval])) or on() label_replace(vector(0), \"reward_type\", \"нет данных\", \"\", \"\")",
+              "legendFormat": "{{reward_type}}"
             },
             {
               "refId": "B",
-              "expr": "sum by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval])) or on() label_replace(vector(0), \"outcome\", \"нет данных\", \"\", \"\")",
-              "legendFormat": "принято {{outcome}}"
+              "expr": "max by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval])) or on() label_replace(vector(0), \"outcome\", \"нет данных\", \"\", \"\")",
+              "legendFormat": "{{outcome}}"
             }
           ],
           "options": {
@@ -1248,7 +1872,44 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "COINS",
+                "rename": "Монеты"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ACCESSORY",
+                "rename": "Аксессуар"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "APPLIED",
+                "rename": "Принято"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "ALREADY_OWNED",
+                "rename": "Уже был"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^$",
+                "rename": "нет данных"
+              }
+            }
+          ]
         },
         {
           "id": 24,
@@ -1267,18 +1928,18 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (created) (rate(fin_snapshot_uploads_total[$__rate_interval])) or vector(0)",
-              "legendFormat": "снапшоты (created={{created}})"
+              "expr": "max by (created) (rate(fin_snapshot_uploads_total[$__rate_interval])) or vector(0)",
+              "legendFormat": "Снапшоты {{created}}"
             },
             {
               "refId": "B",
-              "expr": "sum by (created) (rate(fin_analytics_batches_total[$__rate_interval])) or vector(0)",
-              "legendFormat": "батчи аналитики (created={{created}})"
+              "expr": "max by (created) (rate(fin_analytics_batches_total[$__rate_interval])) or vector(0)",
+              "legendFormat": "Аналитика {{created}}"
             },
             {
               "refId": "C",
-              "expr": "sum by (created) (rate(fin_profile_registrations_total[$__rate_interval])) or vector(0)",
-              "legendFormat": "регистрации (created={{created}})"
+              "expr": "max by (created) (rate(fin_profile_registrations_total[$__rate_interval])) or vector(0)",
+              "legendFormat": "Регистрации {{created}}"
             }
           ],
           "options": {
@@ -1307,13 +1968,35 @@ data:
               }
             },
             "overrides": []
-          }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "created=True",
+                "rename": "новые"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "created=False",
+                "rename": "повторы"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "created=\\)",
+                "rename": "нет данных)"
+              }
+            }
+          ]
         },
         {
           "id": 25,
           "type": "stat",
-          "title": "Агрегация: успех",
-          "description": "Сколько секунд назад пересчитывались мировые метрики",
+          "title": "Агрегация",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -1327,7 +2010,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "time() - fin_aggregation_last_success_unixtime"
+              "expr": "max(time() - fin_aggregation_last_success_unixtime)"
             }
           ],
           "options": {
@@ -1343,7 +2026,8 @@ data:
               "values": false
             },
             "textMode": "auto",
-            "wideLayout": true
+            "wideLayout": true,
+            "noValue": "нет данных"
           },
           "fieldConfig": {
             "defaults": {
@@ -1373,8 +2057,7 @@ data:
         {
           "id": 26,
           "type": "stat",
-          "title": "Агрегация: ошибки",
-          "description": "Провальные циклы пересчёта за последний час",
+          "title": "Ошибки за час",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -1388,7 +2071,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "increase(fin_aggregation_errors_total[1h])"
+              "expr": "max(increase(fin_aggregation_errors_total[1h]))"
             }
           ],
           "options": {
@@ -1404,7 +2087,8 @@ data:
               "values": false
             },
             "textMode": "auto",
-            "wideLayout": true
+            "wideLayout": true,
+            "noValue": "нет данных"
           },
           "fieldConfig": {
             "defaults": {
