@@ -27,6 +27,7 @@ spec:
   values:
     fullnameOverride: headlamp
     config:
+      pluginsDir: /build/plugins
       inCluster: true
       unsafeUseServiceAccountToken: false
       # Без OIDC (Keycloak нет): вход service account token'ом.
@@ -36,6 +37,31 @@ spec:
           create: false
         externalSecret:
           enabled: false
+    # Flux UI: copy the pinned plugin into ephemeral storage on each pod start.
+    initContainers:
+      - name: headlamp-plugin-flux
+        image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:v0.7.0
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - cp -r /plugins/* /build/plugins/ && chown -R 100:101 /build/plugins
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+          runAsGroup: 0
+          privileged: false
+          allowPrivilegeEscalation: false
+        volumeMounts:
+          - name: headlamp-plugins
+            mountPath: /build/plugins
+    volumeMounts:
+      - name: headlamp-plugins
+        mountPath: /build/plugins
+        readOnly: true
+    volumes:
+      - name: headlamp-plugins
+        emptyDir: {}
     # Chart-managed binding kept off: roleRef is immutable; we bind SA in rbac.yaml.
     clusterRoleBinding:
       create: false
