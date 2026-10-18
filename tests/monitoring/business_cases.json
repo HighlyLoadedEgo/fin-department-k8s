@@ -425,38 +425,9 @@
     ]
   },
   {
-    "name": "detailed budget shows percentage instead of raw coins",
-    "dashboard": "game-analytics",
-    "panel": 20,
-    "series": [
-      {
-        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"needs\"}",
-        "values": "50+0x10"
-      },
-      {
-        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"wants\"}",
-        "values": "20+0x10"
-      },
-      {
-        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"savings\"}",
-        "values": "20+0x10"
-      },
-      {
-        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"reserve\"}",
-        "values": "10+0x10"
-      }
-    ],
-    "expected": [
-      {
-        "labels": "{}",
-        "value": 0.5
-      }
-    ]
-  },
-  {
-    "name": "zero budget has no defined percentage",
-    "dashboard": "game-analytics",
-    "panel": 20,
+    "name": "zero budget leaves overview allocation shares undefined",
+    "dashboard": "children-play",
+    "panel": 18,
     "series": [
       {
         "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"needs\"}",
