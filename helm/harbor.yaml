@@ -6,4 +6,4 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30m
-  url: https://helm.goharbor.io
+  url: https://raw.githubusercontent.com/goharbor/harbor-helm/chart-repository
