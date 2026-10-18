@@ -41,7 +41,7 @@ data:
       "timezone": "browser",
       "title": "Экономика и данные игры",
       "uid": "game-analytics",
-      "version": 21,
+      "version": 22,
       "templating": {
         "list": []
       },
@@ -318,8 +318,8 @@ data:
         {
           "id": 20,
           "type": "bargauge",
-          "title": "Распределено монет по статьям",
-          "description": "Суммы в сохранённых подтверждённых бюджетах, в монетах. Процентные доли этих же данных — в обзоре «Как играют дети».",
+          "title": "Распределение бюджета, %",
+          "description": "Сумма по статье / общая сумма всех сохранённых подтверждённых распределений бюджета. Доля монет, не среднее по детям. Если общая сумма равна нулю, процент не определён.",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -333,28 +333,28 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_budget_amount_stored{bucket=\"needs\"})",
+              "expr": "max(fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"needs\"}) / ((sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}))) > 0)",
               "legendFormat": "Нужды",
               "instant": true,
               "range": false
             },
             {
               "refId": "B",
-              "expr": "max(fin_budget_amount_stored{bucket=\"wants\"})",
+              "expr": "max(fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"wants\"}) / ((sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}))) > 0)",
               "legendFormat": "Желания",
               "instant": true,
               "range": false
             },
             {
               "refId": "C",
-              "expr": "max(fin_budget_amount_stored{bucket=\"savings\"})",
+              "expr": "max(fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"savings\"}) / ((sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}))) > 0)",
               "legendFormat": "Накопления",
               "instant": true,
               "range": false
             },
             {
               "refId": "D",
-              "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"})",
+              "expr": "max(fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"reserve\"}) / ((sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}))) > 0)",
               "legendFormat": "Запас",
               "instant": true,
               "range": false
@@ -384,10 +384,11 @@ data:
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "none",
-              "decimals": 0,
+              "unit": "percentunit",
+              "decimals": 1,
               "noValue": "Нет наблюдений",
-              "min": 0
+              "min": 0,
+              "max": 1
             },
             "overrides": [
               {
