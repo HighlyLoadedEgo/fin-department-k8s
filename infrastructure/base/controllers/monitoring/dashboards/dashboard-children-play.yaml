@@ -1,0 +1,1925 @@
+---
+# Продуктовый обзор: поведение в игре; все запросы опираются на существующие fin_* метрики.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-children-play
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  children-play.json: |-
+    {
+      "id": null,
+      "uid": "children-play",
+      "title": "Как играют дети",
+      "description": "Продуктовая аналитика финансовой игры: решения, трудности по навыкам и прогресс синхронизированных миров. Без подмены событий числом детей.",
+      "version": 1,
+      "schemaVersion": 39,
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "refresh": "1m",
+      "tags": [
+        "game",
+        "product-analytics",
+        "hackaton-fin-department"
+      ],
+      "timezone": "browser",
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "timepicker": {
+        "refresh_intervals": [
+          "1m",
+          "5m",
+          "15m"
+        ]
+      },
+      "annotations": {
+        "list": []
+      },
+      "templating": {
+        "list": []
+      },
+      "links": [
+        {
+          "title": "Подробная игровая аналитика",
+          "type": "link",
+          "url": "/d/game-analytics",
+          "keepTime": true,
+          "includeVars": false,
+          "targetBlank": false
+        }
+      ],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Как играют дети",
+          "type": "text",
+          "description": "",
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 5
+          },
+          "options": {
+            "mode": "markdown",
+            "content": "Сводка — синхронизированная история. Новые события — внизу, за выбранный период."
+          }
+        },
+        {
+          "id": 2,
+          "title": "Сохранённые миры",
+          "type": "stat",
+          "description": "Число распознанных сохранённых миров. Не DAU и не уникальные дети.",
+          "gridPos": {
+            "x": 0,
+            "y": 5,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "max(fin_worlds_total{namespace=\"hackaton-fin\"})",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 3,
+          "title": "Прогоны с оценкой",
+          "type": "stat",
+          "description": "Последняя проекция оценки по каждой паре профиль / игровой прогон. Оценка может существовать без снимка мира.",
+          "gridPos": {
+            "x": 6,
+            "y": 5,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "max(fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"})",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#B4A0E5"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#B4A0E5",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 4,
+          "title": "Ответы в практиках",
+          "type": "stat",
+          "description": "Размер выборки для доли правильных ответов; сохранённые факты, а не ответы за выбранный период.",
+          "gridPos": {
+            "x": 12,
+            "y": 5,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "sum(max by (correct) (fin_practice_stored{namespace=\"hackaton-fin\"}))",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 5,
+          "title": "Верные ответы",
+          "type": "stat",
+          "description": "Правильные ответы / все сохранённые ответы. Доля событий, не детей. Отсутствие ответов не превращается в 0%.",
+          "gridPos": {
+            "x": 18,
+            "y": 5,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(max(fin_practice_stored{namespace=\"hackaton-fin\",correct=\"True\"}) or 0 * (sum(max by (correct) (fin_practice_stored{namespace=\"hackaton-fin\"})))) / ((sum(max by (correct) (fin_practice_stored{namespace=\"hackaton-fin\"}))) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#73BFBA"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#73BFBA",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 6,
+          "title": "Какие навыки требуют внимания",
+          "type": "row",
+          "description": "",
+          "gridPos": {
+            "x": 0,
+            "y": 10,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 7,
+          "title": "Доля эпизодов с трудностями",
+          "type": "bargauge",
+          "description": "DIFFICULTY / (SUPPORTED + DIFFICULTY + NEUTRAL) по навыку. Сравнивайте с размером выборки ниже. Это наблюдения в игре, не диагноз и не доля детей.",
+          "gridPos": {
+            "x": 0,
+            "y": 11,
+            "w": 12,
+            "h": 12
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(sort_desc(max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"difficulty_episodes\"}) / ((max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"supported_episodes\"}) + max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"difficulty_episodes\"}) + max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"neutral_episodes\"})) > 0))) and on() (max(fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{skill}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#FFB357"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#FFB357",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-01$",
+                "renamePattern": "FIN-01 · Сравнение цен"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-02$",
+                "renamePattern": "FIN-02 · Планирование"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-03$",
+                "renamePattern": "FIN-03 · Обязательства"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-04$",
+                "renamePattern": "FIN-04 · Темп расходов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-05$",
+                "renamePattern": "FIN-05 · Движение к цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-06$",
+                "renamePattern": "FIN-06 · Выбор цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-07$",
+                "renamePattern": "FIN-07 · Резерв"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-08$",
+                "renamePattern": "FIN-08 · Пересмотр плана"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-09$",
+                "renamePattern": "FIN-09 · Выбор ресурсов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-10$",
+                "renamePattern": "FIN-10 · Заработок"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-11$",
+                "renamePattern": "FIN-11 · Разбор решений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-12$",
+                "renamePattern": "FIN-12 · Учёт денег"
+              }
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "title": "Успехи без игровых подсказок",
+          "type": "bargauge",
+          "description": "SUPPORTED без игровых подсказок / все SUPPORTED по навыку. Отсутствие помощи взрослого не установлено.",
+          "gridPos": {
+            "x": 12,
+            "y": 11,
+            "w": 12,
+            "h": 12
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(sort_desc(max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"supported_without_game_hints\"}) / (max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"supported_episodes\"}) > 0))) and on() (max(fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{skill}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#73BFBA"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#73BFBA",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-01$",
+                "renamePattern": "FIN-01 · Сравнение цен"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-02$",
+                "renamePattern": "FIN-02 · Планирование"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-03$",
+                "renamePattern": "FIN-03 · Обязательства"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-04$",
+                "renamePattern": "FIN-04 · Темп расходов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-05$",
+                "renamePattern": "FIN-05 · Движение к цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-06$",
+                "renamePattern": "FIN-06 · Выбор цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-07$",
+                "renamePattern": "FIN-07 · Резерв"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-08$",
+                "renamePattern": "FIN-08 · Пересмотр плана"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-09$",
+                "renamePattern": "FIN-09 · Выбор ресурсов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-10$",
+                "renamePattern": "FIN-10 · Заработок"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-11$",
+                "renamePattern": "FIN-11 · Разбор решений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-12$",
+                "renamePattern": "FIN-12 · Учёт денег"
+              }
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "title": "Среднее число завершённых эпизодов",
+          "type": "bargauge",
+          "description": "Среднее число завершённых подходящих эпизодов по всем оценённым игровым прогонам. Среднее, не число детей и не суммарное число эпизодов.",
+          "gridPos": {
+            "x": 0,
+            "y": 23,
+            "w": 12,
+            "h": 12
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"completed_episodes\"})) and on() (max(fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{skill}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-01$",
+                "renamePattern": "FIN-01 · Сравнение цен"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-02$",
+                "renamePattern": "FIN-02 · Планирование"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-03$",
+                "renamePattern": "FIN-03 · Обязательства"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-04$",
+                "renamePattern": "FIN-04 · Темп расходов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-05$",
+                "renamePattern": "FIN-05 · Движение к цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-06$",
+                "renamePattern": "FIN-06 · Выбор цели"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-07$",
+                "renamePattern": "FIN-07 · Резерв"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-08$",
+                "renamePattern": "FIN-08 · Пересмотр плана"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-09$",
+                "renamePattern": "FIN-09 · Выбор ресурсов"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-10$",
+                "renamePattern": "FIN-10 · Заработок"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-11$",
+                "renamePattern": "FIN-11 · Разбор решений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-12$",
+                "renamePattern": "FIN-12 · Учёт денег"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "title": "Эпизоды, где пока недостаточно данных",
+          "type": "bargauge",
+          "description": "Среднее на оценённый прогон. PENDING и INSUFFICIENT_DATA показаны отдельно и могут пересекаться; их нельзя складывать или считать уходом из игры.",
+          "gridPos": {
+            "x": 12,
+            "y": 23,
+            "w": 12,
+            "h": 12
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"pending_episodes\"})) and on() (max(fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{skill}} · ожидают завершения"
+            },
+            {
+              "expr": "(max by (skill) (fin_skill_episodes_avg{namespace=\"hackaton-fin\",counter=\"incomplete_episodes\"})) and on() (max(fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}) > 0)",
+              "refId": "B",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{skill}} · недостаточно данных"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#B4A0E5"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#B4A0E5",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-01 ·",
+                "renamePattern": "FIN-01 · Сравнение цен ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-02 ·",
+                "renamePattern": "FIN-02 · Планирование ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-03 ·",
+                "renamePattern": "FIN-03 · Обязательства ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-04 ·",
+                "renamePattern": "FIN-04 · Темп расходов ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-05 ·",
+                "renamePattern": "FIN-05 · Движение к цели ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-06 ·",
+                "renamePattern": "FIN-06 · Выбор цели ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-07 ·",
+                "renamePattern": "FIN-07 · Резерв ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-08 ·",
+                "renamePattern": "FIN-08 · Пересмотр плана ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-09 ·",
+                "renamePattern": "FIN-09 · Выбор ресурсов ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-10 ·",
+                "renamePattern": "FIN-10 · Заработок ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-11 ·",
+                "renamePattern": "FIN-11 · Разбор решений ·"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^FIN-12 ·",
+                "renamePattern": "FIN-12 · Учёт денег ·"
+              }
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "title": "Как принимают финансовые решения",
+          "type": "row",
+          "description": "",
+          "gridPos": {
+            "x": 0,
+            "y": 35,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 13,
+          "title": "Отказы от необязательной покупки",
+          "type": "stat",
+          "description": "Отказ / все решения о необязательной покупке. Доля решений, не детей. Большая доля сама по себе не означает лучшего результата.",
+          "gridPos": {
+            "x": 0,
+            "y": 36,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(max(fin_purchases_stored{namespace=\"hackaton-fin\",purchased=\"False\"}) or 0 * (sum(max by (purchased) (fin_purchases_stored{namespace=\"hackaton-fin\"})))) / ((sum(max by (purchased) (fin_purchases_stored{namespace=\"hackaton-fin\"}))) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 14,
+          "title": "Использование резерва",
+          "type": "stat",
+          "description": "Резерв использован для неожиданного расхода / все сохранённые решения об использовании резерва.",
+          "gridPos": {
+            "x": 6,
+            "y": 36,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(max(fin_reserve_stored{namespace=\"hackaton-fin\",used=\"True\"}) or 0 * (sum(max by (used) (fin_reserve_stored{namespace=\"hackaton-fin\"})))) / ((sum(max by (used) (fin_reserve_stored{namespace=\"hackaton-fin\"}))) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#B4A0E5"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#B4A0E5",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 15,
+          "title": "Доля бюджета на накопления",
+          "type": "stat",
+          "description": "Сумма в savings / сумма всех подтверждённых распределений бюджета. Взвешено по монетам, не среднее по детям.",
+          "gridPos": {
+            "x": 12,
+            "y": 36,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "(max(fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"savings\"}) or 0 * (sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"})))) / ((sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}))) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#73BFBA"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#73BFBA",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 16,
+          "title": "Миры с балансом ≤ 0",
+          "type": "stat",
+          "description": "Доля сохранённых миров с нулевым или отрицательным доступным балансом. Это состояние мира, не оценка ребёнка.",
+          "gridPos": {
+            "x": 18,
+            "y": 36,
+            "w": 6,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "max(fin_pet_balance_bucket{namespace=\"hackaton-fin\",le=\"0\"}) / (max(fin_pet_balance_count{namespace=\"hackaton-fin\"}) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#FFB357"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#FFB357",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 17,
+          "title": "Сколько решений стоит за долями",
+          "type": "bargauge",
+          "description": "Абсолютное число решений в сохранённых фактах. Используйте для оценки размера выборки. Отсутствующий исход не подменяется нулём.",
+          "gridPos": {
+            "x": 0,
+            "y": 41,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "max(fin_purchases_stored{namespace=\"hackaton-fin\",purchased=\"True\"})",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Покупка совершена"
+            },
+            {
+              "expr": "max(fin_purchases_stored{namespace=\"hackaton-fin\",purchased=\"False\"})",
+              "refId": "B",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Отказ от покупки"
+            },
+            {
+              "expr": "max(fin_reserve_stored{namespace=\"hackaton-fin\",used=\"True\"})",
+              "refId": "C",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Резерв использован"
+            },
+            {
+              "expr": "max(fin_reserve_stored{namespace=\"hackaton-fin\",used=\"False\"})",
+              "refId": "D",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Резерв не использован"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          }
+        },
+        {
+          "id": 18,
+          "title": "Куда распределяют бюджет",
+          "type": "bargauge",
+          "description": "Доли от общей суммы подтверждённых бюджетов: нужды, желания, накопления и резерв. Сохранённые решения за всю доступную историю.",
+          "gridPos": {
+            "x": 12,
+            "y": 41,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}) / ignoring(bucket) group_left() ((sum(max by (bucket) (fin_budget_amount_stored{namespace=\"hackaton-fin\"}))) > 0)",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{bucket}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#73BFBA"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#73BFBA",
+                    "value": null
+                  }
+                ]
+              },
+              "max": 1
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^needs$",
+                "renamePattern": "Обязательные расходы"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^wants$",
+                "renamePattern": "Желания"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^savings$",
+                "renamePattern": "Накопления"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^reserve$",
+                "renamePattern": "Резерв"
+              }
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "title": "Прогресс и игровые цели",
+          "type": "row",
+          "description": "",
+          "gridPos": {
+            "x": 0,
+            "y": 49,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 20,
+          "title": "На каких главах находятся миры",
+          "type": "bargauge",
+          "description": "Текущая глава каждого сохранённого мира. Распределение, не воронка: по нему нельзя вычислить конверсию или отвал.",
+          "gridPos": {
+            "x": 0,
+            "y": 50,
+            "w": 12,
+            "h": 9
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "max by (act) (fin_players_by_story_act{namespace=\"hackaton-fin\"})",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{act}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^act-1$",
+                "renamePattern": "Глава 1"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^act-2$",
+                "renamePattern": "Глава 2"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^act-3$",
+                "renamePattern": "Глава 3"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^act-4$",
+                "renamePattern": "Глава 4"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^act-5$",
+                "renamePattern": "Глава 5"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^not_started$",
+                "renamePattern": "Глава не определена: нет дня"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^unknown$",
+                "renamePattern": "Неизвестный идентификатор главы"
+              }
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "title": "Какие проекты завершают",
+          "type": "bargauge",
+          "description": "Завершённые проекты в сохранённых мирах по идентификатору цели. Один мир может завершить несколько проектов. Не доля детей.",
+          "gridPos": {
+            "x": 12,
+            "y": 50,
+            "w": 12,
+            "h": 9
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "sort_desc(max by (goal) (fin_goal_projects_completed{namespace=\"hackaton-fin\"}))",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "{{goal}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#73BFBA"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#73BFBA",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          }
+        },
+        {
+          "id": 22,
+          "title": "Что поступило за выбранный период",
+          "type": "row",
+          "description": "",
+          "gridPos": {
+            "x": 0,
+            "y": 59,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 23,
+          "title": "Поток новых игровых фактов",
+          "type": "timeseries",
+          "description": "Новые принятые факты/мин по типу; повторы загрузки исключены backend. Время приёма сервером может отличаться от времени игры из-за offline-режима.",
+          "gridPos": {
+            "x": 0,
+            "y": 60,
+            "w": 14,
+            "h": 9
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "sum by (detail_type) (rate(fin_analytics_facts_total{namespace=\"hackaton-fin\"}[$__rate_interval])) * 60",
+              "refId": "A",
+              "instant": false,
+              "range": true,
+              "legendFormat": "{{detail_type}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "palette-classic"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "fillOpacity": 8,
+                "showPoints": "never",
+                "spanNulls": false,
+                "axisLabel": "фактов / мин",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "mean"
+              ],
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^practice_answer$",
+                "renamePattern": "Ответы в практиках"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^optional_purchase$",
+                "renamePattern": "Решения о покупке"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^saving_movement$",
+                "renamePattern": "Движения накоплений"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^budget_confirmed$",
+                "renamePattern": "Распределения бюджета"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^reserve_decision$",
+                "renamePattern": "Решения о резерве"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^interaction$",
+                "renamePattern": "Игровые действия"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^earning_completed$",
+                "renamePattern": "Завершённые заработки"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^saving_intention_resolved$",
+                "renamePattern": "Решения о намерении накопить"
+              }
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "title": "Новые события за период",
+          "type": "bargauge",
+          "description": "Оценка прироста счётчиков за выбранный период; Prometheus экстраполирует значения. Это события приёма, не активные дети. Ленивая инициализация счётчиков может пропустить самое первое событие.",
+          "gridPos": {
+            "x": 14,
+            "y": 60,
+            "w": 10,
+            "h": 9
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "sum(increase(fin_profile_registrations_total{namespace=\"hackaton-fin\",created=\"True\"}[$__range]))",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Новые профили устройств"
+            },
+            {
+              "expr": "sum(increase(fin_snapshot_uploads_total{namespace=\"hackaton-fin\",created=\"True\"}[$__range]))",
+              "refId": "B",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Новые снимки миров"
+            },
+            {
+              "expr": "sum(increase(fin_analytics_batches_total{namespace=\"hackaton-fin\",created=\"True\"}[$__range]))",
+              "refId": "C",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Новые пакеты аналитики"
+            },
+            {
+              "expr": "sum(increase(fin_rewards_issued_total{namespace=\"hackaton-fin\",created=\"True\"}[$__range]))",
+              "refId": "D",
+              "instant": true,
+              "range": false,
+              "legendFormat": "Выданные награды родителей"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "#5794F2"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#5794F2",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "basic",
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "sizing": "auto",
+            "valueMode": "text"
+          }
+        },
+        {
+          "id": 25,
+          "title": "Как читать данные",
+          "type": "text",
+          "description": "",
+          "gridPos": {
+            "x": 0,
+            "y": 69,
+            "w": 24,
+            "h": 5
+          },
+          "options": {
+            "mode": "markdown",
+            "content": "**Область данных:** только синхронизированные миры и последние принятые проекции. Offline-игра появится после синхронизации.\n\n**Доли — про события и эпизоды.** Они не показывают процент детей, освоивших навык. Малая выборка требует осторожности; «нет наблюдений» не равно нулю.\n\n**Период сверху** меняет историю графиков и блок новых событий. Остальные панели показывают текущие агрегаты, а не когорту выбранного периода. История Prometheus хранится 3 дня."
+          }
+        },
+        {
+          "id": 26,
+          "title": "Возраст данных",
+          "type": "stat",
+          "description": "Секунд с последнего успешного пересчёта агрегатов. При устаревании интерпретировать показатели нельзя.",
+          "gridPos": {
+            "x": 0,
+            "y": 74,
+            "w": 8,
+            "h": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "expr": "time() - max(fin_aggregation_last_success_unixtime{namespace=\"hackaton-fin\"})",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 0,
+              "min": 0,
+              "noValue": "Нет наблюдений",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#73BFBA",
+                    "value": null
+                  },
+                  {
+                    "color": "#FFB357",
+                    "value": 180
+                  },
+                  {
+                    "color": "#F08A8A",
+                    "value": 900
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "textMode": "auto",
+            "wideLayout": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 38,
+              "titleSize": 14
+            }
+          }
+        },
+        {
+          "id": 27,
+          "title": "Что можно проверить в продукте",
+          "type": "text",
+          "description": "",
+          "gridPos": {
+            "x": 8,
+            "y": 74,
+            "w": 16,
+            "h": 5
+          },
+          "options": {
+            "mode": "markdown",
+            "content": "- Много трудностей и мало эпизодов: сначала собрать больше наблюдений.\n- Много трудностей при достаточной выборке: проверить объяснение и сложность задания.\n- Частые подсказки: проверить понятность правил.\n- Пустой баланс: сопоставить бюджет и решения о покупках; сам по себе он не доказывает проблему."
+          }
+        }
+      ]
+    }

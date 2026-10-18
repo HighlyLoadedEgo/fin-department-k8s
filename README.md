@@ -108,6 +108,9 @@ Robot-аккаунты Harbor: `fin+ci` (push, секреты CI), pull-секр
 
 ## Наблюдаемость
 
+Бизнес-дашборды Grafana: **Как играют дети** и **Игровая аналитика**.
+Формулы, смысл показателей и ограничения: [продуктовая аналитика](docs/game-analytics.md).
+
 Метрики (Prometheus):
 
 - kube-prometheus-stack подхватывает PodMonitor'ы без лейблов release

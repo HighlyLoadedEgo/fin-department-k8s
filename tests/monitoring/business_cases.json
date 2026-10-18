@@ -1,0 +1,301 @@
+[
+  {
+    "name": "8 correct and 2 wrong answers must show 80 percent",
+    "dashboard": "game-analytics",
+    "panel": 16,
+    "series": [
+      {
+        "series": "fin_practice_stored{correct=\"True\"}",
+        "values": "8+0x10"
+      },
+      {
+        "series": "fin_practice_stored{correct=\"False\"}",
+        "values": "2+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 0.8
+      }
+    ]
+  },
+  {
+    "name": "only wrong answers means zero, not no data",
+    "dashboard": "game-analytics",
+    "panel": 16,
+    "series": [
+      {
+        "series": "fin_practice_stored{correct=\"False\"}",
+        "values": "10+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "name": "no answers is not a fabricated zero percent",
+    "dashboard": "game-analytics",
+    "panel": 16,
+    "series": [],
+    "expected": []
+  },
+  {
+    "name": "zero balance worlds must remain visible",
+    "dashboard": "game-analytics",
+    "panel": 21,
+    "series": [
+      {
+        "series": "fin_pet_balance_bucket{le=\"0\"}",
+        "values": "3+0x10"
+      },
+      {
+        "series": "fin_pet_balance_bucket{le=\"50\"}",
+        "values": "7+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "name": "request counters must include both replicas",
+    "dashboard": "game-analytics",
+    "panel": 24,
+    "series": [
+      {
+        "series": "fin_snapshot_uploads_total{created=\"True\",pod=\"a\"}",
+        "values": "0+60x10"
+      },
+      {
+        "series": "fin_snapshot_uploads_total{created=\"True\",pod=\"b\"}",
+        "values": "0+120x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{created=\"True\"}",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "name": "purchase refusal is decisions, not children",
+    "dashboard": "children-play",
+    "panel": 13,
+    "series": [
+      {
+        "series": "fin_purchases_stored{namespace=\"hackaton-fin\",purchased=\"True\"}",
+        "values": "6+0x10"
+      },
+      {
+        "series": "fin_purchases_stored{namespace=\"hackaton-fin\",purchased=\"False\"}",
+        "values": "4+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 0.4
+      }
+    ]
+  },
+  {
+    "name": "only purchases yields zero refusal with evidence",
+    "dashboard": "children-play",
+    "panel": 13,
+    "series": [
+      {
+        "series": "fin_purchases_stored{namespace=\"hackaton-fin\",purchased=\"True\"}",
+        "values": "6+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "name": "no purchase decisions leaves refusal undefined",
+    "dashboard": "children-play",
+    "panel": 13,
+    "series": [],
+    "expected": []
+  },
+  {
+    "name": "zero reserve decisions leaves fraction undefined",
+    "dashboard": "children-play",
+    "panel": 14,
+    "series": [
+      {
+        "series": "fin_reserve_stored{namespace=\"hackaton-fin\",used=\"True\"}",
+        "values": "0+0x10"
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "budget savings share includes all four allocations",
+    "dashboard": "children-play",
+    "panel": 15,
+    "series": [
+      {
+        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"needs\"}",
+        "values": "50+0x10"
+      },
+      {
+        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"wants\"}",
+        "values": "20+0x10"
+      },
+      {
+        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"savings\"}",
+        "values": "20+0x10"
+      },
+      {
+        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"reserve\"}",
+        "values": "10+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 0.2
+      }
+    ]
+  },
+  {
+    "name": "difficulty rate matches skill labels across counters",
+    "dashboard": "children-play",
+    "panel": 7,
+    "series": [
+      {
+        "series": "fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}",
+        "values": "2+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"supported_episodes\"}",
+        "values": "3+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"difficulty_episodes\"}",
+        "values": "1+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"neutral_episodes\"}",
+        "values": "1+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{skill=\"FIN-01\"}",
+        "value": 0.2
+      }
+    ]
+  },
+  {
+    "name": "no assessed runs hides obsolete skill gauges",
+    "dashboard": "children-play",
+    "panel": 7,
+    "series": [
+      {
+        "series": "fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}",
+        "values": "0+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"supported_episodes\"}",
+        "values": "3+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"difficulty_episodes\"}",
+        "values": "1+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"neutral_episodes\"}",
+        "values": "1+0x10"
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "missing backend must not look like no activity",
+    "dashboard": "children-play",
+    "panel": 24,
+    "series": [],
+    "expected": []
+  },
+  {
+    "name": "success without game hints is a share of successful episodes",
+    "dashboard": "children-play",
+    "panel": 8,
+    "series": [
+      {
+        "series": "fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}",
+        "values": "2+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"supported_episodes\"}",
+        "values": "3+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"supported_without_game_hints\"}",
+        "values": "2+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{skill=\"FIN-01\"}",
+        "value": 0.6666666666666666
+      }
+    ]
+  },
+  {
+    "name": "zero worlds makes the zero-balance share undefined",
+    "dashboard": "children-play",
+    "panel": 16,
+    "series": [
+      {
+        "series": "fin_pet_balance_bucket{namespace=\"hackaton-fin\",le=\"0\"}",
+        "values": "0+0x10"
+      },
+      {
+        "series": "fin_pet_balance_count{namespace=\"hackaton-fin\"}",
+        "values": "0+0x10"
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "budget chart preserves bucket labels and proportions",
+    "dashboard": "children-play",
+    "panel": 18,
+    "series": [
+      {
+        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"needs\"}",
+        "values": "75+0x10"
+      },
+      {
+        "series": "fin_budget_amount_stored{namespace=\"hackaton-fin\",bucket=\"savings\"}",
+        "values": "25+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{bucket=\"needs\"}",
+        "value": 0.75
+      },
+      {
+        "labels": "{bucket=\"savings\"}",
+        "value": 0.25
+      }
+    ]
+  }
+]

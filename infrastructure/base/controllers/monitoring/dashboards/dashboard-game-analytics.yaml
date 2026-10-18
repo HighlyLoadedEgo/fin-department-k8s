@@ -1,6 +1,5 @@
 ---
-# Дашборд «Игровая аналитика» v18: бизнес-метрики hackaton-fin-department (fin_*).
-# Пост-обработка: цветные overrides панели «Факты» инжектятся после сборки.
+# Подробная игровая аналитика; snapshot gauges и событийные counters имеют разный смысл.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -14,12 +13,21 @@ data:
       "annotations": {
         "list": []
       },
-      "description": "Аналитика игры: главы, аудитория, активность, поведение, экономика миров.",
+      "description": "Подробные данные синхронизированных миров: накопленные факты, экономика и техническое качество данных. Профили и миры не равны уникальным детям.",
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
       "id": null,
-      "links": [],
+      "links": [
+        {
+          "title": "Как играют дети",
+          "type": "link",
+          "url": "/d/children-play",
+          "keepTime": true,
+          "includeVars": false,
+          "targetBlank": false
+        }
+      ],
       "refresh": "1m",
       "schemaVersion": 39,
       "tags": [
@@ -33,7 +41,7 @@ data:
       "timezone": "browser",
       "title": "Игровая аналитика",
       "uid": "game-analytics",
-      "version": 18,
+      "version": 19,
       "templating": {
         "list": []
       },
@@ -58,7 +66,7 @@ data:
           "id": 2,
           "type": "stat",
           "title": "Аудитория",
-          "description": "Сохранённые миры, зарегистрированные устройства и запуски кампании",
+          "description": "Миры с распознанным снимком, профили устройств и идентификаторы игровых прогонов. Это не число уникальных детей.",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -73,17 +81,23 @@ data:
             {
               "refId": "A",
               "expr": "max(fin_worlds_total)",
-              "legendFormat": "Миры"
+              "legendFormat": "Миры",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "B",
               "expr": "max(fin_profiles_total)",
-              "legendFormat": "Профили"
+              "legendFormat": "Профили",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "C",
               "expr": "max(fin_game_runs_total)",
-              "legendFormat": "Прогоны"
+              "legendFormat": "Прогоны",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -113,7 +127,8 @@ data:
                     "value": null
                   }
                 ]
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -183,7 +198,9 @@ data:
             {
               "refId": "A",
               "expr": "max by (act) (fin_players_by_story_act)",
-              "legendFormat": "{{act}}"
+              "legendFormat": "{{act}}",
+              "instant": true,
+              "range": false
             }
           ],
           "transformations": [
@@ -238,7 +255,7 @@ data:
             }
           ],
           "options": {
-            "displayMode": "gradient",
+            "displayMode": "basic",
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -266,100 +283,100 @@ data:
                   }
                 ]
               },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Глава 1"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Глава 2"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#59A14F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Глава 3"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#F28E2B"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Глава 4"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B07AA1"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Без главы"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#76B7B2"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Неизвестно"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#E15759"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Глава 1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Глава 2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#59A14F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Глава 3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#F28E2B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Глава 4"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B07AA1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Без главы"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#76B7B2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Неизвестно"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E15759"
+                    }
+                  }
+                ]
+              }
+            ]
           }
         },
         {
@@ -397,17 +414,23 @@ data:
             {
               "refId": "A",
               "expr": "max(fin_pet_balance_sum) / max(fin_pet_balance_count)",
-              "legendFormat": "Доступный"
+              "legendFormat": "Доступный",
+              "instant": false,
+              "range": true
             },
             {
               "refId": "B",
               "expr": "max(fin_pet_savings_balance_sum) / max(fin_pet_savings_balance_count)",
-              "legendFormat": "Накопления"
+              "legendFormat": "Накопления",
+              "instant": false,
+              "range": true
             },
             {
               "refId": "C",
               "expr": "max(fin_pet_unallocated_sum) / max(fin_pet_unallocated_count)",
-              "legendFormat": "Нераспределено"
+              "legendFormat": "Нераспределено",
+              "instant": false,
+              "range": true
             }
           ],
           "options": {
@@ -440,7 +463,8 @@ data:
                 "showPoints": "never",
                 "spanNulls": true,
                 "gradientMode": "opacity"
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -495,7 +519,7 @@ data:
           "id": 21,
           "type": "bargauge",
           "title": "Распределение баланса",
-          "description": "Сколько игроков в каждом диапазоне доступного баланса, монет",
+          "description": "Число миров по текущему доступному балансу. Включены нулевые и отрицательные значения; правая граница включена.",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -509,58 +533,85 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_pet_balance_bucket{le=\"50\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
-              "legendFormat": "​0–50"
+              "expr": "max(fin_pet_balance_bucket{le=\"0\"})",
+              "legendFormat": "≤ 0",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "B",
-              "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"50\"})",
-              "legendFormat": "​​50–100"
+              "expr": "max(fin_pet_balance_bucket{le=\"50\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
+              "legendFormat": "(0; 50]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "C",
-              "expr": "max(fin_pet_balance_bucket{le=\"150\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
-              "legendFormat": "​​​100–150"
+              "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"50\"})",
+              "legendFormat": "(50; 100]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "D",
-              "expr": "max(fin_pet_balance_bucket{le=\"200\"}) - max(fin_pet_balance_bucket{le=\"150\"})",
-              "legendFormat": "​​​​150–200"
+              "expr": "max(fin_pet_balance_bucket{le=\"150\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
+              "legendFormat": "(100; 150]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "E",
-              "expr": "max(fin_pet_balance_bucket{le=\"300\"}) - max(fin_pet_balance_bucket{le=\"200\"})",
-              "legendFormat": "​​​​​200–300"
+              "expr": "max(fin_pet_balance_bucket{le=\"200\"}) - max(fin_pet_balance_bucket{le=\"150\"})",
+              "legendFormat": "(150; 200]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "F",
-              "expr": "max(fin_pet_balance_bucket{le=\"400\"}) - max(fin_pet_balance_bucket{le=\"300\"})",
-              "legendFormat": "​​​​​​300–400"
+              "expr": "max(fin_pet_balance_bucket{le=\"300\"}) - max(fin_pet_balance_bucket{le=\"200\"})",
+              "legendFormat": "(200; 300]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "G",
-              "expr": "max(fin_pet_balance_bucket{le=\"600\"}) - max(fin_pet_balance_bucket{le=\"400\"})",
-              "legendFormat": "​​​​​​​400–600"
+              "expr": "max(fin_pet_balance_bucket{le=\"400\"}) - max(fin_pet_balance_bucket{le=\"300\"})",
+              "legendFormat": "(300; 400]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "H",
-              "expr": "max(fin_pet_balance_bucket{le=\"800\"}) - max(fin_pet_balance_bucket{le=\"600\"})",
-              "legendFormat": "​​​​​​​​600–800"
+              "expr": "max(fin_pet_balance_bucket{le=\"600\"}) - max(fin_pet_balance_bucket{le=\"400\"})",
+              "legendFormat": "(400; 600]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "I",
-              "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"800\"})",
-              "legendFormat": "​​​​​​​​​800–1 000"
+              "expr": "max(fin_pet_balance_bucket{le=\"800\"}) - max(fin_pet_balance_bucket{le=\"600\"})",
+              "legendFormat": "(600; 800]",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "J",
+              "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"800\"})",
+              "legendFormat": "(800; 1 000]",
+              "instant": true,
+              "range": false
+            },
+            {
+              "refId": "K",
               "expr": "max(fin_pet_balance_bucket{le=\"+Inf\"}) - max(fin_pet_balance_bucket{le=\"1000\"})",
-              "legendFormat": "​​​​​​​​​​1 000 и больше"
+              "legendFormat": "> 1 000",
+              "instant": true,
+              "range": false
             }
           ],
           "transformations": [],
           "options": {
-            "displayMode": "gradient",
+            "displayMode": "basic",
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -588,158 +639,7 @@ data:
                   }
                 ]
               },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​0–50"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​50–100"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#59A14F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​100–150"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#F28E2B"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​150–200"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B07AA1"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​​200–300"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#76B7B2"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​​​300–400"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#E15759"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​​​​400–600"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#EDC948"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​​​​​600–800"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#9C755F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​​​​​​800–1 000"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#86BCB6"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "​​​​​​​​​​1 000 и больше"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#D37295"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
             "overrides": []
           }
@@ -763,22 +663,30 @@ data:
             {
               "refId": "A",
               "expr": "max(fin_budget_amount_stored{bucket=\"needs\"})",
-              "legendFormat": "Нужды"
+              "legendFormat": "Нужды",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "B",
               "expr": "max(fin_budget_amount_stored{bucket=\"wants\"})",
-              "legendFormat": "Желания"
+              "legendFormat": "Желания",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "C",
               "expr": "max(fin_budget_amount_stored{bucket=\"savings\"})",
-              "legendFormat": "Накопления"
+              "legendFormat": "Накопления",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "D",
               "expr": "max(fin_budget_amount_stored{bucket=\"reserve\"})",
-              "legendFormat": "Запас"
+              "legendFormat": "Запас",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -816,7 +724,8 @@ data:
                   "tooltip": false,
                   "viz": false
                 }
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -901,17 +810,23 @@ data:
             {
               "refId": "A",
               "expr": "max by (kind) (fin_saving_amount_stored)",
-              "legendFormat": "{{kind}}"
+              "legendFormat": "{{kind}}",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "B",
               "expr": "max(fin_unexpected_expense_amount_stored)",
-              "legendFormat": "Незапланированные траты"
+              "legendFormat": "Незапланированные траты",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "C",
               "expr": "max(fin_earning_amount_stored)",
-              "legendFormat": "Заработок"
+              "legendFormat": "Заработок",
+              "instant": true,
+              "range": false
             }
           ],
           "transformations": [
@@ -945,7 +860,7 @@ data:
             }
           ],
           "options": {
-            "displayMode": "gradient",
+            "displayMode": "basic",
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -973,85 +888,85 @@ data:
                   }
                 ]
               },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Пополнение"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#59A14F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Снятие"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#E15759"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Покупка цели"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Незапланированные траты"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#D37295"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Заработок"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#EDC948"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Пополнение"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#59A14F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Снятие"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E15759"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Покупка цели"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Незапланированные траты"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D37295"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Заработок"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EDC948"
+                    }
+                  }
+                ]
+              }
+            ]
           }
         },
         {
@@ -1089,7 +1004,9 @@ data:
             {
               "refId": "A",
               "expr": "max by (temperament) (fin_players_by_pet_temperament)",
-              "legendFormat": "{{temperament}}"
+              "legendFormat": "{{temperament}}",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -1127,7 +1044,8 @@ data:
                   "tooltip": false,
                   "viz": false
                 }
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -1242,7 +1160,9 @@ data:
             {
               "refId": "A",
               "expr": "max by (look) (fin_players_by_pet_look)",
-              "legendFormat": "{{look}}"
+              "legendFormat": "{{look}}",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -1280,7 +1200,8 @@ data:
                   "tooltip": false,
                   "viz": false
                 }
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -1483,7 +1404,9 @@ data:
             {
               "refId": "A",
               "expr": "max by (goal) (fin_goal_projects_completed)",
-              "legendFormat": "{{goal}}"
+              "legendFormat": "{{goal}}",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -1521,7 +1444,8 @@ data:
                   "tooltip": false,
                   "viz": false
                 }
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -1657,7 +1581,9 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_engine_day_sum) / max(fin_engine_day_count)"
+              "expr": "max(fin_engine_day_sum) / max(fin_engine_day_count)",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -1695,7 +1621,8 @@ data:
                     "value": 5
                   }
                 ]
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": []
           }
@@ -1719,7 +1646,9 @@ data:
             {
               "refId": "A",
               "expr": "max by (age) (fin_players_by_pet_age)",
-              "legendFormat": "{{age}}"
+              "legendFormat": "{{age}}",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -1757,7 +1686,8 @@ data:
                   "tooltip": false,
                   "viz": false
                 }
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -1871,7 +1801,9 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(fin_completed_minigames_sum) / max(fin_completed_minigames_count)"
+              "expr": "max(fin_completed_minigames_sum) / max(fin_completed_minigames_count)",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -1901,7 +1833,8 @@ data:
                     "value": null
                   }
                 ]
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": []
           }
@@ -1941,11 +1874,13 @@ data:
             {
               "refId": "A",
               "expr": "topk(10, max by (detail_type) (fin_facts_stored))",
-              "legendFormat": "{{detail_type}}"
+              "legendFormat": "{{detail_type}}",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
-            "displayMode": "gradient",
+            "displayMode": "basic",
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -1973,310 +1908,309 @@ data:
                   }
                 ]
               },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Действия"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Покупки"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#F28E2B"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Утверждённый бюджет"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#59A14F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Заработок получен"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#EDC948"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Планы заработка"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B07AA1"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Отложенные желания"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#76B7B2"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Ответы на практике"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#E15759"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Движение накоплений"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#9C755F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Решение о запасе"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#86BCB6"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Незапланированные траты"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#D37295"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Окна дохода"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#BAB0AC"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Машина времени"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#D4A6C8"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Цель накопления закрыта"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#8CD17D"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Намерение накопления"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#FABFD2"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Приоритет применён"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B6992D"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Конфликт приоритетов"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#499894"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Восстановление"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#DDB6A9"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Выбор ресурса"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#A0CBE8"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Сравнение затрат"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#FFBE7D"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Ответы на вопросы"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#79706E"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Действия"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Покупки"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#F28E2B"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Утверждённый бюджет"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#59A14F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Заработок получен"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#EDC948"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Планы заработка"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B07AA1"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Отложенные желания"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#76B7B2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Ответы на практике"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E15759"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Движение накоплений"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#9C755F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Решение о запасе"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#86BCB6"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Незапланированные траты"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D37295"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Окна дохода"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#BAB0AC"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Машина времени"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#D4A6C8"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Цель накопления закрыта"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8CD17D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Намерение накопления"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FABFD2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Приоритет применён"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B6992D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Конфликт приоритетов"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#499894"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Восстановление"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#DDB6A9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Выбор ресурса"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A0CBE8"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Сравнение затрат"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FFBE7D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Ответы на вопросы"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#79706E"
+                    }
+                  }
+                ]
+              },
               {
                 "matcher": {
                   "id": "byName",
@@ -2741,11 +2675,13 @@ data:
             {
               "refId": "A",
               "expr": "topk(10, max by (name) (fin_interactions_stored))",
-              "legendFormat": "{{name}}"
+              "legendFormat": "{{name}}",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
-            "displayMode": "gradient",
+            "displayMode": "basic",
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -2768,190 +2704,190 @@ data:
                 "mode": "palette-classic"
               },
               "custom": null,
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Изменение бюджета"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#8A9BAE"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Начало дня"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#9BAE8A"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Кормление"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B0A68C"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Завершил событие"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#8AA69E"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Принял подработку"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#A69E8A"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Завершил подработку"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#948B9E"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Закрыл результат"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#8F9FA6"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Выбор"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#A6B09F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Открыл событие"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#9EA6B0"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Пополнение накоплений"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#A69A8F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Бюджет утверждён"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#8F9E8A"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Конец дня"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B09F8F"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Изменение бюджета"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8A9BAE"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Начало дня"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#9BAE8A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Кормление"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B0A68C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Завершил событие"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8AA69E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Принял подработку"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A69E8A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Завершил подработку"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#948B9E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Закрыл результат"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8F9FA6"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Выбор"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A6B09F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Открыл событие"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#9EA6B0"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Пополнение накоплений"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#A69A8F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Бюджет утверждён"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8F9E8A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Конец дня"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B09F8F"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -3192,22 +3128,28 @@ data:
             {
               "refId": "A",
               "expr": "max(fin_purchases_stored{purchased=\"True\"})",
-              "legendFormat": "Куплено"
+              "legendFormat": "Куплено",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "B",
               "expr": "max(fin_purchases_stored{purchased=\"False\"})",
-              "legendFormat": "Не куплено"
+              "legendFormat": "Не куплено",
+              "instant": true,
+              "range": false
             },
             {
               "refId": "C",
               "expr": "max(fin_desires_stored{declared=\"True\"})",
-              "legendFormat": "Отложено желание"
+              "legendFormat": "Отложено желание",
+              "instant": true,
+              "range": false
             }
           ],
           "transformations": [],
           "options": {
-            "displayMode": "gradient",
+            "displayMode": "basic",
             "namePlacement": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
@@ -3235,62 +3177,62 @@ data:
                   }
                 ]
               },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Куплено"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#59A14F"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Не куплено"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#E15759"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Отложено желание"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Куплено"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#59A14F"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Не куплено"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E15759"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Отложено желание"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              }
+            ]
           }
         },
         {
           "id": 16,
           "type": "stat",
           "title": "Верные ответы",
-          "description": "Доля правильных ответов в обучающих практиках",
+          "description": "Правильные ответы / все ответы в сохранённых фактах. Без ответов — нет наблюдений. Доля событий, не детей.",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -3304,7 +3246,9 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(max by (correct) (fin_practice_stored)) / clamp_min(sum(max by (correct) (fin_practice_stored)), 1e-9)"
+              "expr": "(max(fin_practice_stored{correct=\"True\"}) or 0 * (sum(max by (correct) (fin_practice_stored)))) / ((sum(max by (correct) (fin_practice_stored))) > 0)",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -3330,19 +3274,12 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "#E15759",
+                    "color": "#73BFBA",
                     "value": null
-                  },
-                  {
-                    "color": "#EDC948",
-                    "value": 0.5
-                  },
-                  {
-                    "color": "#59A14F",
-                    "value": 0.75
                   }
                 ]
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": []
           }
@@ -3381,13 +3318,17 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval]))",
-              "legendFormat": "{{reward_type}}"
+              "expr": "sum by (reward_type) (rate(fin_rewards_issued_total{created=\"True\"}[$__rate_interval]))",
+              "legendFormat": "{{reward_type}}",
+              "instant": false,
+              "range": true
             },
             {
               "refId": "B",
-              "expr": "max by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval]))",
-              "legendFormat": "{{outcome}}"
+              "expr": "sum by (outcome) (rate(fin_reward_receipts_acknowledged_total[$__rate_interval]))",
+              "legendFormat": "{{outcome}}",
+              "instant": false,
+              "range": true
             }
           ],
           "options": {
@@ -3420,7 +3361,8 @@ data:
                 "showPoints": "never",
                 "spanNulls": true,
                 "gradientMode": "opacity"
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": [
               {
@@ -3534,18 +3476,24 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (created) (rate(fin_snapshot_uploads_total[$__rate_interval]))",
-              "legendFormat": "Снапшоты {{created}}"
+              "expr": "sum by (created) (rate(fin_snapshot_uploads_total[$__rate_interval]))",
+              "legendFormat": "Снапшоты {{created}}",
+              "instant": false,
+              "range": true
             },
             {
               "refId": "B",
-              "expr": "max by (created) (rate(fin_analytics_batches_total[$__rate_interval]))",
-              "legendFormat": "Аналитика {{created}}"
+              "expr": "sum by (created) (rate(fin_analytics_batches_total[$__rate_interval]))",
+              "legendFormat": "Аналитика {{created}}",
+              "instant": false,
+              "range": true
             },
             {
               "refId": "C",
-              "expr": "max by (created) (rate(fin_profile_registrations_total[$__rate_interval]))",
-              "legendFormat": "Регистрации {{created}}"
+              "expr": "sum by (created) (rate(fin_profile_registrations_total[$__rate_interval]))",
+              "legendFormat": "Регистрации {{created}}",
+              "instant": false,
+              "range": true
             }
           ],
           "options": {
@@ -3579,55 +3527,55 @@ data:
                 "spanNulls": true,
                 "gradientMode": "opacity"
               },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/Снапшоты/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#76B7B2"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/Аналитика/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#4E79A7"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/Регистрации/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "mode": "fixed",
-                        "fixedColor": "#B07AA1"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "noValue": "Нет наблюдений"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/Снапшоты/"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#76B7B2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/Аналитика/"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#4E79A7"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/Регистрации/"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B07AA1"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "transformations": [
             {
@@ -3664,7 +3612,9 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(time() - fin_aggregation_last_success_unixtime)"
+              "expr": "max(time() - fin_aggregation_last_success_unixtime)",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -3702,7 +3652,8 @@ data:
                     "value": 900
                   }
                 ]
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": []
           }
@@ -3725,7 +3676,9 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(increase(fin_aggregation_errors_total[1h]))"
+              "expr": "sum(increase(fin_aggregation_errors_total[1h]))",
+              "instant": true,
+              "range": false
             }
           ],
           "options": {
@@ -3759,7 +3712,8 @@ data:
                     "value": 1
                   }
                 ]
-              }
+              },
+              "noValue": "Нет наблюдений"
             },
             "overrides": []
           }

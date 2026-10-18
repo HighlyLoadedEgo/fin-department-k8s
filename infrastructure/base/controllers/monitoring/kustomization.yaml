@@ -6,5 +6,6 @@ resources:
   - external-secret.yaml
   - dashboards/dashboard-active-alerts.yaml
   - dashboards/dashboard-game-analytics.yaml
+  - dashboards/dashboard-children-play.yaml
   - release.yaml
   - istio.yaml
