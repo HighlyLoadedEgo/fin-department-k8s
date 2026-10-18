@@ -1,15 +1,15 @@
 [
   {
     "name": "8 correct and 2 wrong answers must show 80 percent",
-    "dashboard": "game-analytics",
-    "panel": 16,
+    "dashboard": "children-play",
+    "panel": 5,
     "series": [
       {
-        "series": "fin_practice_stored{correct=\"True\"}",
+        "series": "fin_practice_stored{namespace=\"hackaton-fin\",correct=\"True\"}",
         "values": "8+0x10"
       },
       {
-        "series": "fin_practice_stored{correct=\"False\"}",
+        "series": "fin_practice_stored{namespace=\"hackaton-fin\",correct=\"False\"}",
         "values": "2+0x10"
       }
     ],
@@ -22,11 +22,11 @@
   },
   {
     "name": "only wrong answers means zero, not no data",
-    "dashboard": "game-analytics",
-    "panel": 16,
+    "dashboard": "children-play",
+    "panel": 5,
     "series": [
       {
-        "series": "fin_practice_stored{correct=\"False\"}",
+        "series": "fin_practice_stored{namespace=\"hackaton-fin\",correct=\"False\"}",
         "values": "10+0x10"
       }
     ],
@@ -39,8 +39,8 @@
   },
   {
     "name": "no answers is not a fabricated zero percent",
-    "dashboard": "game-analytics",
-    "panel": 16,
+    "dashboard": "children-play",
+    "panel": 5,
     "series": [],
     "expected": []
   },
@@ -295,6 +295,132 @@
       {
         "labels": "{bucket=\"savings\"}",
         "value": 0.25
+      }
+    ]
+  },
+  {
+    "name": "story game completions come from accepted command facts, not legacy attempt IDs",
+    "dashboard": "game-analytics",
+    "panel": 17,
+    "ref": "A",
+    "series": [
+      {
+        "series": "fin_interactions_stored{name=\"CompleteStoryGame\"}",
+        "values": "12+0x10"
+      },
+      {
+        "series": "fin_interactions_stored{name=\"SkipMiniGame\"}",
+        "values": "4+0x10"
+      },
+      {
+        "series": "fin_completed_minigames_sum",
+        "values": "0+0x10"
+      },
+      {
+        "series": "fin_completed_minigames_count",
+        "values": "5+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 12
+      }
+    ]
+  },
+  {
+    "name": "deed game completions are counted separately",
+    "dashboard": "game-analytics",
+    "panel": 17,
+    "ref": "B",
+    "series": [
+      {
+        "series": "fin_interactions_stored{name=\"CompleteDeed\"}",
+        "values": "7+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 7
+      }
+    ]
+  },
+  {
+    "name": "difficulty sample size includes neutral outcomes excluded from eligible completions",
+    "dashboard": "children-play",
+    "panel": 9,
+    "series": [
+      {
+        "series": "fin_skill_assessed_worlds_total{namespace=\"hackaton-fin\"}",
+        "values": "1+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"completed_episodes\"}",
+        "values": "2+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"supported_episodes\"}",
+        "values": "1+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"difficulty_episodes\"}",
+        "values": "1+0x10"
+      },
+      {
+        "series": "fin_skill_episodes_avg{namespace=\"hackaton-fin\",skill=\"FIN-01\",counter=\"neutral_episodes\"}",
+        "values": "8+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{skill=\"FIN-01\"}",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "name": "audience history shows the gauge and does not double shared DB across replicas",
+    "dashboard": "children-play",
+    "panel": 28,
+    "series": [
+      {
+        "series": "fin_profiles_total{namespace=\"hackaton-fin\",pod=\"a\"}",
+        "values": "10+1x10"
+      },
+      {
+        "series": "fin_profiles_total{namespace=\"hackaton-fin\",pod=\"b\"}",
+        "values": "10+1x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "name": "missing all action data must not fabricate zero completed games",
+    "dashboard": "game-analytics",
+    "panel": 17,
+    "series": [],
+    "expected": []
+  },
+  {
+    "name": "known actions with no completion mean zero completed story games",
+    "dashboard": "game-analytics",
+    "panel": 17,
+    "series": [
+      {
+        "series": "fin_interactions_stored{name=\"BeginDay\"}",
+        "values": "10+0x10"
+      }
+    ],
+    "expected": [
+      {
+        "labels": "{}",
+        "value": 0
       }
     ]
   }

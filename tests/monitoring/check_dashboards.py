@@ -16,6 +16,12 @@ ROOT = Path(__file__).resolve().parents[2]
 DASHBOARDS = ROOT / "infrastructure/base/controllers/monitoring/dashboards"
 
 
+def walk_panels(panels):
+    for panel in panels:
+        yield panel
+        yield from walk_panels(panel.get("panels", []))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--docker", action="store_true")
@@ -31,7 +37,7 @@ def main():
     tests = []
     for case in fixtures:
         dashboard = dashboards[case["dashboard"]]
-        panel = next(p for p in dashboard["panels"] if p["id"] == case["panel"])
+        panel = next(p for p in walk_panels(dashboard["panels"]) if p["id"] == case["panel"])
         target = next(t for t in panel["targets"] if t["refId"] == case.get("ref", "A"))
         expr = target["expr"].replace("$__rate_interval", "5m").replace("$__range", "10m")
         tests.append({
@@ -47,7 +53,7 @@ def main():
 
     # Parse every expression too: empty data is valid, syntax errors are not.
     for dashboard in dashboards.values():
-        for panel in dashboard["panels"]:
+        for panel in walk_panels(dashboard["panels"]):
             for target in panel.get("targets", []):
                 if "expr" not in target:
                     continue
