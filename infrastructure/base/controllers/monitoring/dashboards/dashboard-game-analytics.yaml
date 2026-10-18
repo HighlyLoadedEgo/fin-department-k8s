@@ -41,7 +41,7 @@ data:
       "timezone": "browser",
       "title": "Экономика и данные игры",
       "uid": "game-analytics",
-      "version": 20,
+      "version": 21,
       "templating": {
         "list": []
       },
@@ -75,7 +75,7 @@ data:
             "x": 0,
             "y": 1,
             "w": 12,
-            "h": 8
+            "h": 10
           },
           "targets": [
             {
@@ -182,7 +182,7 @@ data:
         {
           "id": 21,
           "type": "bargauge",
-          "title": "Распределение баланса",
+          "title": "Распределение баланса, монет",
           "description": "Число миров в каждом диапазоне целочисленного доступного баланса. 0 и отрицательные значения — в первой строке.",
           "datasource": {
             "type": "prometheus",
@@ -192,7 +192,7 @@ data:
             "x": 12,
             "y": 1,
             "w": 12,
-            "h": 10
+            "h": 13
           },
           "targets": [
             {
@@ -205,63 +205,63 @@ data:
             {
               "refId": "B",
               "expr": "max(fin_pet_balance_bucket{le=\"50\"}) - max(fin_pet_balance_bucket{le=\"0\"})",
-              "legendFormat": "1–50 монет",
+              "legendFormat": "1–50",
               "instant": true,
               "range": false
             },
             {
               "refId": "C",
               "expr": "max(fin_pet_balance_bucket{le=\"100\"}) - max(fin_pet_balance_bucket{le=\"50\"})",
-              "legendFormat": "51–100 монет",
+              "legendFormat": "51–100",
               "instant": true,
               "range": false
             },
             {
               "refId": "D",
               "expr": "max(fin_pet_balance_bucket{le=\"150\"}) - max(fin_pet_balance_bucket{le=\"100\"})",
-              "legendFormat": "101–150 монет",
+              "legendFormat": "101–150",
               "instant": true,
               "range": false
             },
             {
               "refId": "E",
               "expr": "max(fin_pet_balance_bucket{le=\"200\"}) - max(fin_pet_balance_bucket{le=\"150\"})",
-              "legendFormat": "151–200 монет",
+              "legendFormat": "151–200",
               "instant": true,
               "range": false
             },
             {
               "refId": "F",
               "expr": "max(fin_pet_balance_bucket{le=\"300\"}) - max(fin_pet_balance_bucket{le=\"200\"})",
-              "legendFormat": "201–300 монет",
+              "legendFormat": "201–300",
               "instant": true,
               "range": false
             },
             {
               "refId": "G",
               "expr": "max(fin_pet_balance_bucket{le=\"400\"}) - max(fin_pet_balance_bucket{le=\"300\"})",
-              "legendFormat": "301–400 монет",
+              "legendFormat": "301–400",
               "instant": true,
               "range": false
             },
             {
               "refId": "H",
               "expr": "max(fin_pet_balance_bucket{le=\"600\"}) - max(fin_pet_balance_bucket{le=\"400\"})",
-              "legendFormat": "401–600 монет",
+              "legendFormat": "401–600",
               "instant": true,
               "range": false
             },
             {
               "refId": "I",
               "expr": "max(fin_pet_balance_bucket{le=\"800\"}) - max(fin_pet_balance_bucket{le=\"600\"})",
-              "legendFormat": "601–800 монет",
+              "legendFormat": "601–800",
               "instant": true,
               "range": false
             },
             {
               "refId": "J",
               "expr": "max(fin_pet_balance_bucket{le=\"1000\"}) - max(fin_pet_balance_bucket{le=\"800\"})",
-              "legendFormat": "801–1 000 монет",
+              "legendFormat": "801–1 000",
               "instant": true,
               "range": false
             },
@@ -317,7 +317,7 @@ data:
         },
         {
           "id": 20,
-          "type": "piechart",
+          "type": "bargauge",
           "title": "Распределено монет по статьям",
           "description": "Суммы в сохранённых подтверждённых бюджетах, в монетах. Процентные доли этих же данных — в обзоре «Как играют дети».",
           "datasource": {
@@ -326,9 +326,9 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 11,
+            "y": 14,
             "w": 12,
-            "h": 5
+            "h": 6
           },
           "targets": [
             {
@@ -361,42 +361,33 @@ data:
             }
           ],
           "options": {
-            "pieType": "donut",
-            "displayLabels": [],
+            "displayMode": "basic",
+            "orientation": "horizontal",
+            "namePlacement": "left",
+            "valueMode": "text",
+            "sizing": "manual",
+            "minVizHeight": 30,
+            "maxVizHeight": 34,
+            "minVizWidth": 0,
+            "showUnfilled": true,
+            "text": {
+              "titleSize": 14,
+              "valueSize": 18
+            },
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
               ],
               "fields": "",
               "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            },
-            "legend": {
-              "showLegend": true,
-              "displayMode": "list",
-              "placement": "bottom",
-              "values": [
-                "value",
-                "percent"
-              ],
-              "calcs": []
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "none",
               "decimals": 0,
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "noValue": "Нет наблюдений"
+              "noValue": "Нет наблюдений",
+              "min": 0
             },
             "overrides": [
               {
@@ -473,9 +464,9 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 9,
+            "y": 11,
             "w": 12,
-            "h": 7
+            "h": 9
           },
           "targets": [
             {
@@ -488,7 +479,7 @@ data:
             {
               "refId": "B",
               "expr": "max(fin_unexpected_expense_amount_stored)",
-              "legendFormat": "Незапланированные траты",
+              "legendFormat": "Внеплановые траты",
               "instant": true,
               "range": false
             },
@@ -624,7 +615,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Незапланированные траты"
+                  "options": "Внеплановые траты"
                 },
                 "properties": [
                   {
@@ -665,14 +656,14 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 16,
+            "y": 20,
             "w": 24,
             "h": 1
           }
         },
         {
           "id": 7,
-          "type": "piechart",
+          "type": "bargauge",
           "title": "Темперамент",
           "description": "Какие характеры выбирают игроки",
           "datasource": {
@@ -681,7 +672,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 17,
+            "y": 21,
             "w": 12,
             "h": 8
           },
@@ -695,42 +686,33 @@ data:
             }
           ],
           "options": {
-            "pieType": "donut",
-            "displayLabels": [],
+            "displayMode": "basic",
+            "orientation": "horizontal",
+            "namePlacement": "left",
+            "valueMode": "text",
+            "sizing": "manual",
+            "minVizHeight": 30,
+            "maxVizHeight": 34,
+            "minVizWidth": 0,
+            "showUnfilled": true,
+            "text": {
+              "titleSize": 14,
+              "valueSize": 18
+            },
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
               ],
               "fields": "",
               "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            },
-            "legend": {
-              "showLegend": true,
-              "displayMode": "list",
-              "placement": "bottom",
-              "values": [
-                "value",
-                "percent"
-              ],
-              "calcs": []
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "none",
               "decimals": 0,
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "noValue": "Нет наблюдений"
+              "noValue": "Нет наблюдений",
+              "min": 0
             },
             "overrides": [
               {
@@ -828,7 +810,7 @@ data:
         },
         {
           "id": 8,
-          "type": "piechart",
+          "type": "bargauge",
           "title": "Внешний вид",
           "description": "Текущий выбранный аксессуар каждого сохранённого мира; не число покупок предметов.",
           "datasource": {
@@ -837,7 +819,7 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 17,
+            "y": 21,
             "w": 12,
             "h": 8
           },
@@ -851,48 +833,39 @@ data:
             }
           ],
           "options": {
-            "pieType": "donut",
-            "displayLabels": [],
+            "displayMode": "basic",
+            "orientation": "horizontal",
+            "namePlacement": "left",
+            "valueMode": "text",
+            "sizing": "manual",
+            "minVizHeight": 30,
+            "maxVizHeight": 34,
+            "minVizWidth": 0,
+            "showUnfilled": true,
+            "text": {
+              "titleSize": 14,
+              "valueSize": 18
+            },
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
               ],
               "fields": "",
               "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            },
-            "legend": {
-              "showLegend": true,
-              "displayMode": "list",
-              "placement": "bottom",
-              "values": [
-                "value",
-                "percent"
-              ],
-              "calcs": []
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "none",
               "decimals": 0,
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "noValue": "Нет наблюдений"
+              "noValue": "Нет наблюдений",
+              "min": 0
             },
             "overrides": [
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Очки"
+                  "options": "Очки пилота"
                 },
                 "properties": [
                   {
@@ -922,7 +895,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Компас"
+                  "options": "Походный компас"
                 },
                 "properties": [
                   {
@@ -937,7 +910,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Шляпа"
+                  "options": "Шляпа исследователя"
                 },
                 "properties": [
                   {
@@ -952,7 +925,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Классика"
+                  "options": "Без аксессуара"
                 },
                 "properties": [
                   {
@@ -982,7 +955,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Бинокль"
+                  "options": "Бинокль исследователя"
                 },
                 "properties": [
                   {
@@ -997,7 +970,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Нашивка"
+                  "options": "Нашивка путешественника"
                 },
                 "properties": [
                   {
@@ -1123,7 +1096,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 25,
+            "y": 29,
             "w": 6,
             "h": 5
           },
@@ -1182,7 +1155,7 @@ data:
         },
         {
           "id": 27,
-          "type": "piechart",
+          "type": "bargauge",
           "title": "Возраст питомца",
           "description": "На сколько выросли питомцы игроков",
           "datasource": {
@@ -1191,7 +1164,7 @@ data:
           },
           "gridPos": {
             "x": 6,
-            "y": 25,
+            "y": 29,
             "w": 6,
             "h": 5
           },
@@ -1205,42 +1178,33 @@ data:
             }
           ],
           "options": {
-            "pieType": "donut",
-            "displayLabels": [],
+            "displayMode": "basic",
+            "orientation": "horizontal",
+            "namePlacement": "left",
+            "valueMode": "text",
+            "sizing": "manual",
+            "minVizHeight": 30,
+            "maxVizHeight": 34,
+            "minVizWidth": 0,
+            "showUnfilled": true,
+            "text": {
+              "titleSize": 14,
+              "valueSize": 18
+            },
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
               ],
               "fields": "",
               "values": false
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            },
-            "legend": {
-              "showLegend": true,
-              "displayMode": "list",
-              "placement": "bottom",
-              "values": [
-                "value",
-                "percent"
-              ],
-              "calcs": []
             }
           },
           "fieldConfig": {
             "defaults": {
               "unit": "none",
               "decimals": 0,
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "noValue": "Нет наблюдений"
+              "noValue": "Нет наблюдений",
+              "min": 0
             },
             "overrides": [
               {
@@ -1347,7 +1311,7 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 25,
+            "y": 29,
             "w": 12,
             "h": 5
           },
@@ -1422,7 +1386,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 30,
+            "y": 34,
             "w": 24,
             "h": 1
           }
@@ -1438,7 +1402,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 31,
+            "y": 35,
             "w": 12,
             "h": 10
           },
@@ -2246,7 +2210,7 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 31,
+            "y": 35,
             "w": 12,
             "h": 10
           },
@@ -2706,7 +2670,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 41,
+            "y": 45,
             "w": 24,
             "h": 4
           },
@@ -2769,7 +2733,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 45,
+            "y": 49,
             "w": 24,
             "h": 1
           }
@@ -2785,7 +2749,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 46,
+            "y": 50,
             "w": 12,
             "h": 8
           },
@@ -2940,7 +2904,7 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 46,
+            "y": 50,
             "w": 12,
             "h": 8
           },
@@ -3073,7 +3037,7 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 54,
+            "y": 58,
             "w": 12,
             "h": 4
           },
@@ -3141,7 +3105,7 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 54,
+            "y": 58,
             "w": 12,
             "h": 4
           },
