@@ -43,6 +43,7 @@ data:
   APP_HOST: fin-api.mortypython.ru
   HACKATON_FIN_DB_USER: hackaton_fin
   HACKATON_FIN_DB: hackaton_fin_department
+  GRAFANA_POSTGRES_USER: grafana_reader
 
   HARBOR_DB_USER: harbor
   HARBOR_DB: harbor

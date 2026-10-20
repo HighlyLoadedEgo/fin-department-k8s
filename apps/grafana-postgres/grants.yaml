@@ -1,0 +1,64 @@
+---
+# Выполняется в KS apps: инфраструктура не ждёт таблиц миграций приложения.
+# При изменении grants переименовать Job (Pod template у Job immutable).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: grafana-postgres-grants-v1
+  namespace: postgres
+spec:
+  backoffLimit: 20
+  activeDeadlineSeconds: 840
+  template:
+    spec:
+      automountServiceAccountToken: false
+      priorityClassName: fin-batch
+      restartPolicy: OnFailure
+      containers:
+        - name: grants
+          image: ghcr.io/cloudnative-pg/postgresql:18-bookworm
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              psql -v ON_ERROR_STOP=1 -v reader='${GRAFANA_POSTGRES_USER}' -v database="$PGDATABASE" <<'SQL'
+              BEGIN;
+              GRANT CONNECT ON DATABASE :"database" TO :"reader";
+              GRANT USAGE ON SCHEMA public TO :"reader";
+              GRANT SELECT ON TABLE
+                public.profiles,
+                public.snapshot_heads,
+                public.analytics_heads,
+                public.analytics_original_facts,
+                public.analytics_projections,
+                public.skill_assessments,
+                public.parent_rewards,
+                public.parent_reward_receipts
+              TO :"reader";
+              COMMIT;
+              SQL
+          env:
+            - name: PGHOST
+              value: infra-db-rw.postgres.svc.cluster.local
+            - name: PGDATABASE
+              value: ${HACKATON_FIN_DB}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: hackaton-fin-pg
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hackaton-fin-pg
+                  key: password
+            - name: PGSSLMODE
+              value: require
+            - name: PGCONNECT_TIMEOUT
+              value: "10"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

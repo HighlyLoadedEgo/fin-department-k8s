@@ -49,6 +49,17 @@ spec:
 
   managed:
     roles:
+      # Grafana: только явные SELECT-гранты в БД приложения (apps/grafana-postgres).
+      - name: ${GRAFANA_POSTGRES_USER}
+        login: true
+        superuser: false
+        createdb: false
+        createrole: false
+        replication: false
+        bypassrls: false
+        connectionLimit: 5
+        passwordSecret:
+          name: grafana-reader-pg
       # Vestigial bootstrap-owner. Владеет init-БД `app` (пустая, никто не
       # подключается). createdb: false — БД создаются через Database CR.
       - name: app

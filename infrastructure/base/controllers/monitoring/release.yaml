@@ -49,6 +49,29 @@ spec:
 
     grafana:
       enabled: true
+      envValueFrom:
+        GRAFANA_POSTGRES_PASSWORD:
+          secretKeyRef:
+            name: grafana-postgres
+            key: password
+      additionalDataSources:
+        - name: Fin PostgreSQL
+          uid: fin-postgres
+          type: postgres
+          access: proxy
+          url: infra-db-rw.postgres.svc.cluster.local:5432
+          user: ${GRAFANA_POSTGRES_USER}
+          editable: false
+          jsonData:
+            database: ${HACKATON_FIN_DB}
+            sslmode: require
+            postgresVersion: 1800
+            maxOpenConns: 3
+            maxIdleConns: 1
+            connMaxLifetime: 600
+            timescaledb: false
+          secureJsonData:
+            password: $GRAFANA_POSTGRES_PASSWORD
       adminUser: admin
       admin:
         existingSecret: grafana-admin

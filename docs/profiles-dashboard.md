@@ -1,0 +1,97 @@
+# Профили и устройства в Grafana
+
+Дашборд: `https://grafana.mortypython.ru/d/profiles-devices`.
+Datasource: **Fin PostgreSQL**, UID `fin-postgres`, БД
+`${HACKATON_FIN_DB}` на `infra-db-rw.postgres.svc.cluster.local:5432`, TLS.
+
+## Включение
+
+До первого Flux reconcile один раз создать отдельный пароль в Vault
+(в shell с настроенными `VAULT_ADDR` и авторизацией Vault):
+
+```bash
+openssl rand -base64 32 | vault kv put secret/database/grafana-reader password=-
+```
+
+Команда создаёт/перезаписывает пароль; при существующем ключе повторять её
+только для намеренной ротации. Пароль не попадает в git или аргументы процесса.
+ExternalSecret доставляет его в `postgres/grafana-reader-pg` (CNPG) и
+`monitoring/grafana-postgres` (Grafana).
+
+После доставки изменений в main Flux создаст роль `${GRAFANA_POSTGRES_USER}`,
+настроит datasource и подхватит ConfigMap дашборда. В KS `apps` выполнится
+Job `postgres/grafana-postgres-grants-v1`: от имени владельца БД выдаст
+CONNECT, USAGE на public и SELECT на восемь таблиц приложения.
+Нет `pg_read_all_data`, прав записи или автоматического доступа к новым таблицам.
+
+Job намеренно находится в `apps`, а не в `infrastructure`: при bootstrap
+инфраструктура должна стать Ready до запуска приложения и его миграций.
+Job повторяется при ошибках до 14 минут, ожидая роль и таблицы миграций.
+TTL не задан: завершённый Job остаётся под управлением Flux.
+
+Проверка в контексте боевого кластера:
+
+```bash
+kubectl -n postgres wait --for=condition=Ready externalsecret/grafana-reader-pg --timeout=120s
+kubectl -n monitoring wait --for=condition=Ready externalsecret/grafana-postgres --timeout=120s
+kubectl -n postgres wait --for=condition=complete job/grafana-postgres-grants-v1 --timeout=840s
+kubectl -n postgres logs job/grafana-postgres-grants-v1
+```
+
+В Grafana: Connections → Data sources → Fin PostgreSQL → Save & test.
+Затем открыть дашборд и выбрать устройство. При ротации пароля перезапустить
+Deployment `kube-prometheus-stack-grafana` в `monitoring`: пароль datasource
+передаётся через env и перечитывается при запуске Grafana.
+
+При изменении списка grants переименовать Job в следующую версию: Pod template
+у Kubernetes Job неизменяемый. После устранения ошибки завершившийся неуспешно
+Job можно удалить, затем запустить reconcile KS `apps` для повторного создания.
+
+## Что показывает
+
+- Верхние карточки и таблица: все профили, включая профили без аналитики.
+  `device_id`, `profile_id`, характеристики питомца, текущий прогон, ревизия,
+  игровой день, баланс и накопления. Исходные события, прогоны и награды
+  считаются за всё время отдельно, без размножения строк через JOIN.
+  Статусы навыков текущего прогона перечислены с версиями политики оценки.
+- Нажатие на `device_id` выбирает устройство. Общая таблица остаётся общей;
+  нижние панели фильтруются через `${device_id:sqlstring}`.
+- Текущее сохранение: питомец, сюжетный/игровой день, экономика, бюджетный план,
+  предметы, завершённые мини-игры и цели.
+- Все прогоны устройства: принятая последовательность, число исходных событий,
+  признак текущего прогона.
+- Навыки текущего прогона: серверный статус, версия политики, счётчики,
+  объяснения. Разные версии политик показаны отдельно.
+- События: последние 500 фактов **последней проекции текущего прогона**.
+  Проекции могут содержать лишь окно истории, поэтому границы окна показаны
+  явно. Проекции выбираются в том же порядке, что в агрегаторе бэкенда:
+  through_history_sequence, revision, history_start_sequence,
+  projection_version, evaluator_version (по убыванию).
+- Награды: последние 500 за все прогоны, тип, монеты/предмет, дата выдачи
+  и подтверждение применения. Несколько подтверждений не дублируют награду.
+
+Показатели относятся к текущим сохранённым данным; календарный time picker
+скрыт. Время регистрации/последнего входа не хранится. Игровой день и sequence
+не считаются календарными датами или числом действий. Отсутствующие данные
+показаны прочерком; пустой/невалидный snapshot не ломает таблицу.
+
+Дашборд помечен `kustomize.toolkit.fluxcd.io/substitute: disabled`:
+Grafana `${...}` в SQL и ссылках не должна подменяться Flux.
+
+## Проверки локально
+
+Нужны PyYAML и PostgreSQL **16+** (`initdb`, `pg_ctl`, `psql`) в PATH.
+Проверка поднимает отдельный временный PostgreSQL с Unix-сокетом, без TCP,
+заполняет примеры и запускает SQL непосредственно из дашборда.
+
+```bash
+python3 tests/monitoring/check_profiles.py
+kubectl kustomize infrastructure/base/controllers > /dev/null
+kubectl kustomize apps > /dev/null
+```
+
+Проверяются выбор устройства (включая кавычку в ID), изоляция профилей,
+отсутствие аналитики, пустой/невалидный snapshot, отсутствие двойного счёта,
+выбор последней проекции, SELECT под ролью Grafana и отсутствие прав
+UPDATE/чтения посторонней таблицы. Тестовая схема повторяет используемые
+поля моделей бэкенда; это не проверка состояния боевого кластера.

@@ -1,0 +1,585 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-profiles-devices
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    # Grafana ${...} должен пережить Flux postBuild без подстановки.
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+data:
+  profiles-devices.json: |-
+    {
+      "id": null,
+      "uid": "profiles-devices",
+      "title": "Профили и устройства",
+      "description": "Профили, устройства, текущее состояние игры, навыки, события и награды из PostgreSQL.",
+      "version": 1,
+      "schemaVersion": 39,
+      "editable": true,
+      "tags": [
+        "game",
+        "profiles",
+        "hackaton-fin-department"
+      ],
+      "timezone": "browser",
+      "refresh": "1m",
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "timepicker": {
+        "hidden": true
+      },
+      "annotations": {
+        "list": []
+      },
+      "links": [
+        {
+          "title": "Как играют дети",
+          "type": "link",
+          "url": "/d/children-play"
+        },
+        {
+          "title": "Экономика и данные игры",
+          "type": "link",
+          "url": "/d/game-analytics"
+        }
+      ],
+      "templating": {
+        "list": [
+          {
+            "name": "device_id",
+            "label": "Устройство",
+            "type": "query",
+            "datasource": {
+              "type": "postgres",
+              "uid": "fin-postgres"
+            },
+            "query": "SELECT device_id AS __text, device_id AS __value FROM profiles ORDER BY device_id",
+            "definition": "SELECT device_id AS __text, device_id AS __value FROM profiles ORDER BY device_id",
+            "refresh": 1,
+            "sort": 1,
+            "multi": false,
+            "includeAll": false,
+            "options": [],
+            "current": {}
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Профили и устройства",
+          "type": "text",
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 4
+          },
+          "options": {
+            "mode": "markdown",
+            "content": "Текущие данные PostgreSQL. Сверху — все профили. Кликните **device_id** в таблице или выберите устройство в фильтре: ниже появится детализация.\n\nСчётчики событий и наград — за всё время. Игровые дни и номера событий — не календарное время. Дата регистрации и последний вход в БД не хранятся. **—** означает отсутствие данных."
+          }
+        },
+        {
+          "id": 2,
+          "title": "Профилей",
+          "type": "stat",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT count(*) AS \"Профили\" FROM profiles"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "blue"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 3,
+          "title": "Устройств",
+          "type": "stat",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "gridPos": {
+            "x": 6,
+            "y": 4,
+            "w": 6,
+            "h": 4
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT count(DISTINCT device_id) AS \"Устройства\" FROM profiles"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "blue"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 4,
+          "title": "С сохранением",
+          "type": "stat",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 4,
+            "w": 6,
+            "h": 4
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT count(*) AS \"Сохранения\" FROM profiles p JOIN snapshot_heads h USING (profile_id) WHERE h.server_revision > 0"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "blue"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 5,
+          "title": "Исходных событий",
+          "type": "stat",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "gridPos": {
+            "x": 18,
+            "y": 4,
+            "w": 6,
+            "h": 4
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT count(*) AS \"События\" FROM analytics_original_facts f JOIN profiles p USING (profile_id)"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "blue"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 10,
+          "title": "Все профили",
+          "type": "table",
+          "gridPos": {
+            "x": 0,
+            "y": 8,
+            "w": 24,
+            "h": 12
+          },
+          "description": "Все профили, включая устройства без сохранения и аналитики. Баланс — из текущего сохранения; события и награды — все прогоны. Возраст относится к питомцу.",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "WITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'temperament' AS \"Характер\", game_run_id AS \"Текущий прогон\",\n  server_revision AS \"Ревизия сохранения\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  (SELECT count(*) FROM analytics_original_facts f WHERE f.profile_id = world.profile_id) AS \"Исходные события\",\n  (SELECT count(*) FROM analytics_heads a WHERE a.profile_id = world.profile_id) AS \"Прогоны с аналитикой\",\n  (SELECT count(*) FROM parent_rewards r WHERE r.profile_id = world.profile_id) AS \"Награды\",\n  (SELECT string_agg(s.policy_version || ' · ' || (skill->>'skillId') || ': ' || (skill->>'status'), ', '\n     ORDER BY s.policy_version, skill->>'skillId')\n   FROM skill_assessments s\n   CROSS JOIN LATERAL jsonb_array_elements(\n     CASE WHEN jsonb_typeof(s.skills) = 'array' THEN s.skills ELSE '[]'::jsonb END\n   ) AS skill\n   WHERE s.profile_id = world.profile_id AND s.game_run_id = world.game_run_id) AS \"Оценки навыков\"\nFROM world\nORDER BY device_id"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "noValue": "—"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "device_id"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Выбрать устройство",
+                        "url": "/d/profiles-devices?var-device_id=${__value.text:percentencode}",
+                        "targetBlank": false
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "enablePagination": true
+          }
+        },
+        {
+          "id": 19,
+          "title": "Устройство: $device_id",
+          "type": "row",
+          "collapsed": false,
+          "gridPos": {
+            "x": 0,
+            "y": 20,
+            "w": 24,
+            "h": 1
+          },
+          "panels": []
+        },
+        {
+          "id": 20,
+          "title": "Профиль и текущее состояние игры",
+          "type": "table",
+          "gridPos": {
+            "x": 0,
+            "y": 21,
+            "w": 24,
+            "h": 7
+          },
+          "description": "Данные выбранного устройства. Пустое или невалидное сохранение даёт прочерки вместо выдуманных нулей.",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "WITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "noValue": "—"
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "enablePagination": true
+          }
+        },
+        {
+          "id": 25,
+          "title": "Прогоны и объём аналитики",
+          "type": "table",
+          "gridPos": {
+            "x": 0,
+            "y": 28,
+            "w": 24,
+            "h": 7
+          },
+          "description": "Принятая последовательность и число исходных событий каждого прогона. Номера событий не обозначают количество событий.",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT a.game_run_id AS \"Прогон\", a.through_history_sequence AS \"Принято по событие\",\n  a.game_run_id = h.game_run_id AS \"Текущий\",\n  (SELECT count(*) FROM analytics_original_facts f\n   WHERE f.profile_id = a.profile_id AND f.game_run_id = a.game_run_id) AS \"Исходные события\"\nFROM profiles p JOIN analytics_heads a USING (profile_id)\nLEFT JOIN snapshot_heads h USING (profile_id)\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY (a.game_run_id = h.game_run_id) DESC NULLS LAST, a.game_run_id"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "noValue": "—"
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "enablePagination": true
+          }
+        },
+        {
+          "id": 30,
+          "title": "Оценки навыков текущего прогона",
+          "type": "table",
+          "gridPos": {
+            "x": 0,
+            "y": 35,
+            "w": 24,
+            "h": 11
+          },
+          "description": "Серверные оценки skill_assessments. Каждая версия политики показана отдельно; без оценки — пустая таблица.",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT s.game_run_id AS \"Прогон\", s.policy_version AS \"Версия оценки\",\n  s.based_on_history_sequence AS \"Оценка по событие\",\n  skill->>'skillId' AS \"Навык\", skill->>'status' AS \"Статус\",\n  skill #>> '{observationCounts,completedEpisodes}' AS \"Завершено\",\n  skill #>> '{observationCounts,supportedEpisodes}' AS \"Успешно\",\n  skill #>> '{observationCounts,difficultyEpisodes}' AS \"Затруднения\",\n  skill #>> '{observationCounts,pendingEpisodes}' AS \"В процессе\",\n  skill #>> '{observationCounts,incompleteEpisodes}' AS \"Мало свидетельств\",\n  skill->>'assessmentReason' AS \"Основание\",\n  skill->>'explanation' AS \"Объяснение\",\n  skill->>'observationCounts' AS \"Все счётчики\"\nFROM profiles p\nJOIN snapshot_heads h USING (profile_id)\nJOIN skill_assessments s ON s.profile_id = p.profile_id AND s.game_run_id = h.game_run_id\nCROSS JOIN LATERAL jsonb_array_elements(\n  CASE WHEN jsonb_typeof(s.skills) = 'array' THEN s.skills ELSE '[]'::jsonb END\n) AS skill\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY s.policy_version, skill->>'skillId'"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "noValue": "—"
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "enablePagination": true
+          }
+        },
+        {
+          "id": 40,
+          "title": "События последней проекции текущего прогона",
+          "type": "table",
+          "gridPos": {
+            "x": 0,
+            "y": 46,
+            "w": 24,
+            "h": 13
+          },
+          "description": "До 500 событий из последней сохранённой проекции. Начало/конец окна показывают покрытие: это может быть часть истории. При одинаковой последовательности выбирается последняя ревизия; старые проекции не суммируются.",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "WITH latest AS (\n  SELECT a.* FROM profiles p\n  JOIN snapshot_heads h USING (profile_id)\n  JOIN analytics_projections a ON a.profile_id = p.profile_id AND a.game_run_id = h.game_run_id\n  WHERE p.device_id = ${device_id:sqlstring}\n  ORDER BY a.through_history_sequence DESC, a.revision DESC,\n    a.history_start_sequence DESC, a.projection_version DESC, a.evaluator_version DESC\n  LIMIT 1\n)\nSELECT event->>'eventId' AS \"Событие\", (event->>'sequence')::bigint AS \"Порядок\",\n  event->>'episodeId' AS \"Эпизод\", event->>'actionId' AS \"Действие\",\n  event #>> '{detail,_type}' AS \"Тип\", event->>'detail' AS \"Данные\",\n  latest.game_run_id AS \"Прогон\", latest.history_start_sequence AS \"Начало окна\",\n  latest.through_history_sequence AS \"Конец окна\",\n  latest.projection_version AS \"Версия проекции\"\nFROM latest\nCROSS JOIN LATERAL jsonb_array_elements(\n  CASE WHEN jsonb_typeof(latest.facts) = 'array' THEN latest.facts ELSE '[]'::jsonb END\n) AS event\nORDER BY (event->>'sequence')::bigint DESC, event->>'eventId'\nLIMIT 500"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "noValue": "—"
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "enablePagination": true
+          }
+        },
+        {
+          "id": 50,
+          "title": "История родительских наград",
+          "type": "table",
+          "gridPos": {
+            "x": 0,
+            "y": 59,
+            "w": 24,
+            "h": 10
+          },
+          "description": "Последние 500 наград за все прогоны выбранного устройства. Применение берётся из подтверждений; отсутствие подтверждения не считается применением.",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT r.created_at AS \"Выдана\", r.game_run_id AS \"Прогон\",\n  r.sequence AS \"Порядок\", r.reward_id::text AS \"ID награды\",\n  r.reward_type AS \"Тип\", r.amount AS \"Монеты\", r.item_id AS \"Предмет\",\n  (SELECT string_agg(DISTINCT receipt.outcome, ', ')\n   FROM parent_reward_receipts receipt WHERE receipt.reward_id = r.reward_id) AS \"Применение\"\nFROM profiles p JOIN parent_rewards r USING (profile_id)\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY r.created_at DESC, r.sequence DESC\nLIMIT 500"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "noValue": "—"
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "enablePagination": true
+          }
+        }
+      ]
+    }

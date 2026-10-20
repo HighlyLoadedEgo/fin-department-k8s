@@ -7,5 +7,6 @@ resources:
   - dashboards/dashboard-active-alerts.yaml
   - dashboards/dashboard-game-analytics.yaml
   - dashboards/dashboard-children-play.yaml
+  - dashboards/dashboard-profiles-devices.yaml
   - release.yaml
   - istio.yaml
