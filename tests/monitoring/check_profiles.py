@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DASHBOARD = ROOT / "infrastructure/base/controllers/monitoring/dashboards/dashboard-profiles-devices.yaml"
 PROFILE = "00000000-0000-0000-0000-000000000001"
 OTHER = "00000000-0000-0000-0000-000000000002"
+OLDER = "00000000-0000-0000-0000-000000000003"
 
 
 def walk_panels(panels):
@@ -50,7 +51,8 @@ def main():
                 CREATE ROLE app_owner LOGIN;
                 ALTER DATABASE postgres OWNER TO app_owner;
                 SET ROLE app_owner;
-                CREATE TABLE profiles(profile_id uuid PRIMARY KEY, device_id text UNIQUE, pet_json json);
+                CREATE TABLE profiles(profile_id uuid PRIMARY KEY, device_id text UNIQUE, pet_json json,
+                    last_synced_at timestamptz);
                 CREATE TABLE snapshot_heads(profile_id uuid PRIMARY KEY, game_run_id text,
                     server_revision bigint, snapshot_json text);
                 CREATE TABLE analytics_heads(profile_id uuid, game_run_id text, through_history_sequence bigint);
@@ -63,9 +65,12 @@ def main():
                 CREATE TABLE parent_rewards(reward_id uuid, profile_id uuid, game_run_id text,
                     sequence bigint, reward_type text, amount bigint, item_id text, created_at timestamptz);
                 CREATE TABLE parent_reward_receipts(reward_id uuid, outcome text);
-                INSERT INTO profiles VALUES
+                INSERT INTO profiles(profile_id, device_id, pet_json) VALUES
                     ('{PROFILE}', 'device''one', '{{"name":"Мурзик","age":"YOUNG"}}'),
-                    ('{OTHER}', 'empty-device', '{{"name":"Другой"}}');
+                    ('{OTHER}', 'empty-device', '{{"name":"Другой"}}'),
+                    ('{OLDER}', 'older-device', '{{"name":"Старый"}}');
+                UPDATE profiles SET last_synced_at='2026-10-20T10:00:00Z' WHERE profile_id='{PROFILE}';
+                UPDATE profiles SET last_synced_at='2026-10-19T10:00:00Z' WHERE profile_id='{OLDER}';
                 INSERT INTO snapshot_heads VALUES
                     ('{PROFILE}', 'current', 3, '{{"state":{{"economy":{{"availableBalance":42,"savingsBalance":10}},"engine":{{"day":7}}}}}}'),
                     ('{OTHER}', 'empty', 0, '');
@@ -97,11 +102,13 @@ def main():
             assert sql("SELECT has_table_privilege('grafana_reader','private_data','SELECT')") == "f"
             variable = dashboard["templating"]["list"][0]
             choices = rows(variable["query"])
-            assert len(choices) == 2
+            assert len(choices) == 3
             assert next(c for c in choices if c["__value"] == "device'one")["__text"] == "Мурзик · device'one"
             panels = {p["id"]: p for p in walk_panels(dashboard["panels"]) if p.get("targets")}
             results = {key: rows(panel["targets"][0]["rawSql"]) for key, panel in panels.items()}
-            assert len(results[10]) == 2, "Overview must include profiles without analytics"
+            assert len(results[10]) == 3, "Overview must include profiles without analytics"
+            assert [r['device_id'] for r in results[10]] == ["device'one", 'older-device', 'empty-device']
+            assert results[10][-1]['Последняя синхронизация'] is None
             first = next(r for r in results[10] if r["device_id"] == "device'one")
             assert first["Исходные события"] == 2, first
             assert first["Награды"] == 1, "Receipt joins must not multiply rewards"
@@ -130,6 +137,9 @@ def main():
             for panel in panels.values():
                 query = panel["targets"][0]["rawSql"].replace("${device_id:sqlstring}", "'device''one'")
                 sql("SET ROLE grafana_reader; " + query)
+            sql("ALTER TABLE profiles DROP COLUMN last_synced_at")
+            old_schema = rows(panels[10]['targets'][0]['rawSql'])
+            assert all(r['Последняя синхронизация'] is None for r in old_schema), "Dashboard must work before backend migration"
             print(f"Verified {len(panels)} panel queries, device isolation, empty/invalid snapshots and read-only grants.")
         finally:
             subprocess.run(["pg_ctl", "-D", f"{directory}/db", "-m", "immediate", "-w", "stop"],

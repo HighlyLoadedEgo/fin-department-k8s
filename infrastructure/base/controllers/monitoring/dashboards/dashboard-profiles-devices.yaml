@@ -16,7 +16,7 @@ data:
       "uid": "profiles-devices",
       "title": "Профили и устройства",
       "description": "Обзор игроков и понятная детализация выбранного устройства: экономика, навыки, действия и награды. Технические данные доступны в сворачиваемом разделе.",
-      "version": 3,
+      "version": 4,
       "schemaVersion": 39,
       "editable": true,
       "tags": [
@@ -316,7 +316,7 @@ data:
             "w": 24,
             "h": 11
           },
-          "description": "Нажмите на устройство, чтобы открыть его данные ниже. Баланс и день — текущая игра; события и награды — за всё время. Сортировка — нажатием на заголовок, фильтр — в заголовке столбца.",
+          "description": "Нажмите на устройство, чтобы открыть его данные ниже. Баланс и день — текущая игра; события и награды — за всё время. Сортировка — нажатием на заголовок, фильтр — в заголовке столбца. Последняя синхронизация — серверное время приёма новых данных игры, не время действия офлайн. Новые сверху; неизвестные даты внизу. До обновления бэкенда дата отсутствует.",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
@@ -327,7 +327,7 @@ data:
               "format": "table",
               "rawQuery": true,
               "editorMode": "code",
-              "rawSql": "WITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'temperament' AS \"Характер\", game_run_id AS \"Текущий прогон\",\n  server_revision AS \"Ревизия сохранения\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  (SELECT count(*) FROM analytics_original_facts f WHERE f.profile_id = world.profile_id) AS \"Исходные события\",\n  (SELECT count(*) FROM analytics_heads a WHERE a.profile_id = world.profile_id) AS \"Прогоны с аналитикой\",\n  (SELECT count(*) FROM parent_rewards r WHERE r.profile_id = world.profile_id) AS \"Награды\",\n  (SELECT string_agg(s.policy_version || ' · ' || (skill->>'skillId') || ': ' || (skill->>'status'), ', '\n     ORDER BY s.policy_version, skill->>'skillId')\n   FROM skill_assessments s\n   CROSS JOIN LATERAL jsonb_array_elements(\n     CASE WHEN jsonb_typeof(s.skills) = 'array' THEN s.skills ELSE '[]'::jsonb END\n   ) AS skill\n   WHERE s.profile_id = world.profile_id AND s.game_run_id = world.game_run_id) AS \"Оценки навыков\"\nFROM world\nORDER BY device_id"
+              "rawSql": "WITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    nullif(to_jsonb(p)->>'last_synced_at', '')::timestamptz AS sync_time,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  sync_time AS \"Последняя синхронизация\",\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'temperament' AS \"Характер\", game_run_id AS \"Текущий прогон\",\n  server_revision AS \"Ревизия сохранения\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  (SELECT count(*) FROM analytics_original_facts f WHERE f.profile_id = world.profile_id) AS \"Исходные события\",\n  (SELECT count(*) FROM analytics_heads a WHERE a.profile_id = world.profile_id) AS \"Прогоны с аналитикой\",\n  (SELECT count(*) FROM parent_rewards r WHERE r.profile_id = world.profile_id) AS \"Награды\",\n  (SELECT string_agg(s.policy_version || ' · ' || (skill->>'skillId') || ': ' || (skill->>'status'), ', '\n     ORDER BY s.policy_version, skill->>'skillId')\n   FROM skill_assessments s\n   CROSS JOIN LATERAL jsonb_array_elements(\n     CASE WHEN jsonb_typeof(s.skills) = 'array' THEN s.skills ELSE '[]'::jsonb END\n   ) AS skill\n   WHERE s.profile_id = world.profile_id AND s.game_run_id = world.game_run_id) AS \"Оценки навыков\"\nFROM world\nORDER BY sync_time DESC NULLS LAST, device_id"
             }
           ],
           "fieldConfig": {
@@ -457,6 +457,22 @@ data:
                     "value": "right"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Последняя синхронизация"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  }
+                ]
               }
             ]
           },
@@ -475,6 +491,7 @@ data:
                 "include": {
                   "names": [
                     "Питомец",
+                    "Последняя синхронизация",
                     "device_id",
                     "Игровой день",
                     "Баланс",
@@ -491,12 +508,13 @@ data:
                 "excludeByName": {},
                 "indexByName": {
                   "Питомец": 0,
-                  "device_id": 1,
-                  "Игровой день": 2,
-                  "Баланс": 3,
-                  "Накопления": 4,
-                  "Исходные события": 5,
-                  "Награды": 6
+                  "Последняя синхронизация": 1,
+                  "device_id": 2,
+                  "Игровой день": 3,
+                  "Баланс": 4,
+                  "Накопления": 5,
+                  "Исходные события": 6,
+                  "Награды": 7
                 },
                 "renameByName": {
                   "device_id": "Устройство",
