@@ -17,6 +17,12 @@ PROFILE = "00000000-0000-0000-0000-000000000001"
 OTHER = "00000000-0000-0000-0000-000000000002"
 
 
+def walk_panels(panels):
+    for panel in panels:
+        yield panel
+        yield from walk_panels(panel.get("panels", []))
+
+
 def main():
     assert DASHBOARD.exists(), "Profiles dashboard is missing"
     dashboard = json.loads(next(iter(yaml.safe_load(DASHBOARD.read_text())["data"].values())))
@@ -90,8 +96,10 @@ def main():
             assert sql("SELECT has_table_privilege('grafana_reader','profiles','UPDATE')") == "f"
             assert sql("SELECT has_table_privilege('grafana_reader','private_data','SELECT')") == "f"
             variable = dashboard["templating"]["list"][0]
-            assert len(rows(variable["query"])) == 2
-            panels = {p["id"]: p for p in dashboard["panels"] if p.get("targets")}
+            choices = rows(variable["query"])
+            assert len(choices) == 2
+            assert next(c for c in choices if c["__value"] == "device'one")["__text"] == "Мурзик · device'one"
+            panels = {p["id"]: p for p in walk_panels(dashboard["panels"]) if p.get("targets")}
             results = {key: rows(panel["targets"][0]["rawSql"]) for key, panel in panels.items()}
             assert len(results[10]) == 2, "Overview must include profiles without analytics"
             first = next(r for r in results[10] if r["device_id"] == "device'one")
@@ -102,6 +110,11 @@ def main():
             assert len(results[30]) == 1 and results[30][0]["Навык"] == "FIN-01"
             assert len(results[40]) == 2, "Use latest projection, exclude old runs and revisions"
             assert len(results[50]) == 1
+            assert results[21] == [{"Питомец": "Мурзик"}]
+            assert results[23] == [{"Баланс": 42}]
+            assert results[24] == [{"Накопления": 10}]
+            assert rows(panels[23]["targets"][0]["rawSql"], "empty-device") == [{"Баланс": None}]
+            assert rows(panels[23]["targets"][0]["rawSql"], "unknown") == []
             for key in (30, 40, 50):
                 assert rows(panels[key]["targets"][0]["rawSql"], "empty-device") == []
                 assert rows(panels[key]["targets"][0]["rawSql"], "unknown") == []

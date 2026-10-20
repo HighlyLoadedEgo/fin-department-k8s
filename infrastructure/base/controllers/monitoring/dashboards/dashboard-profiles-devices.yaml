@@ -15,8 +15,8 @@ data:
       "id": null,
       "uid": "profiles-devices",
       "title": "Профили и устройства",
-      "description": "Профили, устройства, текущее состояние игры, навыки, события и награды из PostgreSQL.",
-      "version": 1,
+      "description": "Обзор игроков и понятная детализация выбранного устройства: экономика, навыки, действия и награды. Технические данные доступны в сворачиваемом разделе.",
+      "version": 2,
       "schemaVersion": 39,
       "editable": true,
       "tags": [
@@ -52,16 +52,16 @@ data:
         "list": [
           {
             "name": "device_id",
-            "label": "Устройство",
+            "label": "Питомец / устройство",
             "type": "query",
             "datasource": {
               "type": "postgres",
               "uid": "fin-postgres"
             },
-            "query": "SELECT device_id AS __text, device_id AS __value FROM profiles ORDER BY device_id",
-            "definition": "SELECT device_id AS __text, device_id AS __value FROM profiles ORDER BY device_id",
+            "query": "SELECT coalesce(nullif(pet_json->>'name', ''), 'Без имени') || ' · ' || device_id AS __text, device_id AS __value FROM profiles ORDER BY lower(coalesce(pet_json->>'name', '')), device_id",
+            "definition": "SELECT coalesce(nullif(pet_json->>'name', ''), 'Без имени') || ' · ' || device_id AS __text, device_id AS __value FROM profiles ORDER BY lower(coalesce(pet_json->>'name', '')), device_id",
             "refresh": 1,
-            "sort": 1,
+            "sort": 0,
             "multi": false,
             "includeAll": false,
             "options": [],
@@ -72,22 +72,23 @@ data:
       "panels": [
         {
           "id": 1,
-          "title": "Профили и устройства",
+          "title": "Обзор игроков",
           "type": "text",
           "gridPos": {
             "x": 0,
             "y": 0,
             "w": 24,
-            "h": 4
+            "h": 3
           },
           "options": {
             "mode": "markdown",
-            "content": "Текущие данные PostgreSQL. Сверху — все профили. Кликните **device_id** в таблице или выберите устройство в фильтре: ниже появится детализация.\n\nСчётчики событий и наград — за всё время. Игровые дни и номера событий — не календарное время. Дата регистрации и последний вход в БД не хранятся. **—** означает отсутствие данных."
-          }
+            "content": "Выберите питомца в фильтре **«Питомец / устройство»** или нажмите на устройство в списке. Ниже — его игра, навыки и награды.\n\nДанные из последней синхронизации. **—** означает, что данных пока нет."
+          },
+          "transparent": true
         },
         {
           "id": 2,
-          "title": "Профилей",
+          "title": "Профили",
           "type": "stat",
           "datasource": {
             "type": "postgres",
@@ -95,9 +96,9 @@ data:
           },
           "gridPos": {
             "x": 0,
-            "y": 4,
+            "y": 3,
             "w": 6,
-            "h": 4
+            "h": 3
           },
           "targets": [
             {
@@ -114,7 +115,7 @@ data:
               "min": 0,
               "color": {
                 "mode": "fixed",
-                "fixedColor": "blue"
+                "fixedColor": "text"
               }
             },
             "overrides": []
@@ -128,12 +129,21 @@ data:
               ],
               "fields": "",
               "values": false
+            },
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "textMode": "value",
+            "text": {
+              "valueSize": 30,
+              "titleSize": 13
             }
-          }
+          },
+          "description": "Все сохранённые данные. Период активности и время последнего входа в БД не хранятся."
         },
         {
           "id": 3,
-          "title": "Устройств",
+          "title": "Устройства",
           "type": "stat",
           "datasource": {
             "type": "postgres",
@@ -141,9 +151,9 @@ data:
           },
           "gridPos": {
             "x": 6,
-            "y": 4,
+            "y": 3,
             "w": 6,
-            "h": 4
+            "h": 3
           },
           "targets": [
             {
@@ -160,7 +170,7 @@ data:
               "min": 0,
               "color": {
                 "mode": "fixed",
-                "fixedColor": "blue"
+                "fixedColor": "text"
               }
             },
             "overrides": []
@@ -174,12 +184,21 @@ data:
               ],
               "fields": "",
               "values": false
+            },
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "textMode": "value",
+            "text": {
+              "valueSize": 30,
+              "titleSize": 13
             }
-          }
+          },
+          "description": "Все сохранённые данные. Период активности и время последнего входа в БД не хранятся."
         },
         {
           "id": 4,
-          "title": "С сохранением",
+          "title": "Профили с сохранением",
           "type": "stat",
           "datasource": {
             "type": "postgres",
@@ -187,9 +206,9 @@ data:
           },
           "gridPos": {
             "x": 12,
-            "y": 4,
+            "y": 3,
             "w": 6,
-            "h": 4
+            "h": 3
           },
           "targets": [
             {
@@ -206,7 +225,7 @@ data:
               "min": 0,
               "color": {
                 "mode": "fixed",
-                "fixedColor": "blue"
+                "fixedColor": "text"
               }
             },
             "overrides": []
@@ -220,12 +239,21 @@ data:
               ],
               "fields": "",
               "values": false
+            },
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "textMode": "value",
+            "text": {
+              "valueSize": 30,
+              "titleSize": 13
             }
-          }
+          },
+          "description": "Все сохранённые данные. Период активности и время последнего входа в БД не хранятся."
         },
         {
           "id": 5,
-          "title": "Исходных событий",
+          "title": "События за всё время",
           "type": "stat",
           "datasource": {
             "type": "postgres",
@@ -233,9 +261,9 @@ data:
           },
           "gridPos": {
             "x": 18,
-            "y": 4,
+            "y": 3,
             "w": 6,
-            "h": 4
+            "h": 3
           },
           "targets": [
             {
@@ -252,7 +280,7 @@ data:
               "min": 0,
               "color": {
                 "mode": "fixed",
-                "fixedColor": "blue"
+                "fixedColor": "text"
               }
             },
             "overrides": []
@@ -266,20 +294,29 @@ data:
               ],
               "fields": "",
               "values": false
+            },
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "textMode": "value",
+            "text": {
+              "valueSize": 30,
+              "titleSize": 13
             }
-          }
+          },
+          "description": "Все сохранённые данные. Период активности и время последнего входа в БД не хранятся."
         },
         {
           "id": 10,
-          "title": "Все профили",
+          "title": "Все игроки",
           "type": "table",
           "gridPos": {
             "x": 0,
-            "y": 8,
+            "y": 6,
             "w": 24,
-            "h": 12
+            "h": 11
           },
-          "description": "Все профили, включая устройства без сохранения и аналитики. Баланс — из текущего сохранения; события и награды — все прогоны. Возраст относится к питомцу.",
+          "description": "Нажмите на устройство, чтобы открыть его данные ниже. Баланс и день — текущая игра; события и награды — за всё время. Сортировка — нажатием на заголовок, фильтр — в заголовке столбца.",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
@@ -296,34 +333,128 @@ data:
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "align": "auto",
+                "align": "left",
                 "cellOptions": {
                   "type": "auto"
                 },
-                "filterable": true
+                "filterable": true,
+                "minWidth": 90
               },
-              "noValue": "—"
+              "noValue": "—",
+              "unit": "none"
             },
             "overrides": [
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "device_id"
+                  "options": "Устройство"
                 },
                 "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 250
+                  },
                   {
                     "id": "links",
                     "value": [
                       {
-                        "title": "Выбрать устройство",
+                        "title": "Открыть игрока",
                         "url": "/d/profiles-devices?var-device_id=${__value.text:percentencode}",
                         "targetBlank": false
                       }
                     ]
-                  },
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Питомец"
+                },
+                "properties": [
                   {
                     "id": "custom.width",
-                    "value": 260
+                    "value": 160
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Баланс"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Накопления"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "События"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Награды"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
                   }
                 ]
               }
@@ -331,129 +462,410 @@ data:
           },
           "options": {
             "showHeader": true,
-            "cellHeight": "sm",
+            "cellHeight": "md",
             "footer": {
               "show": false
             },
             "enablePagination": true
-          }
+          },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Питомец",
+                    "device_id",
+                    "Игровой день",
+                    "Баланс",
+                    "Накопления",
+                    "Исходные события",
+                    "Награды"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Питомец": 0,
+                  "device_id": 1,
+                  "Игровой день": 2,
+                  "Баланс": 3,
+                  "Накопления": 4,
+                  "Исходные события": 5,
+                  "Награды": 6
+                },
+                "renameByName": {
+                  "device_id": "Устройство",
+                  "Исходные события": "События"
+                }
+              }
+            }
+          ]
         },
         {
           "id": 19,
-          "title": "Устройство: $device_id",
+          "title": "Выбранный игрок",
           "type": "row",
           "collapsed": false,
           "gridPos": {
             "x": 0,
-            "y": 20,
+            "y": 17,
             "w": 24,
             "h": 1
           },
           "panels": []
         },
         {
-          "id": 20,
-          "title": "Профиль и текущее состояние игры",
-          "type": "table",
-          "gridPos": {
-            "x": 0,
-            "y": 21,
-            "w": 24,
-            "h": 7
-          },
-          "description": "Данные выбранного устройства. Пустое или невалидное сохранение даёт прочерки вместо выдуманных нулей.",
+          "id": 21,
+          "type": "stat",
+          "title": "Питомец",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
           },
+          "description": "Текущее сохранение выбранного устройства. Если данных нет, показан прочерк.",
           "targets": [
             {
               "refId": "A",
               "format": "table",
               "rawQuery": true,
               "editorMode": "code",
-              "rawSql": "WITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}"
+              "rawSql": "SELECT \"Питомец\" FROM (\nWITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}\n) selected_profile"
             }
           ],
           "fieldConfig": {
             "defaults": {
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "filterable": true
-              },
-              "noValue": "—"
+              "noValue": "—",
+              "decimals": 0,
+              "unit": "none",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "text"
+              }
             },
             "overrides": []
           },
           "options": {
-            "showHeader": true,
-            "cellHeight": "sm",
-            "footer": {
-              "show": false
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "text": {
+              "valueSize": 28,
+              "titleSize": 13
             },
-            "enablePagination": true
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/.*/",
+              "values": false
+            }
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 18,
+            "w": 4,
+            "h": 4
           }
         },
         {
-          "id": 25,
-          "title": "Прогоны и объём аналитики",
-          "type": "table",
-          "gridPos": {
-            "x": 0,
-            "y": 28,
-            "w": 24,
-            "h": 7
-          },
-          "description": "Принятая последовательность и число исходных событий каждого прогона. Номера событий не обозначают количество событий.",
+          "id": 22,
+          "type": "stat",
+          "title": "День игры",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
           },
+          "description": "Текущее сохранение выбранного устройства. Если данных нет, показан прочерк.",
           "targets": [
             {
               "refId": "A",
               "format": "table",
               "rawQuery": true,
               "editorMode": "code",
-              "rawSql": "SELECT a.game_run_id AS \"Прогон\", a.through_history_sequence AS \"Принято по событие\",\n  a.game_run_id = h.game_run_id AS \"Текущий\",\n  (SELECT count(*) FROM analytics_original_facts f\n   WHERE f.profile_id = a.profile_id AND f.game_run_id = a.game_run_id) AS \"Исходные события\"\nFROM profiles p JOIN analytics_heads a USING (profile_id)\nLEFT JOIN snapshot_heads h USING (profile_id)\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY (a.game_run_id = h.game_run_id) DESC NULLS LAST, a.game_run_id"
+              "rawSql": "SELECT \"Игровой день\" FROM (\nWITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}\n) selected_profile"
             }
           ],
           "fieldConfig": {
             "defaults": {
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "filterable": true
-              },
-              "noValue": "—"
+              "noValue": "—",
+              "decimals": 0,
+              "unit": "locale",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "text"
+              }
             },
             "overrides": []
           },
           "options": {
-            "showHeader": true,
-            "cellHeight": "sm",
-            "footer": {
-              "show": false
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "text": {
+              "valueSize": 28,
+              "titleSize": 13
             },
-            "enablePagination": true
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/.*/",
+              "values": false
+            }
+          },
+          "gridPos": {
+            "x": 4,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          }
+        },
+        {
+          "id": 23,
+          "type": "stat",
+          "title": "На руках",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "description": "Текущее сохранение выбранного устройства. Если данных нет, показан прочерк.",
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT \"Баланс\" FROM (\nWITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}\n) selected_profile"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "noValue": "—",
+              "decimals": 0,
+              "unit": "locale",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "text"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "text": {
+              "valueSize": 28,
+              "titleSize": 13
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          }
+        },
+        {
+          "id": 24,
+          "type": "stat",
+          "title": "В копилке",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "description": "Текущее сохранение выбранного устройства. Если данных нет, показан прочерк.",
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT \"Накопления\" FROM (\nWITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}\n) selected_profile"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "noValue": "—",
+              "decimals": 0,
+              "unit": "locale",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "text"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "text": {
+              "valueSize": 28,
+              "titleSize": 13
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          }
+        },
+        {
+          "id": 26,
+          "type": "stat",
+          "title": "Мини-игры пройдены",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "description": "Текущее сохранение выбранного устройства. Если данных нет, показан прочерк.",
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT \"Завершённые мини-игры\" FROM (\nWITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}\n) selected_profile"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "noValue": "—",
+              "decimals": 0,
+              "unit": "locale",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "text"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "text": {
+              "valueSize": 28,
+              "titleSize": 13
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "gridPos": {
+            "x": 16,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          }
+        },
+        {
+          "id": 27,
+          "type": "stat",
+          "title": "Предметы",
+          "datasource": {
+            "type": "postgres",
+            "uid": "fin-postgres"
+          },
+          "description": "Текущее сохранение выбранного устройства. Если данных нет, показан прочерк.",
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "editorMode": "code",
+              "rawSql": "SELECT \"Предметы\" FROM (\nWITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}\n) selected_profile"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "noValue": "—",
+              "decimals": 0,
+              "unit": "locale",
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "text"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "left",
+            "orientation": "horizontal",
+            "wideLayout": true,
+            "text": {
+              "valueSize": 28,
+              "titleSize": 13
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "gridPos": {
+            "x": 20,
+            "y": 18,
+            "w": 4,
+            "h": 4
           }
         },
         {
           "id": 30,
-          "title": "Оценки навыков текущего прогона",
+          "title": "Как развиваются навыки",
           "type": "table",
           "gridPos": {
             "x": 0,
-            "y": 35,
+            "y": 22,
             "w": 24,
-            "h": 11
+            "h": 12
           },
-          "description": "Серверные оценки skill_assessments. Каждая версия политики показана отдельно; без оценки — пустая таблица.",
+          "description": "Оценки текущей игры по игровым ситуациям. Цвет помогает найти статус, подпись объясняет его. Разные версии оценки остаются отдельными строками. Если строк нет — оценки ещё не синхронизированы.",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
@@ -470,36 +882,243 @@ data:
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "align": "auto",
+                "align": "left",
                 "cellOptions": {
                   "type": "auto"
                 },
-                "filterable": true
+                "filterable": true,
+                "minWidth": 90
               },
-              "noValue": "—"
+              "noValue": "—",
+              "unit": "none"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Навык"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "FIN-01": {
+                            "text": "Сравнение цен",
+                            "color": "text",
+                            "index": 0
+                          },
+                          "FIN-02": {
+                            "text": "Планирование",
+                            "color": "text",
+                            "index": 1
+                          },
+                          "FIN-03": {
+                            "text": "Обязательства",
+                            "color": "text",
+                            "index": 2
+                          },
+                          "FIN-04": {
+                            "text": "Темп расходов",
+                            "color": "text",
+                            "index": 3
+                          },
+                          "FIN-05": {
+                            "text": "Движение к цели",
+                            "color": "text",
+                            "index": 4
+                          },
+                          "FIN-06": {
+                            "text": "Выбор цели",
+                            "color": "text",
+                            "index": 5
+                          },
+                          "FIN-07": {
+                            "text": "Резерв",
+                            "color": "text",
+                            "index": 6
+                          },
+                          "FIN-08": {
+                            "text": "Пересмотр плана",
+                            "color": "text",
+                            "index": 7
+                          },
+                          "FIN-09": {
+                            "text": "Выбор ресурсов",
+                            "color": "text",
+                            "index": 8
+                          },
+                          "FIN-10": {
+                            "text": "Заработок",
+                            "color": "text",
+                            "index": 9
+                          },
+                          "FIN-11": {
+                            "text": "Разбор решений",
+                            "color": "text",
+                            "index": 10
+                          },
+                          "FIN-12": {
+                            "text": "Учёт денег",
+                            "color": "text",
+                            "index": 11
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Статус"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 175
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "MASTERED": {
+                            "text": "Освоен",
+                            "color": "green",
+                            "index": 0
+                          },
+                          "PRACTICING": {
+                            "text": "Тренируется",
+                            "color": "blue",
+                            "index": 1
+                          },
+                          "NO_DATA": {
+                            "text": "Пока нет данных",
+                            "color": "text",
+                            "index": 2
+                          },
+                          "HAS_PROBLEM": {
+                            "text": "Есть трудности",
+                            "color": "orange",
+                            "index": 3
+                          },
+                          "SUPPORTED": {
+                            "text": "Есть успехи",
+                            "color": "green",
+                            "index": 4
+                          },
+                          "DIFFICULTY": {
+                            "text": "Есть трудности",
+                            "color": "orange",
+                            "index": 5
+                          },
+                          "INSUFFICIENT_DATA": {
+                            "text": "Мало данных",
+                            "color": "text",
+                            "index": 6
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Почему такой статус"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 340
+                  },
+                  {
+                    "id": "custom.wrapText",
+                    "value": true
+                  },
+                  {
+                    "id": "custom.inspect",
+                    "value": true
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "showHeader": true,
-            "cellHeight": "sm",
+            "cellHeight": "md",
             "footer": {
               "show": false
             },
             "enablePagination": true
-          }
+          },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Навык",
+                    "Статус",
+                    "Успешно",
+                    "Затруднения",
+                    "В процессе",
+                    "Мало свидетельств",
+                    "Основание"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Навык": 0,
+                  "Статус": 1,
+                  "Успешно": 2,
+                  "Затруднения": 3,
+                  "В процессе": 4,
+                  "Мало свидетельств": 5,
+                  "Основание": 6
+                },
+                "renameByName": {
+                  "Успешно": "Успехи",
+                  "Затруднения": "Трудности",
+                  "Мало свидетельств": "Мало данных",
+                  "Основание": "Почему такой статус"
+                }
+              }
+            }
+          ]
         },
         {
           "id": 40,
-          "title": "События последней проекции текущего прогона",
+          "title": "Последние действия в игре",
           "type": "table",
           "gridPos": {
             "x": 0,
-            "y": 46,
-            "w": 24,
-            "h": 13
+            "y": 34,
+            "w": 14,
+            "h": 12
           },
-          "description": "До 500 событий из последней сохранённой проекции. Начало/конец окна показывают покрытие: это может быть часть истории. При одинаковой последовательности выбирается последняя ревизия; старые проекции не суммируются.",
+          "description": "До 500 событий последнего полученного окна текущей игры. Это может быть часть истории. «Шаг» — порядок в игре, а не дата. Полные данные и границы окна — в техническом блоке.",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
@@ -510,42 +1129,228 @@ data:
               "format": "table",
               "rawQuery": true,
               "editorMode": "code",
-              "rawSql": "WITH latest AS (\n  SELECT a.* FROM profiles p\n  JOIN snapshot_heads h USING (profile_id)\n  JOIN analytics_projections a ON a.profile_id = p.profile_id AND a.game_run_id = h.game_run_id\n  WHERE p.device_id = ${device_id:sqlstring}\n  ORDER BY a.through_history_sequence DESC, a.revision DESC,\n    a.history_start_sequence DESC, a.projection_version DESC, a.evaluator_version DESC\n  LIMIT 1\n)\nSELECT event->>'eventId' AS \"Событие\", (event->>'sequence')::bigint AS \"Порядок\",\n  event->>'episodeId' AS \"Эпизод\", event->>'actionId' AS \"Действие\",\n  event #>> '{detail,_type}' AS \"Тип\", event->>'detail' AS \"Данные\",\n  latest.game_run_id AS \"Прогон\", latest.history_start_sequence AS \"Начало окна\",\n  latest.through_history_sequence AS \"Конец окна\",\n  latest.projection_version AS \"Версия проекции\"\nFROM latest\nCROSS JOIN LATERAL jsonb_array_elements(\n  CASE WHEN jsonb_typeof(latest.facts) = 'array' THEN latest.facts ELSE '[]'::jsonb END\n) AS event\nORDER BY (event->>'sequence')::bigint DESC, event->>'eventId'\nLIMIT 500"
+              "rawSql": "SELECT event.*,\n  CASE event.\"Тип\"\n    WHEN 'interaction' THEN coalesce(detail->>'name', 'Игровое действие')\n    WHEN 'practice_answer' THEN concat_ws(' · ', 'Вопрос: ' || (detail->>'questionId'), 'Ответ: ' || (detail->>'selectedAnswerId'))\n    WHEN 'budget_confirmed' THEN concat_ws(' · ', 'Нужды: ' || (detail->>'needs'), 'Желания: ' || (detail->>'wants'), 'Накопления: ' || (detail->>'savings'), 'Резерв: ' || (detail->>'reserve'))\n    WHEN 'optional_purchase' THEN concat_ws(' · ', 'Предмет: ' || (detail->>'itemId'), 'Цена: ' || (detail->>'price'))\n    ELSE coalesce('Сумма: ' || (detail->>'amount'), detail->>'name', 'Подробности в технических данных')\n  END AS \"Что произошло\"\nFROM (\nWITH latest AS (\n  SELECT a.* FROM profiles p\n  JOIN snapshot_heads h USING (profile_id)\n  JOIN analytics_projections a ON a.profile_id = p.profile_id AND a.game_run_id = h.game_run_id\n  WHERE p.device_id = ${device_id:sqlstring}\n  ORDER BY a.through_history_sequence DESC, a.revision DESC,\n    a.history_start_sequence DESC, a.projection_version DESC, a.evaluator_version DESC\n  LIMIT 1\n)\nSELECT event->>'eventId' AS \"Событие\", (event->>'sequence')::bigint AS \"Порядок\",\n  event->>'episodeId' AS \"Эпизод\", event->>'actionId' AS \"Действие\",\n  event #>> '{detail,_type}' AS \"Тип\", event->>'detail' AS \"Данные\",\n  latest.game_run_id AS \"Прогон\", latest.history_start_sequence AS \"Начало окна\",\n  latest.through_history_sequence AS \"Конец окна\",\n  latest.projection_version AS \"Версия проекции\"\nFROM latest\nCROSS JOIN LATERAL jsonb_array_elements(\n  CASE WHEN jsonb_typeof(latest.facts) = 'array' THEN latest.facts ELSE '[]'::jsonb END\n) AS event\nORDER BY (event->>'sequence')::bigint DESC, event->>'eventId'\nLIMIT 500\n) event\nCROSS JOIN LATERAL (SELECT event.\"Данные\"::jsonb AS detail) payload\nORDER BY event.\"Порядок\" DESC, event.\"Событие\""
             }
           ],
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "align": "auto",
+                "align": "left",
                 "cellOptions": {
                   "type": "auto"
                 },
-                "filterable": true
+                "filterable": true,
+                "minWidth": 90
               },
-              "noValue": "—"
+              "noValue": "—",
+              "unit": "none"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Действие"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "interaction": {
+                            "text": "Игровое действие",
+                            "color": "text",
+                            "index": 0
+                          },
+                          "practice_answer": {
+                            "text": "Ответ в практике",
+                            "color": "text",
+                            "index": 1
+                          },
+                          "budget_confirmed": {
+                            "text": "Бюджет",
+                            "color": "text",
+                            "index": 2
+                          },
+                          "optional_purchase": {
+                            "text": "Выбор покупки",
+                            "color": "text",
+                            "index": 3
+                          },
+                          "saving_movement": {
+                            "text": "Движение накоплений",
+                            "color": "text",
+                            "index": 4
+                          },
+                          "saving_cycle_closed": {
+                            "text": "Завершение накопления",
+                            "color": "text",
+                            "index": 5
+                          },
+                          "saving_intention_resolved": {
+                            "text": "План накоплений",
+                            "color": "text",
+                            "index": 6
+                          },
+                          "desire_deferred": {
+                            "text": "Отложенная покупка",
+                            "color": "text",
+                            "index": 7
+                          },
+                          "priority_applied": {
+                            "text": "Выбор приоритета",
+                            "color": "text",
+                            "index": 8
+                          },
+                          "priority_conflict": {
+                            "text": "Конфликт приоритетов",
+                            "color": "text",
+                            "index": 9
+                          },
+                          "reserve_decision": {
+                            "text": "Решение о резерве",
+                            "color": "text",
+                            "index": 10
+                          },
+                          "unexpected_expense": {
+                            "text": "Непредвиденный расход",
+                            "color": "text",
+                            "index": 11
+                          },
+                          "recovery_action": {
+                            "text": "Восстановление",
+                            "color": "text",
+                            "index": 12
+                          },
+                          "resource_choice": {
+                            "text": "Выбор ресурсов",
+                            "color": "text",
+                            "index": 13
+                          },
+                          "earning_plan": {
+                            "text": "План заработка",
+                            "color": "text",
+                            "index": 14
+                          },
+                          "earning_completed": {
+                            "text": "Заработок",
+                            "color": "text",
+                            "index": 15
+                          },
+                          "question_answer": {
+                            "text": "Ответ на вопрос",
+                            "color": "text",
+                            "index": 16
+                          },
+                          "comparable_application": {
+                            "text": "Применение навыка",
+                            "color": "text",
+                            "index": 17
+                          },
+                          "income_window": {
+                            "text": "Период дохода",
+                            "color": "text",
+                            "index": 18
+                          },
+                          "time_machine_lifecycle": {
+                            "text": "Машина времени",
+                            "color": "text",
+                            "index": 19
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Шаг"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 70
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Что произошло"
+                },
+                "properties": [
+                  {
+                    "id": "custom.wrapText",
+                    "value": true
+                  },
+                  {
+                    "id": "custom.inspect",
+                    "value": true
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "showHeader": true,
-            "cellHeight": "sm",
+            "cellHeight": "md",
             "footer": {
               "show": false
             },
             "enablePagination": true
-          }
+          },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Порядок",
+                    "Тип",
+                    "Что произошло"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Порядок": 0,
+                  "Тип": 1,
+                  "Что произошло": 2
+                },
+                "renameByName": {
+                  "Порядок": "Шаг",
+                  "Тип": "Действие"
+                }
+              }
+            }
+          ]
         },
         {
           "id": 50,
-          "title": "История родительских наград",
+          "title": "Награды от родителей",
           "type": "table",
           "gridPos": {
-            "x": 0,
-            "y": 59,
-            "w": 24,
-            "h": 10
+            "x": 14,
+            "y": 34,
+            "w": 10,
+            "h": 12
           },
-          "description": "Последние 500 наград за все прогоны выбранного устройства. Применение берётся из подтверждений; отсутствие подтверждения не считается применением.",
+          "description": "Последние 500 наград за все игры устройства. «Нет подтверждения» означает отсутствие ответа от игры; награда могла ещё не синхронизироваться.",
           "datasource": {
             "type": "postgres",
             "uid": "fin-postgres"
@@ -562,23 +1367,414 @@ data:
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "align": "auto",
+                "align": "left",
                 "cellOptions": {
                   "type": "auto"
                 },
-                "filterable": true
+                "filterable": true,
+                "minWidth": 90
               },
-              "noValue": "—"
+              "noValue": "—",
+              "unit": "none"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Тип"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 110
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "COINS": {
+                            "text": "Монеты",
+                            "color": "text",
+                            "index": 0
+                          },
+                          "ACCESSORY": {
+                            "text": "Аксессуар",
+                            "color": "text",
+                            "index": 1
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Получение"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "Нет подтверждения"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "APPLIED": {
+                            "text": "Применена",
+                            "color": "green",
+                            "index": 0
+                          },
+                          "ALREADY_OWNED": {
+                            "text": "Уже есть",
+                            "color": "text",
+                            "index": 1
+                          },
+                          "ALREADY_OWNED, APPLIED": {
+                            "text": "Применена / уже есть",
+                            "color": "text",
+                            "index": 2
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Когда"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 155
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Монеты"
+                },
+                "properties": [
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "showHeader": true,
-            "cellHeight": "sm",
+            "cellHeight": "md",
             "footer": {
               "show": false
             },
             "enablePagination": true
+          },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Выдана",
+                    "Тип",
+                    "Монеты",
+                    "Предмет",
+                    "Применение"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Выдана": 0,
+                  "Тип": 1,
+                  "Монеты": 2,
+                  "Предмет": 3,
+                  "Применение": 4
+                },
+                "renameByName": {
+                  "Выдана": "Когда",
+                  "Применение": "Получение"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": 90,
+          "title": "Технические данные: идентификаторы, версии и JSON",
+          "type": "row",
+          "collapsed": true,
+          "panels": [
+            {
+              "id": 20,
+              "title": "Профиль и сохранение целиком",
+              "type": "table",
+              "gridPos": {
+                "x": 0,
+                "y": 47,
+                "w": 24,
+                "h": 10
+              },
+              "description": "Данные выбранного устройства. Пустое или невалидное сохранение даёт прочерки вместо выдуманных нулей.",
+              "datasource": {
+                "type": "postgres",
+                "uid": "fin-postgres"
+              },
+              "targets": [
+                {
+                  "refId": "A",
+                  "format": "table",
+                  "rawQuery": true,
+                  "editorMode": "code",
+                  "rawSql": "WITH world AS (\n  SELECT p.*, h.game_run_id, h.server_revision,\n    CASE WHEN pg_input_is_valid(NULLIF(h.snapshot_json, ''), 'jsonb')\n         THEN h.snapshot_json::jsonb ELSE '{}'::jsonb END AS doc\n  FROM profiles p LEFT JOIN snapshot_heads h USING (profile_id)\n)\nSELECT device_id, profile_id::text AS profile_id,\n  pet_json->>'name' AS \"Питомец\", pet_json->>'age' AS \"Возраст питомца\",\n  pet_json->>'color' AS \"Цвет\", pet_json->>'temperament' AS \"Характер\",\n  pet_json->>'selectedLookId' AS \"Облик\",\n  game_run_id AS \"Текущий прогон\", server_revision AS \"Ревизия\",\n  doc #>> '{state,story,currentDayId}' AS \"Сюжетный день\",\n  doc #>> '{state,engine,day}' AS \"Игровой день\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,availableBalance}') = 'number'\n    THEN (doc #>> '{state,economy,availableBalance}')::numeric END AS \"Баланс\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,savingsBalance}') = 'number'\n    THEN (doc #>> '{state,economy,savingsBalance}')::numeric END AS \"Накопления\",\n  CASE WHEN jsonb_typeof(doc #> '{state,economy,unallocated}') = 'number'\n    THEN (doc #>> '{state,economy,unallocated}')::numeric END AS \"Не распределено\",\n  doc #>> '{state,economy,plan}' AS \"Бюджетный план\",\n  CASE WHEN jsonb_typeof(doc #> '{state,ownedItems}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,ownedItems}') END AS \"Предметы\",\n  CASE WHEN jsonb_typeof(doc #> '{state,completedMiniGames}') = 'array'\n    THEN jsonb_array_length(doc #> '{state,completedMiniGames}') END AS \"Завершённые мини-игры\",\n  doc #>> '{state,completedGoalProjects}' AS \"Завершённые цели\"\nFROM world\nWHERE device_id = ${device_id:sqlstring}"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "filterable": true
+                  },
+                  "noValue": "—"
+                },
+                "overrides": []
+              },
+              "options": {
+                "showHeader": true,
+                "cellHeight": "sm",
+                "footer": {
+                  "show": false
+                },
+                "enablePagination": true
+              }
+            },
+            {
+              "id": 25,
+              "title": "Прогоны и синхронизация",
+              "type": "table",
+              "gridPos": {
+                "x": 0,
+                "y": 57,
+                "w": 24,
+                "h": 10
+              },
+              "description": "Принятая последовательность и число исходных событий каждого прогона. Номера событий не обозначают количество событий.",
+              "datasource": {
+                "type": "postgres",
+                "uid": "fin-postgres"
+              },
+              "targets": [
+                {
+                  "refId": "A",
+                  "format": "table",
+                  "rawQuery": true,
+                  "editorMode": "code",
+                  "rawSql": "SELECT a.game_run_id AS \"Прогон\", a.through_history_sequence AS \"Принято по событие\",\n  a.game_run_id = h.game_run_id AS \"Текущий\",\n  (SELECT count(*) FROM analytics_original_facts f\n   WHERE f.profile_id = a.profile_id AND f.game_run_id = a.game_run_id) AS \"Исходные события\"\nFROM profiles p JOIN analytics_heads a USING (profile_id)\nLEFT JOIN snapshot_heads h USING (profile_id)\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY (a.game_run_id = h.game_run_id) DESC NULLS LAST, a.game_run_id"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "filterable": true
+                  },
+                  "noValue": "—"
+                },
+                "overrides": []
+              },
+              "options": {
+                "showHeader": true,
+                "cellHeight": "sm",
+                "footer": {
+                  "show": false
+                },
+                "enablePagination": true
+              }
+            },
+            {
+              "id": 130,
+              "title": "Навыки: исходные оценки",
+              "type": "table",
+              "gridPos": {
+                "x": 0,
+                "y": 67,
+                "w": 24,
+                "h": 10
+              },
+              "description": "Серверные оценки skill_assessments. Каждая версия политики показана отдельно; без оценки — пустая таблица.",
+              "datasource": {
+                "type": "postgres",
+                "uid": "fin-postgres"
+              },
+              "targets": [
+                {
+                  "refId": "A",
+                  "format": "table",
+                  "rawQuery": true,
+                  "editorMode": "code",
+                  "rawSql": "SELECT s.game_run_id AS \"Прогон\", s.policy_version AS \"Версия оценки\",\n  s.based_on_history_sequence AS \"Оценка по событие\",\n  skill->>'skillId' AS \"Навык\", skill->>'status' AS \"Статус\",\n  skill #>> '{observationCounts,completedEpisodes}' AS \"Завершено\",\n  skill #>> '{observationCounts,supportedEpisodes}' AS \"Успешно\",\n  skill #>> '{observationCounts,difficultyEpisodes}' AS \"Затруднения\",\n  skill #>> '{observationCounts,pendingEpisodes}' AS \"В процессе\",\n  skill #>> '{observationCounts,incompleteEpisodes}' AS \"Мало свидетельств\",\n  skill->>'assessmentReason' AS \"Основание\",\n  skill->>'explanation' AS \"Объяснение\",\n  skill->>'observationCounts' AS \"Все счётчики\"\nFROM profiles p\nJOIN snapshot_heads h USING (profile_id)\nJOIN skill_assessments s ON s.profile_id = p.profile_id AND s.game_run_id = h.game_run_id\nCROSS JOIN LATERAL jsonb_array_elements(\n  CASE WHEN jsonb_typeof(s.skills) = 'array' THEN s.skills ELSE '[]'::jsonb END\n) AS skill\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY s.policy_version, skill->>'skillId'"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "filterable": true
+                  },
+                  "noValue": "—"
+                },
+                "overrides": []
+              },
+              "options": {
+                "showHeader": true,
+                "cellHeight": "sm",
+                "footer": {
+                  "show": false
+                },
+                "enablePagination": true
+              }
+            },
+            {
+              "id": 140,
+              "title": "События: исходные данные",
+              "type": "table",
+              "gridPos": {
+                "x": 0,
+                "y": 77,
+                "w": 24,
+                "h": 10
+              },
+              "description": "До 500 событий из последней сохранённой проекции. Начало/конец окна показывают покрытие: это может быть часть истории. При одинаковой последовательности выбирается последняя ревизия; старые проекции не суммируются.",
+              "datasource": {
+                "type": "postgres",
+                "uid": "fin-postgres"
+              },
+              "targets": [
+                {
+                  "refId": "A",
+                  "format": "table",
+                  "rawQuery": true,
+                  "editorMode": "code",
+                  "rawSql": "WITH latest AS (\n  SELECT a.* FROM profiles p\n  JOIN snapshot_heads h USING (profile_id)\n  JOIN analytics_projections a ON a.profile_id = p.profile_id AND a.game_run_id = h.game_run_id\n  WHERE p.device_id = ${device_id:sqlstring}\n  ORDER BY a.through_history_sequence DESC, a.revision DESC,\n    a.history_start_sequence DESC, a.projection_version DESC, a.evaluator_version DESC\n  LIMIT 1\n)\nSELECT event->>'eventId' AS \"Событие\", (event->>'sequence')::bigint AS \"Порядок\",\n  event->>'episodeId' AS \"Эпизод\", event->>'actionId' AS \"Действие\",\n  event #>> '{detail,_type}' AS \"Тип\", event->>'detail' AS \"Данные\",\n  latest.game_run_id AS \"Прогон\", latest.history_start_sequence AS \"Начало окна\",\n  latest.through_history_sequence AS \"Конец окна\",\n  latest.projection_version AS \"Версия проекции\"\nFROM latest\nCROSS JOIN LATERAL jsonb_array_elements(\n  CASE WHEN jsonb_typeof(latest.facts) = 'array' THEN latest.facts ELSE '[]'::jsonb END\n) AS event\nORDER BY (event->>'sequence')::bigint DESC, event->>'eventId'\nLIMIT 500"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "filterable": true
+                  },
+                  "noValue": "—"
+                },
+                "overrides": []
+              },
+              "options": {
+                "showHeader": true,
+                "cellHeight": "sm",
+                "footer": {
+                  "show": false
+                },
+                "enablePagination": true
+              }
+            },
+            {
+              "id": 150,
+              "title": "Награды: идентификаторы и подтверждения",
+              "type": "table",
+              "gridPos": {
+                "x": 0,
+                "y": 87,
+                "w": 24,
+                "h": 10
+              },
+              "description": "Последние 500 наград за все прогоны выбранного устройства. Применение берётся из подтверждений; отсутствие подтверждения не считается применением.",
+              "datasource": {
+                "type": "postgres",
+                "uid": "fin-postgres"
+              },
+              "targets": [
+                {
+                  "refId": "A",
+                  "format": "table",
+                  "rawQuery": true,
+                  "editorMode": "code",
+                  "rawSql": "SELECT r.created_at AS \"Выдана\", r.game_run_id AS \"Прогон\",\n  r.sequence AS \"Порядок\", r.reward_id::text AS \"ID награды\",\n  r.reward_type AS \"Тип\", r.amount AS \"Монеты\", r.item_id AS \"Предмет\",\n  (SELECT string_agg(DISTINCT receipt.outcome, ', ')\n   FROM parent_reward_receipts receipt WHERE receipt.reward_id = r.reward_id) AS \"Применение\"\nFROM profiles p JOIN parent_rewards r USING (profile_id)\nWHERE p.device_id = ${device_id:sqlstring}\nORDER BY r.created_at DESC, r.sequence DESC\nLIMIT 500"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "filterable": true
+                  },
+                  "noValue": "—"
+                },
+                "overrides": []
+              },
+              "options": {
+                "showHeader": true,
+                "cellHeight": "sm",
+                "footer": {
+                  "show": false
+                },
+                "enablePagination": true
+              }
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 46,
+            "w": 24,
+            "h": 1
           }
         }
       ]
